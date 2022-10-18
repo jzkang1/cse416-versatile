@@ -4,26 +4,35 @@ const path = require('path')
 
 const app = express();
 
-app.get("/api/hello/:say", cors(), async (req, res, next) => {
+
+app.use(express.urlencoded({ extended: true }))
+
+let x = app.use(cors({
+    origin: ["http://localhost:3000"],
+    credentials: true
+}));
+app.use(express.json())
+
+app.get("/api/hello/:say", cors(), async (req, res) => {
     try {
         const text = req.params.say;
-        res.json({
+        res.status(200).json({
             text: "Hello " + text
         });
     } catch (err) {
-        next(err);
+        console.log("error");
     }
-})
+});
 
 
 // Serve our base route that returns a Hello World cow
-app.get("/api/hello/", cors(), async (req, res, next) => {
+app.get("/api/hello/", cors(), async (req, res) => {
     try {
         res.json({
             text: "Hello World"
         });
     } catch (err) {
-        next(err);
+        console.log("error");
     }
 });
 
