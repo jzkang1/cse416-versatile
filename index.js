@@ -15,27 +15,20 @@ app.use(express.json())
 const versatileRouter = require('./routes/versatile-router');
 app.use('/api', versatileRouter);
 
-// app.get("/api/hello/", async (req, res) => {
-//     try {
-//         res.status(200).json({
-//             text: "Hello World"
-//         });
-//     } catch (err) {
-//         console.log("error");
-//     }
-// });
-
 // Choose the port and start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Started express app on port ${PORT}`);
 })
 
+// INITIALIZE OUR DATABASE OBJECT
+const db = require('./db')
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 // Serve static files from the React frontend app
-// app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.use(express.static(path.join(__dirname, 'frontend/build')));
 
-// // Anything that doesn't match the above, send back index.html
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname + '/frontend/build/index.html'))
-// });
+// Anything that doesn't match the above, send back index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/frontend/build/index.html'))
+});

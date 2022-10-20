@@ -34,7 +34,7 @@ const MapSchema = new Schema(
         created_date: { type: Date, required: true },
         modified_date: { type: Date, required: true },
         
-        isPublished: { type: Boolean, required: true },
+        is_published: { type: Boolean, required: true },
         published_date: { type: Date, required: true }, 
         description: { type: String, required: true },
         views: { type: Number, required: true },
