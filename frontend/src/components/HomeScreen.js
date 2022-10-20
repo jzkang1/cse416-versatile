@@ -65,57 +65,53 @@ const HomeScreen = () => {
     }
 
     return (
-        store.getTest()
-    )
+        <div id="top5-list-selector">
+            <div id="list-selector-heading">
+            <Fab 
+                color="primary" 
+                aria-label="add"
+                id="add-list-button"
+                onClick={handleCreateNewList}
+                disabled={store.isListNameEditActive}
+            >
+                <AddIcon />
+            </Fab>
+                <Typography variant="h2">Your Lists</Typography>
+            </div>
+            <div id="list-selector-list">
+                {
+                    listCard
+                }
+            </div>
+            <Modal
+                    open={store.listMarkedForDeletion !== null}
+                    onClose={handleCloseDeleteModal}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                >
+                    <Box sx={deleteModalStyle}>
 
-    // return (
-    //     <div id="top5-list-selector">
-    //         <div id="list-selector-heading">
-    //         <Fab 
-    //             color="primary" 
-    //             aria-label="add"
-    //             id="add-list-button"
-    //             onClick={handleCreateNewList}
-    //             disabled={store.isListNameEditActive}
-    //         >
-    //             <AddIcon />
-    //         </Fab>
-    //             <Typography variant="h2">Your Lists</Typography>
-    //         </div>
-    //         <div id="list-selector-list">
-    //             {
-    //                 listCard
-    //             }
-    //         </div>
-    //         <Modal
-    //                 open={store.listMarkedForDeletion !== null}
-    //                 onClose={handleCloseDeleteModal}
-    //                 aria-labelledby="modal-modal-title"
-    //                 aria-describedby="modal-modal-description"
-    //             >
-    //                 <Box sx={deleteModalStyle}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        Delete the Top 5 {store.listMarkedForDeletion !== null ? store.listMarkedForDeletion.name : ""} List ?
+                    </Typography>
 
-    //                 <Typography id="modal-modal-title" variant="h6" component="h2">
-    //                     Delete the Top 5 {store.listMarkedForDeletion !== null ? store.listMarkedForDeletion.name : ""} List ?
-    //                 </Typography>
+                    <Button 
+                        id='delete-modal-confirm'
+                        onClick={handleConfirmDeleteList}
+                        variant="contained">
+                        Confirm
+                    </Button>
 
-    //                 <Button 
-    //                     id='delete-modal-confirm'
-    //                     onClick={handleConfirmDeleteList}
-    //                     variant="contained">
-    //                     Confirm
-    //                 </Button>
+                    <Button 
+                        id='delete-modal-cancel'
+                        onClick={handleCancelDeleteList}
+                        variant="contained">
+                        Cancel
+                    </Button>
 
-    //                 <Button 
-    //                     id='delete-modal-cancel'
-    //                     onClick={handleCancelDeleteList}
-    //                     variant="contained">
-    //                     Cancel
-    //                 </Button>
-
-    //                 </Box>
-    //             </Modal>
-    //     </div>)
+                    </Box>
+                </Modal>
+        </div>)
 }
 
 export default HomeScreen;
