@@ -27,7 +27,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 // // Serve static files from the React frontend app
 if (process.env.LOCAL) {
-    console.log("local")
     app.use(express.static(path.join(__dirname, 'frontend/build')));
 }
 
@@ -37,3 +36,5 @@ if (process.env.LOCAL) {
         res.sendFile(path.join(__dirname + '/frontend/build/index.html'))
     });
 }
+
+//"heroku-postbuild": "cd frontend && npm install && npm run build"
