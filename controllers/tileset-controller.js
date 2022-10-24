@@ -25,6 +25,12 @@ updateTileset = async (req, res) => {
         const { _id, name, height, width, tiles } = req.body;
 
         Tileset.findOne({ _id: _id }, (err, tileset) => {
+            if (!tileset) {
+                return res.status(400).json({
+                    success: false
+                })
+            }
+            
             if (name) tileset.name = name
             if (height) tileset.height = height
             if (width) tileset.width = width

@@ -49,6 +49,12 @@ updateMap = async(req, res) => {
             comments, thumbnailLarge, thumbnailSmall } = req.body;
 
         Map.findOne({ _id: _id }, (err, map) => {
+            if (!map) {
+                return res.status(400).json({
+                    success: false
+                })
+            }
+
             if (name) map.name = name
             if (owner) map.owner = owner
             if (height) map.height = height
@@ -70,13 +76,12 @@ updateMap = async(req, res) => {
 
             map.save();
             console.log("map update success")
+            return res.status(200).json({
+                success: true,
+                _id: _id,
+                message: 'Map updated!',
+            })
         });
-
-        return res.status(200).json({
-            success: true,
-            _id: _id,
-            message: 'Map updated!',
-        })
     } catch (err) {
         console.log(err);
     }
@@ -86,11 +91,11 @@ deleteMap = async(req, res) => {
     try {
         const { _id } = req.body;
         await Map.findOneAndDelete({ _id: _id });
-
         console.log("delete success");
         return res.status(200).json({
             success: true
         })
+        
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not delete map",
