@@ -40,7 +40,7 @@ deleteTileset = async (req, res) => {
         })
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not create tileset"
+            errorMessage: "Could not delete tileset"
         });
     }
 }

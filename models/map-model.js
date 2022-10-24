@@ -24,16 +24,17 @@ const LayerSchema = new Schema(
 
 const MapSchema = new Schema(
     {
-        height: { type: Number, required: true },
-        width: { type: Number, required: true },
-        layers: { type: [LayerSchema], required: true },
-        tilesets: { type: [Tileset.schema], required: true },
-        
         name: { type: String, required: true },
         owner: { type: String, required: true },
-        collaborators: { type: [String], required: true },
-        createdDate: { type: Date, required: true },
-        modifiedDate: { type: Date, required: true },
+
+        height: { type: Number, required: true },
+        width: { type: Number, required: true },
+        layers: { type: [Object], required: true },
+        tilesets: { type: [String], required: true },
+        
+        collaborators: { type: [String], required: false },
+        createdDate: { type: Date, required: false },
+        modifiedDate: { type: Date, required: false },
         
         isPublished: { type: Boolean, required: true },
         publishedDate: { type: Date, required: false }, 
