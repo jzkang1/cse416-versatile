@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 
+const Tileset = require("./tileset-model")
+
 const CommentSchema = new Schema(
     {
         username: { type: String, required: true },
@@ -22,28 +24,26 @@ const LayerSchema = new Schema(
 
 const MapSchema = new Schema(
     {
-        tiled_version: { type: String, required: true },
         height: { type: Number, required: true },
         width: { type: Number, required: true },
         layers: { type: [LayerSchema], required: true },
-        tilesets: { type: [Tileset], required: true },
+        tilesets: { type: [Tileset.schema], required: true },
         
         name: { type: String, required: true },
         owner: { type: String, required: true },
         collaborators: { type: [String], required: true },
-        created_date: { type: Date, required: true },
-        modified_date: { type: Date, required: true },
+        createdDate: { type: Date, required: true },
+        modifiedDate: { type: Date, required: true },
         
-        is_published: { type: Boolean, required: true },
-        published_date: { type: Date, required: true }, 
-        description: { type: String, required: true },
-        views: { type: Number, required: true },
-        users_who_disliked: { type: [String], required: true },
-        users_who_liked: { type: [String], required: true }, 
-        comments: { type: [CommentSchema], required: true },
-
-        thumbnail_large: { type: String, required: true },
-        thumbnail_small: { type: String, required: true },
+        isPublished: { type: Boolean, required: true },
+        publishedDate: { type: Date, required: false }, 
+        description: { type: String, required: false },
+        views: { type: Number, required: false },
+        usersWhoLiked: { type: [String], required: false }, 
+        usersWhoDisliked: { type: [String], required: false },
+        comments: { type: [CommentSchema], required: false },
+        thumbnailLarge: { type: String, required: false },
+        thumbnailSmall: { type: String, required: false },
     },
     { timestamps: true },
 )

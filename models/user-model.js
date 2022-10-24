@@ -11,14 +11,13 @@ const UserSchema = new Schema(
     {
         username: { type: String, required: true },
         passwordHash: { type: String, required: true },
-        email: { type: String, required: true },
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
-        join_date: {type: Date, required: true },
-        profile_image: { type: String, required: true },
-        security_question: { type: [securityQA], required: true }
+        joinDate: {type: Date, required: false },
+        securityQuestions: { type: [securityQA], required: true }
     },
     { timestamps: true },
 )
 
+module.exports = mongoose.model('SecurityQA', securityQA)
 module.exports = mongoose.model('User', UserSchema)

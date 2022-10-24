@@ -25,10 +25,15 @@ app.listen(PORT, () => {
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, 'frontend/build')));
+// // Serve static files from the React frontend app
+if (process.env.LOCAL) {
+    console.log("local")
+    app.use(express.static(path.join(__dirname, 'frontend/build')));
+}
 
-// Anything that doesn't match the above, send back index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/frontend/build/index.html'))
-});
+// // Anything that doesn't match the above, send back index.html
+if (process.env.LOCAL) {
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname + '/frontend/build/index.html'))
+    });
+}
