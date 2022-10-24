@@ -44,11 +44,11 @@ createMap = async(req, res) => {
 
 updateMap = async(req, res) => {
     try {
-        const { name, owner, height, width, layers, tilesets, isPublished, 
+        const { _id, name, owner, height, width, layers, tilesets, isPublished, 
             collaborators, createdDate, modifiedDate, publishedDate, description, views, usersWhoLiked, usersWhoDisliked, 
             comments, thumbnailLarge, thumbnailSmall } = req.body;
 
-        Map.findOne({ _id: req.params.id }, (err, map) => {
+        Map.findOne({ _id: _id }, (err, map) => {
             if (name) map.name = name
             if (owner) map.owner = owner
             if (height) map.height = height
@@ -68,16 +68,15 @@ updateMap = async(req, res) => {
             if (thumbnailLarge) map.thumbnailLarge = thumbnailLarge
             if (thumbnailSmall) map.thumbnailSmall = thumbnailSmall
 
-
-            Map.save()
-                .then(() => {
-                    return res.status(200).json({
-                        success: true,
-                        id: map._id,
-                        message: 'Map updated!',
-                    })
-                })
+            map.save();
+            console.log("map update success")
         });
+
+        return res.status(200).json({
+            success: true,
+            _id: _id,
+            message: 'Map updated!',
+        })
     } catch (err) {
         console.log(err);
     }
@@ -85,15 +84,17 @@ updateMap = async(req, res) => {
 
 deleteMap = async(req, res) => {
     try {
-        const id = req.params._id;
-        console.log(id);
-        await Map.findOneAndDelete({ _id: _id }, () => {
-            console.log("deleted success");
-            return res.status(200).json({ success: true })
+        const { _id } = req.body;
+        await Map.findOneAndDelete({ _id: _id });
+
+        console.log("delete success");
+        return res.status(200).json({
+            success: true
         })
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not delete map"
+            errorMessage: "Could not delete map",
+            err: err
         });
     }
 }

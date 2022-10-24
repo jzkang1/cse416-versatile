@@ -5,8 +5,7 @@ const ObjectId = Schema.Types.ObjectId
 const Tile = new Schema(
     {
         pixels: { type: [Number], required: true }
-    },
-    { timestamps: true },
+    }
 )
 
 const TilesetSchema = new Schema(

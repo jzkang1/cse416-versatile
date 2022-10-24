@@ -22,9 +22,23 @@ createTileset = async (req, res) => {
 
 updateTileset = async (req, res) => {
     try {
-        let tileset = await Tileset.findOne({ _id: req.body._id });
+        const { _id, name, height, width, tiles } = req.body;
 
+        Tileset.findOne({ _id: _id }, (err, tileset) => {
+            if (name) tileset.name = name
+            if (height) tileset.height = height
+            if (width) tileset.width = width
+            if (tiles) tileset.tiles = tiles
 
+            tileset.save();
+            console.log("tileset update success")
+
+            return res.status(200).json({
+                success: true,
+                _id: _id,
+                message: 'Tileset updated!',
+            })
+        });
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not update tileset"
@@ -34,9 +48,12 @@ updateTileset = async (req, res) => {
 
 deleteTileset = async (req, res) => {
     try {
-        let tileset = await Tileset.findOneAndDelete({ _id: req.body._id }, () => {
-            console.log("deleted success");
-            return res.status(200).json({ success: true })
+        const { _id } = req.body;
+        await Tileset.findOneAndDelete({ _id: _id });
+
+        console.log("delete tileset success");
+        return res.status(200).json({
+            success: true
         })
     } catch (err) {
         return res.status(400).json({

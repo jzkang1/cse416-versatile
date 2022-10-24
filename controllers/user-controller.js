@@ -49,7 +49,7 @@ registerUser = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this email address already exists."
+                    errorMessage: "An account with this username already exists."
                 })
         }
 
@@ -74,9 +74,8 @@ registerUser = async (req, res) => {
             user: {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
-                email: savedUser.email,
                 passwordHash: savedUser.passwordHash,
-                securityQuestion: savedUser.securityQuestion
+                securityQuestions: savedUser.securityQuestions
             }
         });
     } catch (err) {
@@ -112,7 +111,7 @@ loginUser = async (req, res) => {
                 success: true,
                 user: existingUser
             });
-            
+
             return;
         }
 
