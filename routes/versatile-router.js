@@ -1,26 +1,29 @@
 const auth = require('../auth')
 const express = require('express')
 
-const MapController = require('../controllers/map-controller')
-const TilesetController = require('../controllers/tileset-controller')
 const UserController = require('../controllers/user-controller')
+const TilesetController = require('../controllers/tileset-controller')
+const MapController = require('../controllers/map-controller')
+
 const router = express.Router()
-
-// router.get("/hello", async (req, res) => {
-//     try {
-//         res.status(200).json({
-//             success: true,
-//             text: "Hello World"
-//         });
-//     } catch (err) {
-//         console.log("error");
-//     }
-// });
-
 
 router.post('/register', UserController.registerUser)
 router.get('/loggedIn', UserController.getLoggedIn)
-router.get('/logout', UserController.logout)
-router.post(`/login`, UserController.loginUser)
+router.get('/logout', UserController.logoutUser)
+router.put('/login', UserController.loginUser)
+
+router.get('/getPublicMaps', MapController.getPublicMaps)
+router.get('/getPersonalMaps', MapController.getPersonalMaps)
+router.post('/createMap', MapController.createMap)
+router.put('/updateMap', MapController.updateMap)
+router.delete('/deleteMap', MapController.deleteMap)
+
+router.post('/createTileset', TilesetController.createTileset)
+router.put('/updateTileset', TilesetController.updateTileset)
+router.put('/getTileset', TilesetController.getTileset)
+router.delete('/deleteTileset', TilesetController.deleteTileset)
+
+// router.post('/createTSet', TilesetController.)
+
 
 module.exports = router
