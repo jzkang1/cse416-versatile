@@ -55,6 +55,8 @@ function GlobalStoreContextProvider(props) {
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
 
+    // added a test comment
+
     store.testApi = async function() {
         try {
             let response = await api.test();
