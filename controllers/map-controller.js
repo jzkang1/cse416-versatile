@@ -1,4 +1,4 @@
-const Map = require('../models/map-model')
+const Map = require("../models/map-model")
 
 getPublicMaps = async (req, res) => {
     try {
@@ -25,16 +25,22 @@ getPersonalMaps = async(req, res) => {
 createMap = async(req, res) => {
     try {
         const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
+
         const newMap = new Map({
             name, owner, height, width, layers, tilesets, isPublished
         });
-        const savedMap = await newMap.save()
-                                            .then(() => {
-                                                return res.status(201).json({
-                                                    success: true,
-                                                    message: 'Map Created!'
-                                                })
-                                            })
+        
+        newMap.save().then(() => {
+            return res.status(201).json({
+                success: true,
+                message: "Map Created!",
+                map: newMap
+            })
+        })
+
+
+
+
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not create map"
@@ -79,7 +85,7 @@ updateMap = async(req, res) => {
             return res.status(200).json({
                 success: true,
                 _id: _id,
-                message: 'Map updated!',
+                message: "Map updated!",
             })
         });
     } catch (err) {
