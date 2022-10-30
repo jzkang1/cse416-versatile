@@ -7,6 +7,8 @@ import { GlobalStoreContextProvider } from './store'
 import AppBanner from './components/AppBanner'
 import HomeScreen from './components/HomeScreen'
 import LoginScreen from './components/LoginScreen'
+import PersonalScreen from './components/PersonalScreen'
+import CommunityScreen from './components/CommunityScreen'
 
 console.log("HI")
 
@@ -22,7 +24,12 @@ const App = () => {
                     <AppBanner />
                     <Routes>
                         <Route path="/" element={<HomeScreen />} />
+                        <Route path="/Home" element={<HomeScreen />} />
+
                         <Route path="/login" element={<LoginScreen />} />
+
+                        <Route path="/Personal" element={<PersonalScreen />} />
+                        <Route path="/Community" element={<CommunityScreen />} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>

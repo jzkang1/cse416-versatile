@@ -14,7 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import Link from "@mui/material/Link";
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -23,22 +23,13 @@ export default function AppBanner() {
     if (auth && store) {}
 
     const pages = ["Home", "Personal", "Community"];
-    const settings = ["Profile", "Account", "Dashboard", "Logout"];
+    const settings = ["Log in", "Register"];
 
     const [anchorElNav, setAnchorElNav] = useState(null);//(React.useState < null) | (HTMLElement > null);
     const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
 
-    console.log(React.useState < null);
-
-    const handleOpenNavMenu = (event) => {
-        setAnchorElNav(event.currentTarget);
-    };
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
     };
 
     const handleCloseUserMenu = () => {
@@ -82,7 +73,7 @@ export default function AppBanner() {
                         {pages.map((page) => (
                             <Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                href={page}
                                 sx={{ my: 2, color: "white", display: "block" }}
                             >
                                 {page}
@@ -120,16 +111,16 @@ export default function AppBanner() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting}
+                            <MenuItem
                                     onClick={handleCloseUserMenu}
-                                >
-                                    <Typography textAlign="center">
-                                        {setting}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
+                            >
+                                <a href="/login">Log in</a>
+                            </MenuItem>
+                            <MenuItem
+                                    onClick={handleCloseUserMenu}
+                            >
+                                <a href="/register">Register</a>
+                            </MenuItem>
                         </Menu>
                     </Box>
                 </Toolbar>
