@@ -6,7 +6,11 @@ import { GlobalStoreContextProvider } from './store'
 
 import AppBanner from './components/AppBanner'
 import HomeScreen from './components/HomeScreen'
+
+import ProfileScreen from './components/ProfileScreen'
 import LoginScreen from './components/LoginScreen'
+import RegisterScreen from './components/RegisterScreen'
+
 import PersonalScreen from './components/PersonalScreen'
 import CommunityScreen from './components/CommunityScreen'
 
@@ -22,11 +26,15 @@ const App = () => {
             <AuthContextProvider>
                 <GlobalStoreContextProvider>
                     <AppBanner />
+
+
                     <Routes>
                         <Route path="/" element={<HomeScreen />} />
                         <Route path="/Home" element={<HomeScreen />} />
 
+                        <Route path="/profile" element={<ProfileScreen />} />
                         <Route path="/login" element={<LoginScreen />} />
+                        <Route path="/register" element={<RegisterScreen />} />
 
                         <Route path="/Personal" element={<PersonalScreen />} />
                         <Route path="/Community" element={<CommunityScreen />} />
