@@ -14,12 +14,6 @@ import RegisterScreen from './components/RegisterScreen'
 import PersonalScreen from './components/PersonalScreen'
 import CommunityScreen from './components/CommunityScreen'
 
-console.log("HI")
-
-// DARK: #001328
-// MID: #001F41
-// LIGHT: #002956
-
 const App = () => {
     return (
         <BrowserRouter>
