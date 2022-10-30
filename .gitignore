@@ -104,3 +104,6 @@ dist
 .tern-port
 
 frontend/build
+
+# MacOS
+.DS_Store
