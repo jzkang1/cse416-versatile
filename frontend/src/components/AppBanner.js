@@ -14,7 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import Link from "@mui/material/Link";
+import { Link } from 'react-router-dom'
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -49,7 +49,6 @@ export default function AppBanner() {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="/"
                         sx={{
                             ml: .6,
                             mr: 2,
@@ -70,15 +69,9 @@ export default function AppBanner() {
                             display: { xs: "none", md: "flex" },
                         }}
                     >
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                href={page}
-                                sx={{ my: 2, color: "white", display: "block" }}
-                            >
-                                {page}
-                            </Button>
-                        ))}
+                        <Link to='/'><Button sx={{ my: 2, color: "white", display: "block" }}>Home</Button></Link>
+                        <Link to='/personal'><Button sx={{ my: 2, color: "white", display: "block" }}>Personal</Button></Link>
+                        <Link to='/community'><Button sx={{ my: 2, color: "white", display: "block" }}>Community</Button></Link>
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
@@ -111,21 +104,9 @@ export default function AppBanner() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            <MenuItem
-                                    onClick={handleCloseUserMenu}
-                            >
-                                <a href="/profile">Profile</a>
-                            </MenuItem>
-                            <MenuItem
-                                    onClick={handleCloseUserMenu}
-                            >
-                                <a href="/login">Log in</a>
-                            </MenuItem>
-                            <MenuItem
-                                    onClick={handleCloseUserMenu}
-                            >
-                                <a href="/register">Register</a>
-                            </MenuItem>
+                            <Link to='/profile'><MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem></Link>
+                            <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
+                            <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
                         </Menu>
                     </Box>
                 </Toolbar>
