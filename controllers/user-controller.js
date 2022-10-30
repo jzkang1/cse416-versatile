@@ -131,9 +131,33 @@ logoutUser = async (req, res) => {
     });
 }
 
+getUser = async (req, res) => {
+    try {
+        const { _id } = req.body;
+
+        let existingUser = User.findOne({_id : _id});
+        
+        if (existingUser) {
+            return res.status(200).json({
+                success: true,
+                user: existingUser
+            });
+        }
+
+        return res.status(400).json({
+            errorMessage: "User not found"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "User not found"
+        });
+    }
+}
+
 module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    getUser
 }

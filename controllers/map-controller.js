@@ -1,5 +1,26 @@
 const Map = require("../models/map-model")
 
+getMap = async (req, res) => {
+    try {
+        const { _id } = req.body;
+
+        let maps = await Map.findOne({_id : _id}, (err, map) => {
+            return res.status(200).json({
+                success: true,
+                map: map
+            })
+        }).catch(err => console.log(err));
+
+        return res.status(400).json({
+            errorMessage: "Could not retrieve map"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not retrieve map"
+        });
+    }
+}
+
 getPublicMaps = async (req, res) => {
     try {
         let maps = await Map.find({}, (err, publicMaps) => {
@@ -121,6 +142,7 @@ duplicateMap = async(req, res) => {
 }
 
 module.exports = {
+    getMap,
     getPublicMaps,
     getPersonalMaps,
     createMap,
