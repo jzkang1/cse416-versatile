@@ -1,17 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
 import { React } from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import {
-    HomeScreen
-} from './components'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-function App() {
+import HomeScreen from './components/HomeScreen'
+import AppBanner from './components/AppBanner'
+
+const App = () => {
   return (
     <BrowserRouter>
-      <Switch>
-        <Route path="/" exact component={HomeScreen} />
-      </Switch>
+      <AppBanner />
+      <Routes>
+        <Route path="/" element={<HomeScreen/>} />
+      </Routes>
     </BrowserRouter>
   );
 }

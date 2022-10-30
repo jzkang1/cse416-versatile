@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
 
-export default function HomeScreen() {
+export default function AppBanner() {
     return (
         <Box sx={{ flexGrow: 1 }}>
-            HOME SCREEN
+            APP BANNER
         </Box>
-    )
+    );
 }
