@@ -114,6 +114,11 @@ export default function AppBanner() {
                             <MenuItem
                                     onClick={handleCloseUserMenu}
                             >
+                                <a href="/profile">Profile</a>
+                            </MenuItem>
+                            <MenuItem
+                                    onClick={handleCloseUserMenu}
+                            >
                                 <a href="/login">Log in</a>
                             </MenuItem>
                             <MenuItem
