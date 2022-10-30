@@ -13,7 +13,7 @@ router.get('/logout', UserController.logoutUser)
 router.put('/login', UserController.loginUser)
 router.put('/getuser', UserController.getUser)
 
-router.get('getMap', MapControllerr.getMap)
+router.get('getMap', MapController.getMap)
 router.get('/getPublicMaps', MapController.getPublicMaps)
 router.get('/getPersonalMaps', MapController.getPersonalMaps)
 router.post('/createMap', MapController.createMap)
