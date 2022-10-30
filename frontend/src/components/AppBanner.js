@@ -104,9 +104,27 @@ export default function AppBanner() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
+<<<<<<< HEAD
                             <Link to='/profile'><MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem></Link>
                             <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
                             <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
+=======
+                            <MenuItem
+                                    onClick={handleCloseUserMenu}
+                            >
+                                <a href="/profile">Profile</a>
+                            </MenuItem>
+                            <MenuItem
+                                    onClick={handleCloseUserMenu}
+                            >
+                                <a href="/login">Log in</a>
+                            </MenuItem>
+                            <MenuItem
+                                    onClick={handleCloseUserMenu}
+                            >
+                                <a href="/register">Register</a>
+                            </MenuItem>
+>>>>>>> jun
                         </Menu>
                     </Box>
                 </Toolbar>
