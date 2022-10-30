@@ -1,4 +1,26 @@
-const Tileset = require('../models/tileset-model')
+const Tileset = require("../models/tileset-model")
+
+getTileset = async (req, res) => {
+    try {
+        let tileset = await Tileset.findOne({ _id: req.body._id });
+        
+        if (tileset) {
+            return res.status(200).json({
+                success: true,
+                message: "Tileset found",
+                tileset: tileset,
+            });
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not get tileset"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not get tileset"
+        });
+    }
+}
 
 createTileset = async (req, res) => {
     try {
@@ -10,7 +32,7 @@ createTileset = async (req, res) => {
                                             .then(() => {
                                                 return res.status(201).json({
                                                     success: true,
-                                                    message: 'Tilset Created!'
+                                                    message: "Tilset Created!"
                                                 })
                                             })
     } catch (err) {
@@ -42,7 +64,7 @@ updateTileset = async (req, res) => {
             return res.status(200).json({
                 success: true,
                 _id: _id,
-                message: 'Tileset updated!',
+                message: "Tileset updated!",
             })
         });
     } catch (err) {
@@ -68,18 +90,10 @@ deleteTileset = async (req, res) => {
     }
 }
 
-getTileset = async (req, res) => {
-    try {
-        let tileset = await Tileset.findOne({ _id: req.body._id });
 
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    }
-}
 
 module.exports = {
+    getTileset,
     createTileset,
     updateTileset,
     deleteTileset,
