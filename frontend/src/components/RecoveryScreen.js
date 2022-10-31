@@ -16,7 +16,16 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 
-const theme = createTheme();
+const theme = createTheme({
+    palette: {
+        primary: {
+            main: "#002956"
+        },
+        background: {
+            default: "#69C6DE"
+        }
+    }
+});
 
 const recoveryStateObj = {
     1: "ENTER_USERNAME",
