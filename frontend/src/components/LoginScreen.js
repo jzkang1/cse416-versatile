@@ -93,7 +93,7 @@ export default function SignIn() {
               Sign In
             </Button>
             <Grid item xs sx={{textAlign: "center"}}>
-              <Link href="#" variant="body2">
+              <Link href="recovery" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
