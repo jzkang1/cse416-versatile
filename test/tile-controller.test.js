@@ -1,7 +1,7 @@
 const map = require("../controllers/tileset-controller.js");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-dotenv.config();
+dotenv.config({ path: ".env" });
 
 beforeAll(() => {
   mongoose.disconnect();
