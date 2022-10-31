@@ -60,7 +60,7 @@ export default function Album() {
         <ThemeProvider theme={theme}>
         <CssBaseline />
         <main>
-            <Container disableGutters maxWidth="lg" sx={{ mt: 4, pt: 2, border: 1 }}
+            <Container disableGutters maxWidth="lg" sx={{ mt: 4, pt: 2, border: 1, backgroundColor: "#DDD2FF" }}
             >
                 <Toolbar sx={{ mt: -1.5, justifyContent: "center" }}>
                     <Typography variant="h3" color="inherit" noWrap align="center" sx={{ ml: 3 }}>
@@ -106,7 +106,7 @@ export default function Album() {
                 </Toolbar>
             </Container>
 
-            <Container disableGutters maxWidth="lg" sx={{ border: 1 }}>
+            <Container disableGutters maxWidth="lg" sx={{ border: 1, backgroundColor: "#DDD2FF" }}>
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
                     <Grid container md={2}>
                         {cards.map((card) => (

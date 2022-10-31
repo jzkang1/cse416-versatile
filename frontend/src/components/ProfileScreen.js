@@ -45,14 +45,14 @@ export default function Album() {
             <Container maxWidth="lg" sx={{ pt: 4 }}
             >
                 <Toolbar sx={{ justifyContent: "center" }}>
-                    <Avatar sx={{ backgroundColor: 'lightblue', width: 100, height: 100}}/>
+                    <Avatar sx={{ backgroundColor: 'lightblue', width: 100, height: 100}} src={require('../images/dog.jpg')}/>
                     <Typography variant="h3" color="inherit" noWrap align="center" sx={{ ml: 3 }}>
                         Your Profile
                     </Typography>
                 </Toolbar>
                 
                 <Typography align="center">
-                    9 public maps
+                    @joerogan123 - 9 public maps
                 </Typography>
 
                 <Toolbar sx={{ borderTop: 1, mt: 3 }}>
@@ -64,7 +64,7 @@ export default function Album() {
                 {cards.map((card) => (
                 <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
                     <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px'}}>
-                        <Link to='/view'>
+                        <Link to='/mapView'>
                             <CardMedia 
                                 component="img"
                                 image="https://source.unsplash.com/random"
