@@ -10,10 +10,12 @@ import HomeScreen from './components/HomeScreen'
 import ProfileScreen from './components/ProfileScreen'
 import LoginScreen from './components/LoginScreen'
 import RegisterScreen from './components/RegisterScreen'
+import RecoveryScreen from './components/RecoveryScreen'
 
 import PersonalScreen from './components/PersonalScreen'
 import CommunityScreen from './components/CommunityScreen'
-import RecoveryScreen from './components/RecoveryScreen';
+import MapView from './components/MapView'
+
 
 const App = () => {
     return (
@@ -34,6 +36,8 @@ const App = () => {
 
                         <Route path="/Personal" element={<PersonalScreen />} />
                         <Route path="/Community" element={<CommunityScreen />} />
+
+                        <Route path="/mapView" element={<MapView />} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
