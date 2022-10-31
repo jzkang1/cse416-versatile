@@ -44,8 +44,8 @@ export default function Album() {
         <main>
             <Container maxWidth="lg" sx={{ pt: 4 }}
             >
-                <Toolbar>
-                    <Avatar sx={{ ml: 45, backgroundColor: 'lightblue', width: 100, height: 100}}/>
+                <Toolbar sx={{ justifyContent: "center" }}>
+                    <Avatar sx={{ backgroundColor: 'lightblue', width: 100, height: 100}}/>
                     <Typography variant="h3" color="inherit" noWrap align="center" sx={{ ml: 3 }}>
                         Your Profile
                     </Typography>
