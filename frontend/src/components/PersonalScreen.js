@@ -116,8 +116,9 @@ export default function Album() {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-                                <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
+                                <MenuItem onClick={handleCloseUserMenu}>Share</MenuItem>
                                 <MenuItem onClick={handleCloseUserMenu}>Duplicate</MenuItem>
+                                <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
                             </Menu>
                         </Container>
                     </Card>
