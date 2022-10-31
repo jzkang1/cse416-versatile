@@ -81,7 +81,7 @@ export default function Album() {
                 {cards.map((card) => (
                 <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
                     <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px'}}>
-                        <Link to='/view'>
+                        <Link to='/mapView'>
                             <CardMedia 
                                 component="img"
                                 image="https://source.unsplash.com/random"
