@@ -25,8 +25,8 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
           touch .env
-          echo DB_CONNECT="$DB_CONNECT" >> .Renviron
-          echo JWT_SECRET="$JWT_SECRET" >> .Renviron
+          echo DB_CONNECT="$DB_CONNECT" >> .env
+          echo JWT_SECRET="$JWT_SECRET" >> .env
           shell: bash
 
       - uses: actions/checkout@v3
