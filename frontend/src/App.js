@@ -13,6 +13,7 @@ import RegisterScreen from './components/RegisterScreen'
 
 import PersonalScreen from './components/PersonalScreen'
 import CommunityScreen from './components/CommunityScreen'
+import RecoveryScreen from './components/RecoveryScreen';
 
 const App = () => {
     return (
@@ -29,6 +30,7 @@ const App = () => {
                         <Route path="/profile" element={<ProfileScreen />} />
                         <Route path="/login" element={<LoginScreen />} />
                         <Route path="/register" element={<RegisterScreen />} />
+                        <Route path="/recovery" element={<RecoveryScreen />} />
 
                         <Route path="/Personal" element={<PersonalScreen />} />
                         <Route path="/Community" element={<CommunityScreen />} />
