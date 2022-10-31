@@ -8,10 +8,10 @@ beforeAll(() => {
   mongoose.connect(process.env.DB_CONNECT, {
     useNewUrlParser: true,
   });
-  //   mongoose.connection.on(
-  //     "error",
-  //     console.error.bind(console, "MongoDB connection error:")
-  //   );
+  // mongoose.connection.on(
+  //   "error",
+  //   console.error.bind(console, "MongoDB connection error:")
+  // );
 });
 
 afterAll(() => mongoose.connection.close());
