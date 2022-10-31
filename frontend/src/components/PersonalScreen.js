@@ -6,7 +6,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';import { Link } from 'react-router-dom';
+import Container from '@mui/material/Container';
+import { Link } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -116,8 +117,9 @@ export default function Album() {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-                                <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
+                                <MenuItem onClick={handleCloseUserMenu}>Share</MenuItem>
                                 <MenuItem onClick={handleCloseUserMenu}>Duplicate</MenuItem>
+                                <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
                             </Menu>
                         </Container>
                     </Card>
