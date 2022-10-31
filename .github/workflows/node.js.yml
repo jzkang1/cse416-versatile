@@ -27,6 +27,7 @@ jobs:
           touch .env
           echo DB_CONNECT="$DB_CONNECT" >> .env
           echo JWT_SECRET="$JWT_SECRET" >> .env
+          cat .env
         shell: bash
 
       - uses: actions/checkout@v3
