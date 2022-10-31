@@ -1,7 +1,7 @@
 const map = require("../controllers/map-controller.js");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
-dotenv.config({ path: "./.env" });
+dotenv.config();
 
 beforeAll(() => {
   mongoose.disconnect();
