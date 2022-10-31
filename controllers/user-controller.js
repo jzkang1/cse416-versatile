@@ -75,7 +75,8 @@ registerUser = async (req, res) => {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
                 passwordHash: savedUser.passwordHash,
-                securityQuestions: savedUser.securityQuestions
+                securityQuestions: savedUser.securityQuestions,
+                build2Testing: "hello world"
             }
         });
     } catch (err) {
