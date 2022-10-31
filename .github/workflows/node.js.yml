@@ -27,7 +27,7 @@ jobs:
           touch .env
           echo DB_CONNECT="$DB_CONNECT" >> .env
           echo JWT_SECRET="$JWT_SECRET" >> .env
-          shell: bash
+        shell: bash
 
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
