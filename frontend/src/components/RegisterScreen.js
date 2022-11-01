@@ -12,6 +12,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AuthContext from '../auth' 
+import { useContext } from 'react';
+import { GlobalStoreContext } from '../store'
 
 function Copyright(props) {
     return (
@@ -37,13 +40,21 @@ const theme = createTheme({
 });
 
 export default function RegisterScreen() {
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext)
+
     const handleSubmit = (event) => {
         event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        const formData = new FormData(event.currentTarget);
+        console.log(formData.get('firstName'), formData.get('lastName'), formData.get('username'), formData.get('email'), formData.get('password'), formData.get('passwordVerify'))
+        auth.registerUser({
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            username: formData.get('username'),
+            email: formData.get('email'),
+            password: formData.get('password'),
+            passwordVerify: formData.get('passwordVerify')
+        }, store);
     };
 
     return (
@@ -121,10 +132,10 @@ export default function RegisterScreen() {
                                 <TextField
                                     required
                                     fullWidth
-                                    name="confirm-password"
+                                    name="passwordVerify"
                                     label="Confirm Password"
                                     type="password"
-                                    id="confirm-password"
+                                    id="passwordVerify"
                                 />
                             </Grid>
                         </Grid>

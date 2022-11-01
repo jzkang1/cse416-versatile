@@ -106,7 +106,7 @@ function AuthContextProvider(props) {
                     }
                 });
                 // history.push("/");
-                store.loadIdNamePairs();
+                // store.loadIdNamePairs();
             } else {
                 authReducer({
                     type: AuthActionType.SET_REGISTER_ERROR,
@@ -119,7 +119,7 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.SET_REGISTER_ERROR,
                 payload: {
-                    registerError: err.response.data.errorMessage
+                    registerError: err.response
                 }
             });
         }
