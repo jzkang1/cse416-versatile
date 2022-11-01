@@ -42,14 +42,20 @@ registerUser = async (req, res) => {
                 });
         }
         
-        const existingUser = await User.findOne({ username: username });
+        const existingUser = await User.findOne({ 
+            $or: [
+                { 'email': email },
+                { 'username': username }
+              ]
+        });
+        
         
         if (existingUser) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this username already exists."
+                    errorMessage: "An account with this username or email already exists."
                 })
         }
 
@@ -77,8 +83,7 @@ registerUser = async (req, res) => {
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
                 passwordHash: savedUser.passwordHash,
-                securityQuestions: savedUser.securityQuestions,
-                build2Testing: "hello world"
+                securityQuestions: savedUser.securityQuestions
             }
         });
     } catch (err) {
