@@ -18,9 +18,9 @@ getLoggedIn = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, username, password, passwordVerify, securityQuestions} = req.body;
+        const { firstName, lastName, email, username, password, passwordVerify, securityQuestions} = req.body;
 
-        if (!firstName || !lastName || !username || !password || !passwordVerify) {
+        if (!firstName || !lastName || !email || !username || !password || !passwordVerify) {
             return res
                 .status(400)
                 .json({
@@ -42,23 +42,29 @@ registerUser = async (req, res) => {
                 });
         }
         
-        const existingUser = await User.findOne({ username: username });
+        const existingUser = await User.findOne({ 
+            $or: [
+                { 'email': email },
+                { 'username': username }
+              ]
+        });
+        
         
         if (existingUser) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "An account with this username already exists."
+                    errorMessage: "An account with this username or email already exists."
                 })
         }
 
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
-
+        
         const newUser = new User({
-            firstName, lastName, username, passwordHash, securityQuestions 
+            firstName, lastName, email, username, passwordHash, securityQuestions 
         });
         const savedUser = await newUser.save();
 
@@ -72,11 +78,12 @@ registerUser = async (req, res) => {
         }).status(200).json({
             success: true,
             user: {
+                username: savedUser.username,
+                email: savedUser.email,
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
                 passwordHash: savedUser.passwordHash,
-                securityQuestions: savedUser.securityQuestions,
-                build2Testing: "hello world"
+                securityQuestions: savedUser.securityQuestions
             }
         });
     } catch (err) {

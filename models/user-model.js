@@ -10,10 +10,10 @@ const securityQA = new Schema({
 const UserSchema = new Schema(
     {
         username: { type: String, required: true },
+        email: { type: String, required: true },
         passwordHash: { type: String, required: true },
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
-        joinDate: {type: Date, required: false },
         securityQuestions: { type: [securityQA], required: true }
     },
     { timestamps: true },
