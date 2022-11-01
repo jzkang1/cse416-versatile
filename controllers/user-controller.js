@@ -18,9 +18,9 @@ getLoggedIn = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, username, password, passwordVerify, securityQuestions} = req.body;
+        const { firstName, lastName, email, username, password, passwordVerify, securityQuestions} = req.body;
 
-        if (!firstName || !lastName || !username || !password || !passwordVerify) {
+        if (!firstName || !lastName || !email || !username || !password || !passwordVerify) {
             return res
                 .status(400)
                 .json({
@@ -56,9 +56,9 @@ registerUser = async (req, res) => {
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
-
+        
         const newUser = new User({
-            firstName, lastName, username, passwordHash, securityQuestions 
+            firstName, lastName, email, username, passwordHash, securityQuestions 
         });
         const savedUser = await newUser.save();
 
@@ -72,6 +72,8 @@ registerUser = async (req, res) => {
         }).status(200).json({
             success: true,
             user: {
+                username: savedUser.username,
+                email: savedUser.email,
                 firstName: savedUser.firstName,
                 lastName: savedUser.lastName,
                 passwordHash: savedUser.passwordHash,
