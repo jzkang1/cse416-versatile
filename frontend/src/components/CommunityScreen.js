@@ -81,17 +81,17 @@ export default function Album() {
                 {cards.map((card) => (
                 <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
                     <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px'}}>
-                        <Link to='/view'>
+                        <Link to='/mapView'>
                             <CardMedia 
                                 component="img"
-                                image="https://source.unsplash.com/random"
+                                image={require('../images/forest.png')}
                                 sx={{ height: '130px'}}
                             />
                         
                         </Link>
                         <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
                             <Typography variant="body2">
-                                Forest in Amazon
+                                Green Forest
                             </Typography>
 
                             <FavoriteIcon fontSize='tiny' sx={{ marginLeft: 'auto', mt: .3 }}/>

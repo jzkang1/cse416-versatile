@@ -27,6 +27,11 @@ export const updateTileset = (payload) => api.post(`/updateTileset`, payload)
 export const deleteTileset = (payload) => api.delete(`/deleteTileset`, payload)
 
 const apis = {
+    getLoggedIn,
+    registerUser,
+    loginUser,
+    logoutUser,
+    getUser
 }
 
 export default apis
