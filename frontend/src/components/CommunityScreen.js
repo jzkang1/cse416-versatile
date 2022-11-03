@@ -84,14 +84,14 @@ export default function Album() {
                         <Link to='/mapView'>
                             <CardMedia 
                                 component="img"
-                                image="https://source.unsplash.com/random"
+                                image={require('../images/forest.png')}
                                 sx={{ height: '130px'}}
                             />
                         
                         </Link>
                         <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
                             <Typography variant="body2">
-                                Forest in Amazon
+                                Green Forest
                             </Typography>
 
                             <FavoriteIcon fontSize='tiny' sx={{ marginLeft: 'auto', mt: .3 }}/>

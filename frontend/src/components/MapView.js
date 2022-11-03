@@ -113,24 +113,6 @@ export default function MapView() {
                             {map.name}
 
                         </Typography>
-                        
-                        {/* <Typography
-                            variant="h4"
-                            noWrap
-                            component="a"
-                            sx={{
-                                ml: .6,
-                                mr: 2,
-                                display: { xs: "none", md: "flex" },
-                                fontFamily: "monospace",
-                                fontWeight: 700,
-                                letterSpacing: ".3rem",
-                                color: "inherit",
-                                textDecoration: "none",
-                            }}
-                        >
-                            @{map.owner}
-                        </Typography> */}
                     </Box>
                     
                     <Box
@@ -257,7 +239,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                8 Comments
+                                2 Comments
                             </Typography>
                         </Box>
 

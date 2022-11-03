@@ -56,7 +56,7 @@ const style = {
 };
 
 export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => {
@@ -119,14 +119,14 @@ export default function Album() {
                                     <Link to='/editor'>
                                         <CardMedia
                                             component="img"
-                                            image="https://source.unsplash.com/random"
+                                            image={require('../images/forest.png')}
                                             sx={{ height: '130px' }}
                                         />
 
                                     </Link>
                                     <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
                                         <Typography variant="body2">
-                                            Forest in Amazon
+                                            Green Forest
                                         </Typography>
 
                                         <Button onClick={handleOpenUserMenu}
