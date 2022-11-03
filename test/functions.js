@@ -7,7 +7,7 @@ const functions = {
   },
   testAPI: () =>
     axios
-      .get("https://cse416-versatile.herokuapp.com/api/logout")
+      .get("localhost:3000/api/logout")
       .then((res) => res.data)
       .catch((err) => "error"),
 };
