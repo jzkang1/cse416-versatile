@@ -10,6 +10,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AuthContext from '../auth' 
+import { useContext } from 'react';
+import { GlobalStoreContext } from '../store'
 
 function Copyright(props) {
   return (
@@ -36,14 +39,19 @@ const theme = createTheme({
 });
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+
+  const { auth } = useContext(AuthContext);
+  const { store } = useContext(GlobalStoreContext)
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        console.log(formData.get('username'), formData.get('password'))
+        auth.loginUser({
+            username: formData.get('username'),
+            password: formData.get('password')
+        }, store);
+    };
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,9 +76,9 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="username"
               label="Username"
-              name="email"
+              name="username"
               autoComplete="email"
               autoFocus
             />

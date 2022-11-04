@@ -7,24 +7,24 @@ const api = axios.create({
 })
 
 // user api
-export const getLoggedIn = () => api.get(`/loggedIn/`)
-export const registerUser = (payload) => api.post(`/register/`, payload)
-export const loginUser = (payload) => api.post(`/login/`, payload)
-export const logoutUser = () => api.get(`/logout/`)
+export const getLoggedIn = () => api.get(`/loggedIn/`).catch((err) => { if (err.response) return err.response; else return null });
+export const registerUser = (payload) => api.post(`/register/`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const loginUser = (payload) => api.put(`/login/`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const logoutUser = () => api.get(`/logout/`).catch((err) => { if (err.response) return err.response; else return null });
 
-export const getUser = (id) => api.get(`/getUser/${id}`)
+export const getUser = (id) => api.get(`/getUser/${id}`).catch((err) => { if (err.response) return err.response; else return null });
 
 // map api
-export const getMap = (id) => api.get(`/getMap/${id}`)
-export const createMap = (payload) => api.post(`/createMap`, payload)
-export const updateMap = (payload) => api.post(`/updateMap`, payload)
-export const deleteMap = (payload) => api.delete(`/deleteMap`, payload)
+export const getMap = (id) => api.get(`/getMap/${id}`).catch((err) => { if (err.response) return err.response; else return null });
+export const createMap = (payload) => api.post(`/createMap`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const updateMap = (payload) => api.post(`/updateMap`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const deleteMap = (payload) => api.delete(`/deleteMap`, payload).catch((err) => { if (err.response) return err.response; else return null });
 
 // tileset api
-export const getTileset = (id) => api.get(`/getTileset/${id}`)
-export const createTileset = (payload) => api.post(`/createTileset`, payload)
-export const updateTileset = (payload) => api.post(`/updateTileset`, payload)
-export const deleteTileset = (payload) => api.delete(`/deleteTileset`, payload)
+export const getTileset = (id) => api.get(`/getTileset/${id}`).catch((err) => { if (err.response) return err.response; else return null });
+export const createTileset = (payload) => api.post(`/createTileset`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const updateTileset = (payload) => api.post(`/updateTileset`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const deleteTileset = (payload) => api.delete(`/deleteTileset`, payload).catch((err) => { if (err.response) return err.response; else return null });
 
 const apis = {
     getLoggedIn,
