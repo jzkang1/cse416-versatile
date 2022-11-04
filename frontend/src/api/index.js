@@ -2,10 +2,8 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 
-const PORT = process.env.PORT || 5000;
-
 const api = axios.create({
-    baseURL: 'http://localhost:' + PORT + '/api',
+    baseURL: 'http://localhost:5000/api',
 })
 
 // user api
@@ -26,7 +24,7 @@ export const deleteMap = (payload) => api.delete(`/deleteMap`, payload).catch((e
 export const getTileset = (id) => api.get(`/getTileset/${id}`).catch((err) => { if (err.response) return err.response; else return null });
 export const createTileset = (payload) => api.post(`/createTileset`, payload).catch((err) => { if (err.response) return err.response; else return null });
 export const updateTileset = (payload) => api.post(`/updateTileset`, payload).catch((err) => { if (err.response) return err.response; else return null });
-export const deleteTileset = (payload) => api.delete(`/deleteTileset`, payload).catch((err) => { if (err.response) return err.response; else return null });
+export const deleteTileset = (payload) => api.delete(`/deleteTileset`, payload)
 
 const apis = {
     getLoggedIn,
