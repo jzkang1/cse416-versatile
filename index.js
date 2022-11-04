@@ -9,7 +9,7 @@ app.use(cookies())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://localhost:3000", "https://cse416-versatile.herokuapp.com/"],
     credentials: true
 }));
 app.use(express.json())
