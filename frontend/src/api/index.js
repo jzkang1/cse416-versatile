@@ -2,8 +2,10 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 
+const PORT = process.env.PORT || 5000;
+
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: 'http://localhost:' + PORT + '/api',
 })
 
 // user api
