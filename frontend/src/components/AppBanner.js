@@ -36,6 +36,20 @@ export default function AppBanner() {
         setAnchorElUser(null);
     };
 
+    const handleLogout = () => {
+        handleCloseUserMenu();
+        auth.logoutUser();
+    }
+
+    var button = <Link to='/'><MenuItem onClick={handleLogout}>Logout</MenuItem></Link>
+
+    if (!auth.loggedIn) {
+        button = <div> 
+                    <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
+                    <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
+                </div>
+    }
+
     return (
         <AppBar position="static"
             sx={{
@@ -105,8 +119,7 @@ export default function AppBanner() {
                             onClose={handleCloseUserMenu}
                         >
                             <Link to='/profile'><MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem></Link>
-                            <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
-                            <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
+                            {button}
                         </Menu>
                     </Box>
                 </Toolbar>

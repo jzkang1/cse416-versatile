@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import api from '../api'
 
 const AuthContext = createContext();
@@ -19,6 +19,10 @@ function AuthContextProvider(props) {
         registerError: null,
         loginError: null
     });
+
+    useEffect(() => {
+        auth.getLoggedIn();
+    }, []);
 
     const authReducer = (action) => {
         const { type, payload } = action;
@@ -87,11 +91,11 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
-                store.loadIdNamePairs();
+                //store.loadIdNamePairs();
                 // history.push("/");
             }
         } catch (err) {
-            
+            console.log(err)
         }
     }
 
@@ -145,7 +149,8 @@ function AuthContextProvider(props) {
                     }
                 });
                 // history.push("/");
-                store.loadIdNamePairs();
+                //store.loadIdNamePairs();
+                console.log("Login Succe")
             } else {
                 authReducer({
                     type: AuthActionType.SET_LOGIN_ERROR,
@@ -155,6 +160,7 @@ function AuthContextProvider(props) {
                 });
             }
         } catch (err) {
+            console.log(err)
             authReducer({
                 type: AuthActionType.SET_LOGIN_ERROR,
                 payload: {
