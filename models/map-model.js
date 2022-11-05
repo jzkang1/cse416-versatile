@@ -29,7 +29,7 @@ const MapSchema = new Schema(
 
         height: { type: Number, required: true },
         width: { type: Number, required: true },
-        layers: { type: [Object], required: true },
+        layers: { type: [LayerSchema], required: true },
         tilesets: { type: [String], required: true },
         
         collaborators: { type: [String], required: false },
@@ -38,11 +38,13 @@ const MapSchema = new Schema(
         
         isPublished: { type: Boolean, required: true },
         publishedDate: { type: Date, required: false }, 
+
         description: { type: String, required: false },
         views: { type: Number, required: false },
-        usersWhoLiked: { type: [String], required: false }, 
-        usersWhoDisliked: { type: [String], required: false },
+        likes: { type: Number, required: false },
+        dislikes: { type: Number, required: false },
         comments: { type: [CommentSchema], required: false },
+
         thumbnailLarge: { type: String, required: false },
         thumbnailSmall: { type: String, required: false },
     },

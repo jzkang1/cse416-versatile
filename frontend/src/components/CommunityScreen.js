@@ -1,4 +1,7 @@
-import * as React from 'react';
+import React from 'react';
+import { useContext, useState, useEffect } from "react";
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -9,43 +12,54 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';import { Link } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useContext, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SearchIcon from '@mui/icons-material/Search';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 const theme = createTheme({
     palette: {
-      primary: {
-        main: "#002956"
-      },
-      background: {
-        default: "#69C6DE"
-      }
-    }
-  });
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
+    },
 
-export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+    typography: {
+        fontFamily: [
+            "monospace",
+            "Roboto",
+            "Helvetica Neue",
+            "Arial",
+            "sans-serif",
+        ].join(",")
+    }
+});
+
+export default function CommunityScreen() {
+    useEffect(() => {
+        store.loadCommunityMaps();
+    }, []);
+
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-    };
+    }
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (event) => {
         setAnchorElUser(null);
-    };
+    }
 
     return (
         <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <main>
-            <Container maxWidth="lg" sx={{ pt: 4 }}
-            >
+            <CssBaseline />
+            <Container maxWidth="lg" sx={{ pt: 4 }}>
                 <Typography variant="h3" color="inherit" noWrap align="center">
                     Community
                 </Typography>
@@ -69,7 +83,7 @@ export default function Album() {
                         label="Search"
                         InputProps={{
                             endAdornment: (
-                                  <SearchIcon />
+                                    <SearchIcon />
                             )
                         }}
                     />
@@ -78,7 +92,7 @@ export default function Album() {
 
             <Container maxWidth="lg">
             <Grid container spacing={3}>
-                {cards.map((card) => (
+                {store.communityMapCards.map((card) => (
                 <Grid item key={card} md={12}>
                     <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
                         <Link to='/mapView'>
@@ -123,7 +137,6 @@ export default function Album() {
                 ))}
             </Grid>
             </Container>
-        </main>
         </ThemeProvider>
     );
 }
