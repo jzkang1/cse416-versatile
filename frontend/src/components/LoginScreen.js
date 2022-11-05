@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -28,14 +28,14 @@ function Copyright(props) {
 }
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#002956"
+    palette: {
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
     },
-    background: {
-      default: "#69C6DE"
-    }
-  }
 });
 
 export default function SignIn() {

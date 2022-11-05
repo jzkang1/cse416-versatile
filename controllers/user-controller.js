@@ -19,7 +19,7 @@ getLoggedIn = async (req, res) => {
 
 registerUser = async (req, res) => {
     try {
-        const { firstName, lastName, email, username, password, passwordVerify, securityQuestions} = req.body;
+        const { firstName, lastName, email, username, password, passwordVerify, securityQuestions } = req.body;
 
         if (!firstName || !lastName || !email || !username || !password || !passwordVerify) {
             return res

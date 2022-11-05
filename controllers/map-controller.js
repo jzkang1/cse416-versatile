@@ -1,31 +1,29 @@
 const Map = require("../models/map-model")
 
-getMap = async (req, res) => {
+getPersonalMaps = async(req, res) => {
     try {
-        const { _id } = req.body;
 
-        let maps = await Map.findOne({_id : _id}, (err, map) => {
-            return res.status(200).json({
-                success: true,
-                map: map
-            })
-        }).catch(err => console.log(err));
-
-        return res.status(400).json({
-            errorMessage: "Could not retrieve map"
-        });
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not retrieve map"
+            errorMessage: "Could not retrieve personal maps"
         });
     }
 }
 
 getPublicMaps = async (req, res) => {
     try {
-        let maps = await Map.find({}, (err, publicMaps) => {
-            
-        }).catch(err => console.log(err));
+        let publicMaps = await Map.find({ isPublished: true });
+
+        if (publicMaps) {
+            return res.status(200).json({
+                success: true,
+                publicMaps: publicMaps
+            })
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not retrieve public maps"
+        });
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not retrieve public maps"
@@ -33,12 +31,25 @@ getPublicMaps = async (req, res) => {
     }
 }
 
-getPersonalMaps = async(req, res) => {
+getMap = async (req, res) => {
     try {
+        const _id  = req.params.id;
 
+        let map = await Map.findOne({_id : _id});
+
+        if (map) {
+            return res.status(200).json({
+                success: true,
+                map: map
+            })
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not retrieve map"
+        });
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not retrieve personal maps"
+            errorMessage: "Could not retrieve map"
         });
     }
 }
@@ -142,11 +153,11 @@ duplicateMap = async(req, res) => {
 }
 
 module.exports = {
-    getMap,
-    getPublicMaps,
     getPersonalMaps,
+    getPublicMaps,
+    getMap,
     createMap,
     updateMap,
     deleteMap,
-    duplicateMap
+    duplicateMap,
 }

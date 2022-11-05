@@ -27,20 +27,20 @@ const App = () => {
                     <AppBanner />
                     
                     <Routes>
-                        <Route path="/" element={<HomeScreen />} />
-                        <Route path="/Home" element={<HomeScreen />} />
+                        <Route path="/" element={<HomeScreen/>} />
+                        <Route path="/Home" element={<HomeScreen/>} />
 
-                        <Route path="/profile/:username" element={<ProfileScreen />} />
-                        <Route path="/login" element={<LoginScreen />} />
-                        <Route path="/register" element={<RegisterScreen />} />
-                        <Route path="/recovery" element={<RecoveryScreen />} />
+                        <Route path="/profile/:username" element={<ProfileScreen/>} />
+                        <Route path="/login" element={<LoginScreen/>} />
+                        <Route path="/register" element={<RegisterScreen/>} />
+                        <Route path="/recovery" element={<RecoveryScreen/>} />
 
-                        <Route path="/personal" element={<PersonalScreen />} />
-                        <Route path="/community" element={<CommunityScreen />} />
+                        <Route path="/personal" element={<PersonalScreen/>} />
+                        <Route path="/community" element={<CommunityScreen/>} />
 
-                        <Route path="/mapview" element={<MapView />} />
+                        <Route path="/mapView/:id" element={<MapView/>} />
 
-                        <Route path="/editor" element={<MapEditorScreen />} />
+                        <Route path="/editor" element={<MapEditorScreen/>} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>

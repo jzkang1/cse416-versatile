@@ -11,13 +11,12 @@ router.post('/register', UserController.registerUser)
 router.get('/loggedIn', UserController.getLoggedIn)
 router.get('/logout', UserController.logoutUser)
 router.put('/login', UserController.loginUser)
-router.get('/getUser/:username', UserController.getUser, (req, res) => {
-    res.send(req.params)
-})
+router.get('/getUser/:username', UserController.getUser)
 
-router.get('getMap', MapController.getMap)
-router.get('/getPublicMaps', MapController.getPublicMaps)
 router.get('/getPersonalMaps', MapController.getPersonalMaps)
+router.get('/getPublicMaps', MapController.getPublicMaps)
+
+router.get('/getMap/:id', MapController.getMap)
 router.post('/createMap', MapController.createMap)
 router.put('/updateMap', MapController.updateMap)
 router.delete('/deleteMap', MapController.deleteMap)
@@ -27,8 +26,6 @@ router.post('/createTileset', TilesetController.createTileset)
 router.put('/updateTileset', TilesetController.updateTileset)
 router.put('/getTileset', TilesetController.getTileset)
 router.delete('/deleteTileset', TilesetController.deleteTileset)
-
-// router.post('/createTSet', TilesetController.)
 
 
 module.exports = router
