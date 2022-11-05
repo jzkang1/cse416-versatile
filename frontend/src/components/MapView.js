@@ -1,5 +1,6 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import Button from "@mui/material/Button";
@@ -56,6 +57,16 @@ export default function MapView() {
 
     const handleClickViewProfile = (event) => {
         store.loadProfile(store.currentMapView.owner);
+    }
+
+    let { id } = useParams();
+
+    useEffect(() => {
+        store.loadMapView(id);
+    }, [])
+
+    if (!store.currentMapView) {
+        return ("map not found");
     }
 
     return (
@@ -132,9 +143,9 @@ export default function MapView() {
                             >
                                 @{store.currentMapView.owner}
                             </Typography>
-
+                            
                             <Typography
-                                variant="h7"
+                                variant="h6"
                                 noWrap
                                 component="a"
                                 onClick={handleClickViewProfile}
@@ -143,7 +154,7 @@ export default function MapView() {
                                     fontFamily: "monospace",
                                     fontWeight: 700,
                                     color: "grey",
-                                    textDecoration: "none",
+                                    textDecoration: "none"
                                 }}
                             >
                                 View profile

@@ -45,25 +45,25 @@ const exampleUser = {
 
 const exampleMaps = [
     {
-        id: "6366c40527b415b2af61b485",
+        _id: "6366c40527b415b2af61b485",
         name: "Green Forest",
         views: 8229
     },
 
     {
-        id: "6366c40527b415b2af61b485",
+        _id: "6366c40527b415b2af61b485",
         name: "Desert",
         views: 4231
     },
 
     {
-        id: "6366c40527b415b2af61b485",
+        _id: "6366c40527b415b2af61b485",
         name: "Snowy Mountains",
         views: 910
     },
 
     {
-        id: "6366c40527b415b2af61b485",
+        _id: "6366c40527b415b2af61b485",
         name: "Ocean",
         views: 21
     },
@@ -108,9 +108,9 @@ export default function ProfileScreen() {
 
                     <Grid container spacing={4} sx={{mt: 0}}>
                         {exampleMaps.map((map) => (
-                            <Grid item key={map.id} xs={4} sm={4} md={4} lg={4}>
+                            <Grid item key={map._id} xs={4} sm={4} md={4} lg={4}>
                                 <Card sx={{ display: "flex", flexDirection: "column", borderRadius: 2}}>
-                                    <Link onClick={(event) => {handleClickMapCard(event, map.id)}}>
+                                    <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>
                                         <CardMedia
                                             component="img"
                                             image={require("../images/forest.png")}
