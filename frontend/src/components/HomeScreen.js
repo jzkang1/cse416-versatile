@@ -5,14 +5,14 @@ import Typography from '@mui/material/Typography';
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: "#002956"
-      },
-      background: {
-        default: "#69C6DE"
-      }
-    }
-  });
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
+    },
+});
 
 export default function HomeScreen() {
     return (

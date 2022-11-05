@@ -11,6 +11,7 @@ export const GlobalStoreContext = createContext({});
 export const GlobalStoreActionType = {
     SET_PERSONAL_MAPS: "SET_PERSONAL_MAPS",
     SET_COMMUNITY_MAPS: "SET_COMMUNITY_MAPS",
+    SET_CURRENT_MAP_VIEW: "SET_CURRENT_MAP_VIEW",
     SET_CURRENT_PROFILE_VIEW: "SET_CURRENT_PROFILE_VIEW",
 
 }
@@ -19,6 +20,7 @@ function GlobalStoreContextProvider(props) {
     const [store, setStore] = useState({
         personalMapCards: [],
         communityMapCards: [],
+        currentMapView: null,
         currentProfileView: null,
     });
     
@@ -33,6 +35,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     personalMapCards: payload,
                     communityMapCards: store.communityMapCards,
+                    currentMapView: store.currentMapView,
                     currentProfileView: store.currentProfileView,
                 });
             }
@@ -41,7 +44,17 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     personalMapCards: store.personalMapCards,
                     communityMapCards: payload,
+                    currentMapView: store.currentMapView,
                     currentProfileView: store.currentProfileView,
+                });
+            }
+
+            case GlobalStoreActionType.SET_CURRENT_MAP_VIEW: {
+                return setStore({
+                    personalMapCards: store.personalMapCards,
+                    communityMapCards: store.communityMapCards,
+                    currentMapView: payload,
+                    currentProfileView: null,
                 });
             }
 
@@ -49,6 +62,7 @@ function GlobalStoreContextProvider(props) {
                 return setStore({
                     personalMapCards: store.personalMapCards,
                     communityMapCards: store.communityMapCards,
+                    currentMapView: null,
                     currentProfileView: payload,
                 });
             }
@@ -78,6 +92,22 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.loadCommunityMaps = async function() {
+        try {
+            const response = await api.getPublicMaps();
+            if (response.data.success) {
+                let publicMaps = response.data.publicMaps;
+                
+                storeReducer({
+                    type: GlobalStoreActionType.SET_COMMUNITY_MAPS,
+                    payload: publicMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+    }
+
     store.loadProfile = async function(username) {
         try {
             let response = await api.getUser(username);
@@ -95,6 +125,25 @@ function GlobalStoreContextProvider(props) {
             console.log(err);
         }
         
+    }
+
+    store.loadMapView = async function(id) {
+        try {
+            let response = await api.getMap(id);
+            console.log(response);
+            if (response.data.success) {
+
+                let map = response.data.map;
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+                    payload: map
+                })
+                navigate(`/mapView/${id}`);
+            }
+            
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     return (
