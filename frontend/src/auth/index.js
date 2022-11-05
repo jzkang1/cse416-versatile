@@ -83,6 +83,15 @@ function AuthContextProvider(props) {
         }
     }
 
+    auth.hideErrorModal = function () {
+        authReducer({
+            type: AuthActionType.SET_REGISTER_ERROR,
+            payload: {
+                registerError: null
+            }
+        })
+    }
+
     auth.getLoggedIn = async function(store) {
         try {
             const response = await api.getLoggedIn();
@@ -114,7 +123,8 @@ function AuthContextProvider(props) {
                 });
                 navigate("/personal");
                 // store.loadIdNamePairs();
-            } else {
+            } 
+            else {
                 authReducer({
                     type: AuthActionType.SET_REGISTER_ERROR,
                     payload: {

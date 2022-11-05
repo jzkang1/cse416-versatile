@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,6 +13,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AuthContext from '../auth' 
 import { useContext } from 'react';
 import { GlobalStoreContext } from '../store'
+import Modal from '@mui/material/Modal';
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 function Copyright(props) {
     return (
@@ -27,7 +28,8 @@ function Copyright(props) {
         {'.'}
       </Typography>
     );
-  }
+}
+
 const theme = createTheme({
     palette: {
         primary: {
@@ -38,6 +40,18 @@ const theme = createTheme({
         }
     }
 });
+
+const errorModalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
 
 export default function RegisterScreen() {
     const { auth } = useContext(AuthContext);
@@ -57,9 +71,31 @@ export default function RegisterScreen() {
         }, store);
     };
 
+    const toggleClose = (event) => {
+        auth.hideErrorModal();
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
+                <div>
+                    <Modal
+                        open={Boolean(auth.registerError)}
+
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                    >
+                        <Box sx={errorModalStyle}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                Error
+                            </Typography>
+                            <Stack sx={{ width: '100%' }} spacing={2}>
+                                <Alert severity="error">{auth.registerError}</Alert>
+                                <Button onClick={toggleClose}>OK</Button>
+                            </Stack>
+                        </Box>
+                    </Modal>
+                </div>
                 <CssBaseline />
                 <Box
                     sx={{
