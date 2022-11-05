@@ -105,7 +105,6 @@ registerUser = async (req, res) => {
 }
 
 loginUser = async (req, res) => {
-    console.log("Login")
     try {
         const { username, password } = req.body;
 

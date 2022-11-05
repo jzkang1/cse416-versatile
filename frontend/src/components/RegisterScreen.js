@@ -71,16 +71,12 @@ export default function RegisterScreen() {
         }, store);
     };
 
-    const toggleClose = (event) => {
-        auth.hideErrorModal();
-    }
-
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
                 <div>
                     <Modal
-                        open={Boolean(auth.registerError)}
+                        open={Boolean(auth.modalText)}
 
                         aria-labelledby="modal-modal-title"
                         aria-describedby="modal-modal-description"
@@ -90,8 +86,8 @@ export default function RegisterScreen() {
                                 Error
                             </Typography>
                             <Stack sx={{ width: '100%' }} spacing={2}>
-                                <Alert severity="error">{auth.registerError}</Alert>
-                                <Button onClick={toggleClose}>OK</Button>
+                                <Alert severity="error">{auth.modalText}</Alert>
+                                <Button onClick={auth.closeModal}>OK</Button>
                             </Stack>
                         </Box>
                     </Modal>
