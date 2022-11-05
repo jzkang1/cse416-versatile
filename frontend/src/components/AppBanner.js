@@ -25,8 +25,8 @@ export default function AppBanner() {
     const pages = ["Home", "Personal", "Community"];
     const settings = ["Log in", "Register"];
 
-    const [anchorElNav, setAnchorElNav] = useState(null);//(React.useState < null) | (HTMLElement > null);
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -41,13 +41,20 @@ export default function AppBanner() {
         auth.logoutUser();
     }
 
-    var button = <Link to='/'><MenuItem onClick={handleLogout}>Logout</MenuItem></Link>
+    const handleClickOwnProfile = (event) => {
+        handleCloseUserMenu(event);
+        store.loadProfile(auth.user.username);
+    }
 
-    if (!auth.loggedIn) {
-        button = <div> 
-                    <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
-                    <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
-                </div>
+    let menuLinks = <div> 
+                        <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
+                        <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
+                    </div>
+    if (auth.loggedIn) {
+        menuLinks = <div>
+                        <MenuItem onClick={handleClickOwnProfile}>Profile</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </div>
     }
 
     return (
@@ -98,7 +105,6 @@ export default function AppBanner() {
                                     sx={{
                                         backgroundColor: 'lightblue'
                                     }}
-                                    // src={require("../images/logo.png")}
                                 />
                             </IconButton>
                         </Tooltip>
@@ -118,8 +124,7 @@ export default function AppBanner() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            <Link to='/profile'><MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem></Link>
-                            {button}
+                            {menuLinks}
                         </Menu>
                     </Box>
                 </Toolbar>

@@ -25,13 +25,12 @@ const App = () => {
             <AuthContextProvider>
                 <GlobalStoreContextProvider>
                     <AppBanner />
-
-
+                    
                     <Routes>
                         <Route path="/" element={<HomeScreen />} />
                         <Route path="/Home" element={<HomeScreen />} />
 
-                        <Route path="/profile" element={<ProfileScreen />} />
+                        <Route path="/profile/:username" element={<ProfileScreen />} />
                         <Route path="/login" element={<LoginScreen />} />
                         <Route path="/register" element={<RegisterScreen />} />
                         <Route path="/recovery" element={<RecoveryScreen />} />

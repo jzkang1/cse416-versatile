@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useContext, useState, useEffect } from "react";
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -13,7 +15,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useContext, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SearchIcon from '@mui/icons-material/Search';
@@ -26,7 +27,6 @@ import Stack from '@mui/material/Stack';
 
 import ShareModal from './ShareModal';
 import { Avatar } from '@mui/material';
-
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -55,14 +55,16 @@ const style = {
     p: 4,
 };
 
-export default function Album() {
+export default function PersonalScreen() {
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     const [open, setOpen] = React.useState(false);
+
     const handleOpen = () => {
         setOpen(true);
         handleCloseUserMenu();
     }
+
     const handleClose = () => setOpen(false);
 
     const handleOpenUserMenu = (event) => {
@@ -116,14 +118,15 @@ export default function Album() {
                         {cards.map((card) => (
                             <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
                                 <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>
+
                                     <Link to='/editor'>
                                         <CardMedia
                                             component="img"
                                             image={require('../images/forest.png')}
                                             sx={{ height: '130px' }}
                                         />
-
                                     </Link>
+                                    
                                     <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
                                         <Typography variant="body2">
                                             Green Forest

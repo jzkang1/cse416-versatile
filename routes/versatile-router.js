@@ -11,7 +11,9 @@ router.post('/register', UserController.registerUser)
 router.get('/loggedIn', UserController.getLoggedIn)
 router.get('/logout', UserController.logoutUser)
 router.put('/login', UserController.loginUser)
-router.put('/getuser', UserController.getUser)
+router.get('/getUser/:username', UserController.getUser, (req, res) => {
+    res.send(req.params)
+})
 
 router.get('getMap', MapController.getMap)
 router.get('/getPublicMaps', MapController.getPublicMaps)

@@ -27,8 +27,8 @@ const theme = createTheme({
     }
   });
 
-export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+export default function ProfileScreen() {
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);

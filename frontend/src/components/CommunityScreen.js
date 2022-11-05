@@ -77,15 +77,15 @@ export default function Album() {
             </Container>
 
             <Container maxWidth="lg">
-            <Grid container spacing={4}>
+            <Grid container spacing={3}>
                 {cards.map((card) => (
-                <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
-                    <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px'}}>
+                <Grid item key={card} md={12}>
+                    <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
                         <Link to='/mapView'>
                             <CardMedia 
                                 component="img"
                                 image={require('../images/forest.png')}
-                                sx={{ height: '130px'}}
+                                sx={{ height: '150px'}}
                             />
                         
                         </Link>

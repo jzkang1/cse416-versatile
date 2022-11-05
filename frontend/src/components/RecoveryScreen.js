@@ -112,7 +112,6 @@ export default function RecoveryScreen() {
                                 fullWidth
                                 id="username"
                                 label="username"
-                                autoFocus
                             />
                         </Grid>
                     </Grid>
@@ -139,7 +138,6 @@ export default function RecoveryScreen() {
                         fullWidth
                         id={questionID}
                         label={securityQuestions[i].question}
-                        autoFocus
                     />
                 );
             }
@@ -181,7 +179,6 @@ export default function RecoveryScreen() {
                             fullWidth
                             id=""
                             label={"New password"}
-                            autoFocus
                         />
                         <TextField
                             autoComplete=""
@@ -190,7 +187,6 @@ export default function RecoveryScreen() {
                             fullWidth
                             id=""
                             label={"Confirm new password"}
-                            autoFocus
                         />
                     </Stack>
                     
