@@ -14,6 +14,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import TextModal from './TextModal';
 
 function Copyright(props) {
     return (
@@ -61,19 +62,16 @@ export default function RecoveryScreen() {
     const handleSubmitEmail = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        
         let email = data.get("email");
-
-        console.log(email);
-
         if (email
             .toLowerCase()
             .match(
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
             ) {
+                // POSTMARK LOGIC HERE
                 setRecoveryState(recoveryStateObj[2]);
         } else {
-            
+            auth.showModal("Enter valid email.")
         }
     }
 
@@ -204,6 +202,7 @@ export default function RecoveryScreen() {
     
     return (
         <ThemeProvider theme={theme}>
+            <TextModal />
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box

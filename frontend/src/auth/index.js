@@ -68,6 +68,15 @@ function AuthContextProvider(props) {
         }
     }
 
+    auth.showModal = function (text) {
+        authReducer({
+            type: AuthActionType.SHOW_MODAL,
+            payload: {
+                modalText: text
+            }
+        })
+    }
+
     auth.closeModal = function () {
         authReducer({
             type: AuthActionType.SHOW_MODAL,
