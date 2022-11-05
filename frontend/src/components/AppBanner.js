@@ -4,11 +4,11 @@ import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -19,8 +19,6 @@ import { Link } from 'react-router-dom'
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
-
-    if (auth && store) {}
 
     const pages = ["Home", "Personal", "Community"];
     const settings = ["Log in", "Register"];
@@ -71,41 +69,28 @@ export default function AppBanner() {
                         noWrap
                         component="a"
                         sx={{
-                            ml: .6,
-                            mr: 2,
-                            display: { xs: "none", md: "flex" },
+                            ml: 1,
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
-                            color: "inherit",
-                            textDecoration: "none",
+                            letterSpacing: ".3rem"
                         }}
                     >
                         ersatile
                     </Typography>
                     
-                    <Box
-                        sx={{
-                            flexGrow: 1,
-                            display: { xs: "none", md: "flex" },
-                        }}
-                    >
+                    <Stack direction="row" sx={{ ml: 2 }}>
                         <Link to='/'><Button sx={{ my: 2, color: "white", display: "block" }}>Home</Button></Link>
                         <Link to='/personal'><Button sx={{ my: 2, color: "white", display: "block" }}>Personal</Button></Link>
                         <Link to='/community'><Button sx={{ my: 2, color: "white", display: "block" }}>Community</Button></Link>
-                    </Box>
-
-                    <Box sx={{ flexGrow: 0 }}>
+                    </Stack>
+                    
+                    <Box sx={{ marginLeft: "auto" }}>
                         <Tooltip title="Open settings">
                             <IconButton
                                 onClick={handleOpenUserMenu}
                                 sx={{ p: 0 }}
                             >
-                                <Avatar
-                                    sx={{
-                                        backgroundColor: 'lightblue'
-                                    }}
-                                />
+                                <Avatar sx={{ backgroundColor: 'lightblue' }}/>
                             </IconButton>
                         </Tooltip>
                         <Menu

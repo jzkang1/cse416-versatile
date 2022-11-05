@@ -51,8 +51,8 @@ function GlobalStoreContextProvider(props) {
 
             case GlobalStoreActionType.SET_CURRENT_MAP_VIEW: {
                 return setStore({
-                    personalMapCards: store.personalMapCards,
-                    communityMapCards: store.communityMapCards,
+                    personalMapCards: [],
+                    communityMapCards: [],
                     currentMapView: payload,
                     currentProfileView: null,
                 });
@@ -60,8 +60,8 @@ function GlobalStoreContextProvider(props) {
 
             case GlobalStoreActionType.SET_CURRENT_PROFILE_VIEW: {
                 return setStore({
-                    personalMapCards: store.personalMapCards,
-                    communityMapCards: store.communityMapCards,
+                    personalMapCards: [],
+                    communityMapCards: [],
                     currentMapView: null,
                     currentProfileView: payload,
                 });
@@ -130,7 +130,6 @@ function GlobalStoreContextProvider(props) {
     store.loadMapView = async function(id) {
         try {
             let response = await api.getMap(id);
-            console.log(response);
             if (response.data.success) {
 
                 let map = response.data.map;
