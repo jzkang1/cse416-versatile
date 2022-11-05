@@ -69,9 +69,18 @@ export default function RecoveryScreen() {
             .match(
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
             ) {
-
                 // POSTMARK LOGIC HERE
-                // setRecoveryState(recoveryStateObj[2]);
+                let postmark = require("postmark")
+                let uniqueCode = Math.floor(100000 + Math.random() * 900000)
+                console.log(uniqueCode)
+                var client = new postmark.ServerClient("e1e4b14a-6bcf-4224-86a9-bf2c3c3093d0");
+                client.sendEmail({
+                    "From": "CSE416Versatile@stonybrook.edu",
+                    "To": "danielpinyao.huang@stonybrook.edu",
+                    "Subject": "Account Recovery One Time Code",
+                    "TextBody": uniqueCode
+                });
+                                
                 let securityQuestions = [
                     {question: "what was the name of this app?"},
                     {question: "what class is this project for?"},
