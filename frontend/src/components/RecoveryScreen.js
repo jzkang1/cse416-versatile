@@ -45,7 +45,7 @@ const theme = createTheme({
 });
 
 const recoveryStateObj = {
-    1: "ENTER_USERNAME",
+    1: "ENTER_EMAIL",
     2: "SECURITY_QUESTIONS",
     3: "CHANGE_PASSWORD",
     4: "SUCCESS",
@@ -58,23 +58,22 @@ export default function RecoveryScreen() {
     const [recoveryState, setRecoveryState] = useState(recoveryStateObj[1]);
     const [securityQuestions, setSecurityQuestions] = useState(null);
 
-    const handleSubmitUsername = async (event) => {
+    const handleSubmitEmail = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         
-        let username = data.get("username");
-        console.log(username);
-        // let securityQuestions = auth.getSecurityQuestions(username);
+        let email = data.get("email");
 
-        let securityQuestions = [
-            {question: "what was the name of this app?"},
-            {question: "what class is this project for?"},
-            {question: "what is the name of your professor"},
-        ];
+        console.log(email);
 
-        if (securityQuestions) {
-            setRecoveryState(recoveryStateObj[2]);
-            setSecurityQuestions(securityQuestions);
+        if (email
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+            ) {
+                setRecoveryState(recoveryStateObj[2]);
+        } else {
+            
         }
     }
 
@@ -100,18 +99,18 @@ export default function RecoveryScreen() {
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmitUsername}
+                    onSubmit={handleSubmitEmail}
                     sx={{ mt: 3 }}
                 >
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
                                 autoComplete=""
-                                name="username"
+                                name="email"
                                 required
                                 fullWidth
-                                id="username"
-                                label="username"
+                                id="email"
+                                label="email"
                             />
                         </Grid>
                     </Grid>

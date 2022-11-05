@@ -7,18 +7,16 @@ const AuthContext = createContext();
 export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     REGISTER_USER: "REGISTER_USER",
-    SET_REGISTER_ERROR: "SET_REGISTER_ERROR",
     LOGIN_USER: "LOGIN_USER",
-    SET_LOGIN_ERROR: "SET_LOGIN_ERROR",
-    LOGOUT_USER: "LOGOUT_USER"
+    LOGOUT_USER: "LOGOUT_USER",
+    SHOW_MODAL: "SHOW_MODAL",
 }
 
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         loggedIn: false,
-        registerError: null,
-        loginError: null
+        modalText: null
     });
 
     const navigate = useNavigate()
@@ -34,48 +32,35 @@ function AuthContextProvider(props) {
                 return setAuth({
                     user: payload.user,
                     loggedIn: payload.loggedIn,
-                    registerError: null,
-                    loginError: null
+                    modalText: null
                 });
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
                     user: payload.user,
                     loggedIn: true,
-                    registerError: null,
-                    loginError: null
+                    modalText: null
                 })
-            }
-            case AuthActionType.SET_REGISTER_ERROR: {
-                return setAuth({
-                    user: auth.user,
-                    loggedIn: auth.loggedIn,
-                    registerError: payload.registerError,
-                    loginError: null
-                });
             }
             case AuthActionType.LOGIN_USER: { 
                 return setAuth({
                     user: payload.user,
                     loggedIn: true,
-                    registerError: null,
-                    loginError: null
+                    modalText: null
                 })
-            }
-            case AuthActionType.SET_LOGIN_ERROR: {
-                return setAuth({
-                    user: auth.user,
-                    loggedIn: false,
-                    registerError: null,
-                    loginError: payload.loginError
-                });
             }
             case AuthActionType.LOGOUT_USER: {
                 return setAuth({
                     user: null,
                     loggedIn: false,
-                    registerError: null,
-                    loginError: null
+                    modalText: null
+                });
+            }
+            case AuthActionType.SHOW_MODAL: {
+                return setAuth({
+                    user: auth.user,
+                    loggedIn: auth.loggedIn,
+                    modalText: payload.modalText
                 });
             }
             default:
@@ -83,11 +68,11 @@ function AuthContextProvider(props) {
         }
     }
 
-    auth.hideErrorModal = function () {
+    auth.closeModal = function () {
         authReducer({
-            type: AuthActionType.SET_REGISTER_ERROR,
+            type: AuthActionType.SHOW_MODAL,
             payload: {
-                registerError: null
+                modalText: null
             }
         })
     }
@@ -126,29 +111,20 @@ function AuthContextProvider(props) {
             } 
             else {
                 authReducer({
-                    type: AuthActionType.SET_REGISTER_ERROR,
+                    type: AuthActionType.SHOW_MODAL,
                     payload: {
-                        registerError: response.data.errorMessage
+                        modalText: response.data.errorMessage
                     }
                 });
             }
         } catch (err) {
             authReducer({
-                type: AuthActionType.SET_REGISTER_ERROR,
+                type: AuthActionType.SHOW_MODAL,
                 payload: {
-                    registerError: err.response
+                    modalText: err.response
                 }
             });
         }
-    }
-
-    auth.closeRegisterError = function() {
-        authReducer({
-            type: AuthActionType.SET_REGISTER_ERROR,
-            payload: {
-                registerError: null
-            }
-        });
     }
 
     auth.loginUser = async function(userData, store) {
@@ -163,31 +139,23 @@ function AuthContextProvider(props) {
                 });
                 navigate('/personal')
             } else {
+                console.log(response.data)
                 authReducer({
-                    type: AuthActionType.SET_LOGIN_ERROR,
+                    type: AuthActionType.SHOW_MODAL,
                     payload: {
-                        loginError: response.data.loginError
+                        modalText: response.data.errorMessage
                     }
                 });
             }
         } catch (err) {
             console.log(err)
             authReducer({
-                type: AuthActionType.SET_LOGIN_ERROR,
+                type: AuthActionType.SHOW_MODAL,
                 payload: {
-                    loginError: "Invalid email or password"
+                    modalText: "Invalid email or password"
                 }
             });
         }
-    }
-
-    auth.closeLoginError = function() {
-        authReducer({
-            type: AuthActionType.SET_LOGIN_ERROR,
-            payload: {
-                loginError: null
-            }
-        });
     }
 
     auth.logoutUser = async function() {
