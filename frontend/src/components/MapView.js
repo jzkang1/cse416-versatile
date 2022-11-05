@@ -1,4 +1,7 @@
 import * as React from "react";
+import { useContext } from "react";
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -43,14 +46,12 @@ const theme = createTheme({
 });
 
 export default function MapView() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-    };
-
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+    
     const map = {
         "name": "Green Forest",
-        "owner": "joerogan123",
+        "owner": "JoesRogan",
         "height": 320,
         "width": 320,
         "layers": [
@@ -71,6 +72,10 @@ export default function MapView() {
         {username: "mckilla_gorilla", text: "I really like this one", date: "10/30/2022"},
         {username: "joerogan123", text: "Disliked lol", date: "10/29/2022"}
     ]
+
+    const handleClickViewProfile = (event) => {
+        store.loadProfile(map.owner);
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -162,11 +167,12 @@ export default function MapView() {
                             >
                                 @{map.owner}
                             </Typography>
+
                             <Typography
                                 variant="h7"
                                 noWrap
                                 component="a"
-                                href="profile"
+                                onClick={handleClickViewProfile}
                                 sx={{
                                     display: { xs: "none", md: "flex" },
                                     fontFamily: "monospace",
@@ -177,6 +183,7 @@ export default function MapView() {
                             >
                                 View profile
                             </Typography>
+
                             <Box
                                 sx={{
                                     flexGrow: 1,
@@ -314,7 +321,6 @@ export default function MapView() {
                             
                             id="comment"
                             label="Write your comment"
-                            autoFocus
                             sx={{
                                 flexGrow: 1,
                                 m: 2,

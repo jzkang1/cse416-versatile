@@ -10,7 +10,8 @@ getLoggedIn = async (req, res) => {
             user: {
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
-                email: loggedInUser.email
+                email: loggedInUser.email,
+                username: loggedInUser.username
             }
         });
     });
@@ -107,6 +108,8 @@ loginUser = async (req, res) => {
 
         const existingUser = await User.findOne({ username: username });
 
+        console.log(existingUser);
+
         const correctPass = await bcrypt.compare(password, existingUser.passwordHash);
 
         if (correctPass) {
@@ -142,10 +145,10 @@ logoutUser = async (req, res) => {
 
 getUser = async (req, res) => {
     try {
-        const { _id } = req.body;
+        const { username } = req.params;
 
-        let existingUser = User.findOne({_id : _id});
-        
+        let existingUser = await User.findOne({ username: username });
+    
         if (existingUser) {
             return res.status(200).json({
                 success: true,

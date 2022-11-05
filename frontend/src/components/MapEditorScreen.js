@@ -73,7 +73,7 @@ export default function Album() {
 
                     
                 <Toolbar disableGutters sx={{ mt: 0, borderTop: 1, borderBottom: 1 }}>
-                    <Button sx={{  display: "block"}}><PanToolIcon/></Button>
+                    <Button sx={{ display: "block" }}><PanToolIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><PanToolAltIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><LayersIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}><FormatColorFillIcon/></Button>
