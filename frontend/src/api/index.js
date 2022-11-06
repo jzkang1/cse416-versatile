@@ -11,6 +11,10 @@ export const getLoggedIn = () => api.get(`/loggedIn/`).catch(catcher);
 export const registerUser = (payload) => api.post(`/register/`, payload).catch(catcher);
 export const loginUser = (payload) => api.put(`/login/`, payload).catch(catcher);
 export const logoutUser = () => api.get(`/logout/`).catch(catcher);
+// user - postman api
+export const sendRecoveryCode = (payload) => api.put(`/sendCode/`, payload).catch(catcher);
+export const validateRecoveryCode = (payload) => api.put(`/validateCode/`, payload).catch(catcher);
+export const changePassword = (payload) => api.put(`/changePassword/`, payload).catch(catcher);
 
 export const getUser = (username) => api.get(`/getUser/${username}`).catch(catcher);
 
@@ -37,6 +41,9 @@ const apis = {
     loginUser,
     logoutUser,
     getUser,
+    sendRecoveryCode,
+    validateRecoveryCode,
+    changePassword,
 
     getPersonalMaps,
     getPublicMaps,

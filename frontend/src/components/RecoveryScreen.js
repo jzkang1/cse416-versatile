@@ -8,13 +8,13 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Stack from '@mui/material/Stack';
 import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TextModal from './TextModal';
+import { Navigate } from "react-router-dom";
 
 function Copyright(props) {
     return (
@@ -47,9 +47,8 @@ const theme = createTheme({
 
 const recoveryStateObj = {
     1: "ENTER_EMAIL",
-    2: "SECURITY_QUESTIONS",
-    3: "CHANGE_PASSWORD",
-    4: "SUCCESS",
+    2: "ENTER_RECOVERY_CODE",
+    3: "CHANGE_PASSWORD"
 }
 
 export default function RecoveryScreen() {
@@ -57,50 +56,51 @@ export default function RecoveryScreen() {
     const { store } = useContext(GlobalStoreContext);
     
     const [recoveryState, setRecoveryState] = useState(recoveryStateObj[1]);
-    const [securityQuestions, setSecurityQuestions] = useState(null);
+    const [recoveryUsername, setRecoveryUsername] = useState(null);
 
-    const handleSubmitEmail = async (event) => {
+    const handleSendRecoveryCode = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
 
-        let email = data.get("email");
-        if (email
-            .toLowerCase()
-            .match(
-                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-            ) {
-
-                // POSTMARK LOGIC HERE
-                // setRecoveryState(recoveryStateObj[2]);
-                let securityQuestions = [
-                    {question: "what was the name of this app?"},
-                    {question: "what class is this project for?"},
-                    {question: "what is the name of your professor"},
-                ];
-        
-                if (securityQuestions) {
-                    setRecoveryState(recoveryStateObj[2]);
-                    setSecurityQuestions(securityQuestions);
-                }
-        } else {
-            auth.showModal("Enter valid email.")
-        }
+        let inputUsername = data.get("username");
+        auth.sendRecoveryCode({
+            username: inputUsername
+        }, store).then((isValidUsername) => {
+            if (isValidUsername) {
+                setRecoveryState(recoveryStateObj[2]);
+                setRecoveryUsername(inputUsername)
+            }
+        })
     }
 
-    const handleSubmitSecurityQuestions = (event) => {
+    const handleSubmitRecoveryCode = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-
-        let correct = true;
-
-        if (correct) {
-            setRecoveryState(recoveryStateObj[3]);
-        }
+        let recoveryCode = data.get("recoveryCode");
+        
+        auth.validateRecoveryCode({
+            username: recoveryUsername,
+            recoveryCode: recoveryCode
+        }).then((isValidatedCode) => {
+                if (isValidatedCode) {
+                    setRecoveryState(recoveryStateObj[3]);
+                }
+            }
+        )
     }
 
     const handleSubmitChangePassword = (event) => {
         event.preventDefault();
-        
+        const data = new FormData(event.currentTarget);
+
+        let password = data.get("password");
+        let passwordVerify = data.get("passwordVerify");
+
+        auth.changePassword({
+            username: recoveryUsername,
+            password: password,
+            passwordVerify: passwordVerify
+        })
     }
 
     const getRecoveryContent = () => {
@@ -109,21 +109,19 @@ export default function RecoveryScreen() {
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmitEmail}
+                    onSubmit={handleSendRecoveryCode}
                     sx={{ mt: 3 }}
                 >
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                autoComplete=""
-                                name="email"
-                                required
-                                fullWidth
-                                id="email"
-                                label="email"
-                            />
-                        </Grid>
-                    </Grid>
+                    <Stack spacing={2}>
+                        <TextField
+                            autoComplete=""
+                            name="username"
+                            required
+                            fullWidth
+                            id="username"
+                            label="username"
+                        />
+                    </Stack>
 
                     <Button
                         type="submit"
@@ -136,31 +134,21 @@ export default function RecoveryScreen() {
                 </Box>
             );
         } else if (recoveryState === recoveryStateObj[2]) {
-            let securityQuestionFields = [];
-            for (let i = 0; i < securityQuestions.length; i++) {
-                let questionID = "q" + i;
-                securityQuestionFields.push(
-                    <TextField
-                        autoComplete=""
-                        name={questionID}
-                        required
-                        fullWidth
-                        id={questionID}
-                        label={securityQuestions[i].question}
-                    />
-                );
-            }
-
             return (
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmitSecurityQuestions}
+                    onSubmit={handleSubmitRecoveryCode}
                     sx={{ mt: 3 }}
                 >
-                    <Stack spacing={2}>
-                        {securityQuestionFields}
-                    </Stack>
+                    <TextField
+                        autoComplete=""
+                        name="recoveryCode"
+                        required
+                        fullWidth
+                        id="recoveryCode"
+                        label="Enter Recovery Code"
+                    />
                     
                     <Button
                         type="submit"
@@ -183,19 +171,21 @@ export default function RecoveryScreen() {
                     <Stack spacing={2}>
                         <TextField
                             autoComplete=""
-                            name=""
+                            name="password"
                             required
                             fullWidth
-                            id=""
-                            label={"New password"}
+                            type="password"
+                            id="password"
+                            label="New password"
                         />
                         <TextField
                             autoComplete=""
-                            name=""
+                            name="passwordVerify"
                             required
                             fullWidth
-                            id=""
-                            label={"Confirm new password"}
+                            type="password"
+                            id="passwordVerify"
+                            label="Confirm new password"
                         />
                     </Stack>
                     
