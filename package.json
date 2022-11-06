@@ -20,7 +20,8 @@
     "jsonwebtoken": "latest",
     "mongoose": "^6.6.5",
     "nodemon": "^2.0.20",
-    "cookie-parser": "latest"
+    "cookie-parser": "latest",
+    "postmark": "latest"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.19.4",

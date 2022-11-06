@@ -12,6 +12,9 @@ router.get('/loggedIn', UserController.getLoggedIn)
 router.get('/logout', UserController.logoutUser)
 router.put('/login', UserController.loginUser)
 router.get('/getUser/:username', UserController.getUser)
+router.put('/sendCode', UserController.sendRecoveryCode)
+router.put('/validateCode', UserController.validateRecoveryCode)
+router.put('/changePassword', UserController.changePassword)
 
 router.get('/getPersonalMaps', MapController.getPersonalMaps)
 router.get('/getPublicMaps', MapController.getPublicMaps)
@@ -26,6 +29,5 @@ router.post('/createTileset', TilesetController.createTileset)
 router.put('/updateTileset', TilesetController.updateTileset)
 router.put('/getTileset', TilesetController.getTileset)
 router.delete('/deleteTileset', TilesetController.deleteTileset)
-
 
 module.exports = router

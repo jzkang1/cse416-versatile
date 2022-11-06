@@ -9,7 +9,7 @@ export const AuthActionType = {
     REGISTER_USER: "REGISTER_USER",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    SHOW_MODAL: "SHOW_MODAL",
+    SHOW_MODAL: "SHOW_MODAL"
 }
 
 function AuthContextProvider(props) {
@@ -192,6 +192,63 @@ function AuthContextProvider(props) {
             }
         } catch (err) {
             console.log(`user ${id} not found`)
+        }
+    }
+
+    auth.sendRecoveryCode = async function(userData) {
+        try {
+            let response = await api.sendRecoveryCode(userData);
+            if (response.data.success) {
+                return true
+            } else {
+                authReducer({
+                    type: AuthActionType.SHOW_MODAL,
+                    payload: {
+                        modalText: response.data.errorMessage
+                    }
+                });
+                return false
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    auth.validateRecoveryCode = async function(userData) {
+        try {
+            let response = await api.validateRecoveryCode(userData);
+            if (response.data.success) {
+                return true
+            } else {
+                authReducer({
+                    type: AuthActionType.SHOW_MODAL,
+                    payload: {
+                        modalText: response.data.errorMessage
+                    }
+                });
+                return false
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    auth.changePassword = async function(userData) {
+        try {
+            let response = await api.changePassword(userData);
+            if (response.data.success) {
+                navigate('/login')
+            } else {
+                authReducer({
+                    type: AuthActionType.SHOW_MODAL,
+                    payload: {
+                        modalText: response.data.errorMessage
+                    }
+                });
+                return false
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
 
