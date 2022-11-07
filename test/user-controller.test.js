@@ -17,5 +17,5 @@ beforeAll(() => {
 afterAll(() => mongoose.connection.close());
 
 test("Empty test for skipping the error", () => {
-  console.log("I'm fine :)");
+  //pass
 });
