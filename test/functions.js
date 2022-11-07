@@ -7,12 +7,12 @@ const functions = {
   },
   testAPI: () =>
     axios
-      .get("http://localhost:5001/api/logout")
+      .get("/api/logout")
       .then((res) => res.data)
       .catch((err) => "error"),
   createMap: () =>
     axios
-      .post("http://localhost:5001/api/createMap", {
+      .post("/api/createMap", {
         name: "Forest.tmx",
         owner: "Jun",
         height: 1024,
@@ -25,7 +25,7 @@ const functions = {
       .catch((err) => "error"),
   deleteMap: (_id) =>
     axios
-      .delete("http://localhost:5001/api/deleteMap", {
+      .delete("/api/deleteMap", {
         _id: _id,
       })
       .then((res) => res.data)
