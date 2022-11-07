@@ -48,10 +48,10 @@ export default function ProfileScreen() {
 
     useEffect(() => {
         store.loadProfile(username);
-    }, [])
+    }, []);
 
     if (!store.currentProfileView) {
-        return ("profile not found");
+        return null;
     }
 
     return (
@@ -72,7 +72,7 @@ export default function ProfileScreen() {
                         <Box sx={{ml: 2, display: "flex", flexDirection: "column"}}>
                             <Typography variant="h3">{store.currentProfileView.username}</Typography>
                             <Stack sx={{ml: 2}}>
-                                <Typography variant="h6" color="grey">{store.currentProfileMaps.length} published map {store.currentProfileMaps.length != 1 ? "s" : ""}</Typography>
+                                <Typography variant="h6" color="grey">{store.currentProfileMaps.length} published map{store.currentProfileMaps.length != 1 ? "s" : ""}</Typography>
                                 <Typography variant="h6" color="grey">{store.currentProfileView.numLikes ? store.currentProfileView.numLikes : 0} total likes</Typography>
                                 <Typography variant="h6" color="grey">{store.currentProfileView.numDislikes ? store.currentProfileView.numDislikes : 0} total dislikes</Typography>
                             </Stack>
