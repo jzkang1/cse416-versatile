@@ -60,7 +60,7 @@ export default function MapView() {
     }
 
     let { id } = useParams();
-
+    
     useEffect(() => {
         store.loadMapView(id);
     }, [])

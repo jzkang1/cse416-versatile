@@ -1,11 +1,11 @@
 import React from "react";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { Card, CardMedia } from "@mui/material";
-// import  from "@mui/material/CardMedia";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Toolbar from "@mui/material/Toolbar";
@@ -36,40 +36,6 @@ const theme = createTheme({
     }
 });
 
-const exampleUser = {
-    username: "Tylermcgregor",
-    numPublicMaps: 24,
-    numLikes: 1002,
-    numDislikes: 92,
-}
-
-const exampleMaps = [
-    {
-        _id: "6366c40527b415b2af61b485",
-        name: "Green Forest",
-        views: 8229
-    },
-
-    {
-        _id: "6366c40527b415b2af61b485",
-        name: "Desert",
-        views: 4231
-    },
-
-    {
-        _id: "6366c40527b415b2af61b485",
-        name: "Snowy Mountains",
-        views: 910
-    },
-
-    {
-        _id: "6366c40527b415b2af61b485",
-        name: "Ocean",
-        views: 21
-    },
-
-]
-
 export default function ProfileScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
@@ -78,11 +44,20 @@ export default function ProfileScreen() {
         store.loadMapView(mapID);
     }
 
+    let { username } = useParams();
+
+    useEffect(() => {
+        store.loadProfile(username);
+    }, [])
+
+    if (!store.currentProfileView) {
+        return ("profile not found");
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <Container maxWidth="lg" sx={{ pt: 4 }}>
-
                 <Box
                     backgroundColor={"#DDD2FF"}
                     borderRadius={4}
@@ -95,11 +70,11 @@ export default function ProfileScreen() {
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <Avatar sx={{width: 200, height: 200, ml: 2}} src={require("../images/dog.jpg")}/>
                         <Box sx={{ml: 2, display: "flex", flexDirection: "column"}}>
-                            <Typography variant="h3">{exampleUser.username}</Typography>
+                            <Typography variant="h3">{store.currentProfileView.username}</Typography>
                             <Stack sx={{ml: 2}}>
-                                <Typography variant="h6" color="grey">{exampleUser.numPublicMaps} published maps</Typography>
-                                <Typography variant="h6" color="grey">{exampleUser.numLikes} total likes</Typography>
-                                <Typography variant="h6" color="grey">{exampleUser.numDislikes} total dislikes</Typography>
+                                <Typography variant="h6" color="grey">{store.currentProfileMaps.length} published map {store.currentProfileMaps.length != 1 ? "s" : ""}</Typography>
+                                <Typography variant="h6" color="grey">{store.currentProfileView.numLikes ? store.currentProfileView.numLikes : 0} total likes</Typography>
+                                <Typography variant="h6" color="grey">{store.currentProfileView.numDislikes ? store.currentProfileView.numDislikes : 0} total dislikes</Typography>
                             </Stack>
                         </Box>
                     </Box>
@@ -107,7 +82,7 @@ export default function ProfileScreen() {
                     <Toolbar sx={{ borderBottom: 1 }}></Toolbar>
 
                     <Grid container spacing={4} sx={{mt: 0}}>
-                        {exampleMaps.map((map) => (
+                        {store.currentProfileMaps.map((map) => (
                             <Grid item key={map._id} xs={4} sm={4} md={4} lg={4}>
                                 <Card sx={{ display: "flex", flexDirection: "column", borderRadius: 2}}>
                                     <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>
@@ -120,7 +95,7 @@ export default function ProfileScreen() {
                                     <Box sx={{ p: 2, display: "flex", flexDirection: "row", alignItems: "center" }}>
                                         <Typography variant="body1">{map.name}</Typography>
                                         <VisibilityIcon fontSize="tiny" sx={{ marginLeft: "auto" }}/>
-                                        <Typography sx={{ml: 1}}>{map.views}</Typography>
+                                        <Typography sx={{ml: 1}}>{map.views ? map.views : 0}</Typography>
                                     </Box>
                                 </Card>
                             </Grid>
