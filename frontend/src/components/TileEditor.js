@@ -7,7 +7,6 @@ import Container from "@mui/material/Container";
 import LC from "literallycanvas";
 import "../literallycanvas/css/literallycanvas.css"
 
-
 const theme = createTheme({
     palette: {
         primary: {
