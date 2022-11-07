@@ -13,7 +13,6 @@ export const GlobalStoreActionType = {
     SET_COMMUNITY_MAPS: "SET_COMMUNITY_MAPS",
     SET_CURRENT_MAP_VIEW: "SET_CURRENT_MAP_VIEW",
     SET_CURRENT_PROFILE_VIEW: "SET_CURRENT_PROFILE_VIEW",
-
 }
 
 function GlobalStoreContextProvider(props) {
@@ -22,6 +21,7 @@ function GlobalStoreContextProvider(props) {
         communityMapCards: [],
         currentMapView: null,
         currentProfileView: null,
+        currentProfileMaps: [],
     });
     
     const navigate = useNavigate()
@@ -34,18 +34,20 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.SET_PERSONAL_MAPS: {
                 return setStore({
                     personalMapCards: payload,
-                    communityMapCards: store.communityMapCards,
-                    currentMapView: store.currentMapView,
-                    currentProfileView: store.currentProfileView,
+                    communityMapCards: [],
+                    currentMapView: null,
+                    currentProfileView: null,
+                    currentProfileMaps: []
                 });
             }
 
             case GlobalStoreActionType.SET_COMMUNITY_MAPS: {
                 return setStore({
-                    personalMapCards: store.personalMapCards,
+                    personalMapCards: [],
                     communityMapCards: payload,
-                    currentMapView: store.currentMapView,
-                    currentProfileView: store.currentProfileView,
+                    currentMapView: null,
+                    currentProfileView: null,
+                    currentProfileMaps: []
                 });
             }
 
@@ -55,6 +57,7 @@ function GlobalStoreContextProvider(props) {
                     communityMapCards: [],
                     currentMapView: payload,
                     currentProfileView: null,
+                    currentProfileMaps: []
                 });
             }
 
@@ -63,7 +66,8 @@ function GlobalStoreContextProvider(props) {
                     personalMapCards: [],
                     communityMapCards: [],
                     currentMapView: null,
-                    currentProfileView: payload,
+                    currentProfileView: payload.user,
+                    currentProfileMaps: payload.maps,
                 });
             }
 
@@ -110,15 +114,20 @@ function GlobalStoreContextProvider(props) {
 
     store.loadProfile = async function(username) {
         try {
-            let response = await api.getUser(username);
-            if (response.data.success) {
+            let userResponse = await api.getUser(username);
+            let mapResponse = await api.getMapsByUser(username);
 
-                let user = response.data.user;
+            if (userResponse.data.success && mapResponse.data.success) {
+                let user = userResponse.data.user;
+                let maps = mapResponse.data.maps;
 
                 storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_PROFILE_VIEW,
-                    payload: user
-                })
+                    payload: {
+                        user: user,
+                        maps: maps
+                    }
+                });
                 navigate(`/profile/${username}`)
             }
         } catch (err) {
