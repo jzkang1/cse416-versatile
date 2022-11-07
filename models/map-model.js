@@ -15,9 +15,8 @@ const CommentSchema = new Schema(
 
 const LayerSchema = new Schema(
     {
-        data: { type: [Number], required: true },
         name: { type: String, required: true },
-        opacity: { type: Number, required: true },
+        grid: { type: Object, required: true },
     },
     { timestamps: true },
 )

@@ -69,10 +69,7 @@ createMap = async(req, res) => {
                 map: newMap
             })
         })
-
-
-
-
+        
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not create map"
@@ -142,6 +139,30 @@ deleteMap = async(req, res) => {
     }
 }
 
+getMapsByUser = async (req, res) => {
+    try {
+        const { username } = req.params;
+
+        let ownedMaps = await Map.find({ owner: username });
+        
+        if (ownedMaps) {
+            return res.status(200).json({
+                success: true,
+                maps: ownedMaps
+            });
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not delete map"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not delete map",
+            err: err
+        });
+    }
+}
+
 duplicateMap = async(req, res) => {
     try {
         
@@ -159,5 +180,6 @@ module.exports = {
     createMap,
     updateMap,
     deleteMap,
+    getMapsByUser,
     duplicateMap,
 }

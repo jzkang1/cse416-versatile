@@ -60,13 +60,13 @@ export default function MapView() {
     }
 
     let { id } = useParams();
-
+    
     useEffect(() => {
         store.loadMapView(id);
     }, [])
 
     if (!store.currentMapView) {
-        return ("map not found");
+        return null;
     }
 
     return (

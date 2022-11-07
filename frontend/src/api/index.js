@@ -27,6 +27,8 @@ export const createMap = (payload) => api.post(`/createMap`, payload).catch(catc
 export const updateMap = (payload) => api.post(`/updateMap`, payload).catch(catcher);
 export const deleteMap = (payload) => api.delete(`/deleteMap`, payload).catch(catcher);
 
+export const getMapsByUser = (username) => api.get(`/getMapsByUser/${username}`).catch(catcher);
+
 // tileset api
 export const getTileset = (id) => api.get(`/getTileset/${id}`).catch(catcher);
 export const createTileset = (payload) => api.post(`/createTileset`, payload).catch(catcher);
@@ -52,6 +54,8 @@ const apis = {
     createMap,
     updateMap,
     deleteMap,
+    
+    getMapsByUser,
 
     getTileset,
     createTileset,
