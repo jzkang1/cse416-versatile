@@ -199,6 +199,12 @@ function AuthContextProvider(props) {
         try {
             let response = await api.sendRecoveryCode(userData);
             if (response.data.success) {
+                authReducer({
+                    type: AuthActionType.SHOW_MODAL,
+                    payload: {
+                        modalText: `An email has been sent to ${response.data.email}`
+                    }
+                });
                 return true
             } else {
                 authReducer({
