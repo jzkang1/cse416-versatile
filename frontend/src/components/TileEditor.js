@@ -2,9 +2,11 @@ import React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 
 import LC from "literallycanvas";
 import "../literallycanvas/css/literallycanvas.css"
+
 
 const theme = createTheme({
     palette: {
@@ -32,9 +34,11 @@ export default function TileEditor() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <Box>
-                <LC.LiterallyCanvasReactComponent imageURLPrefix="../src/literallycanvas/img" />
-            </Box>
+            <Container maxWidth="lg" sx={{ pt: 4 }}>
+                <Box>
+                    <LC.LiterallyCanvasReactComponent imageURLPrefix="../src/literallycanvas/img" />
+                </Box>
+            </Container>
         </ThemeProvider>
     );
 }
