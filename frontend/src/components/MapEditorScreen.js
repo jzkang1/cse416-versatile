@@ -1,4 +1,6 @@
 import React from 'react';
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -8,7 +10,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useContext, useState } from "react";
 import Paper from '@mui/material/Paper';
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
@@ -39,8 +40,8 @@ const theme = createTheme({
     }
   });
 
-export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+export default function MapEditorScreen() {
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -104,10 +105,12 @@ export default function Album() {
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
                     <Grid container md={2}>
                         {cards.map((card) => (
-                            <Grid item key={card} md={4} sx={{ p: 1}}>
-                                <Card sx={{ height: '50px', width: '5, 0px' }}>
-                                    <CardMedia component="img" image="https://source.unsplash.com/random" sx={{ height: '50px'}}/>
-                                </Card>
+                            <Grid item key={card} md={4}>
+                                <Link to="/tileEditor">
+                                    <Card>
+                                        <CardMedia component="img" image={require("../images/tree.png")}/>
+                                    </Card>
+                                </Link>
                             </Grid>
                         ))}
                         <Toolbar disableGutters sx={{ mt: 0, borderTop: 1 }}>

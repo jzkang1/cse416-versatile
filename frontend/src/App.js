@@ -17,6 +17,7 @@ import CommunityScreen from './components/CommunityScreen'
 import MapView from './components/MapView'
 
 import MapEditorScreen from './components/MapEditorScreen'
+import TileEditor from './components/TileEditor';
 
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
                         <Route path="/mapView/:id" element={<MapView/>} />
 
                         <Route path="/editor" element={<MapEditorScreen/>} />
+                        <Route path="/tileEditor" element={<TileEditor/>} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>

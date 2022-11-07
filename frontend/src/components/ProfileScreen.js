@@ -1,17 +1,18 @@
 import React from "react";
 import { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import { Card, CardMedia } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";import { Link } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
