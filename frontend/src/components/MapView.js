@@ -66,7 +66,7 @@ export default function MapView() {
     }, [])
 
     if (!store.currentMapView) {
-        return ("map not found");
+        return null;
     }
 
     return (
