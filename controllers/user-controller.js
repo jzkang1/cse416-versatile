@@ -201,7 +201,8 @@ sendRecoveryCode = async (req, res) => {
 
             return res.status(200).json({
                 success: true,
-                message: "Postmark sendEmail request sent success"
+                message: "Postmark sendEmail request sent success",
+                email: existingUser.email
             });
         } else {
             return res.status(400).json({
