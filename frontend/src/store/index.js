@@ -13,6 +13,8 @@ export const GlobalStoreActionType = {
     SET_COMMUNITY_MAPS: "SET_COMMUNITY_MAPS",
     SET_CURRENT_MAP_VIEW: "SET_CURRENT_MAP_VIEW",
     SET_CURRENT_PROFILE_VIEW: "SET_CURRENT_PROFILE_VIEW",
+    SHARE_MODAL: "SHARE_MODAL",
+    UPDATE_MAP: "UPDATE_MAP"
 }
 
 function GlobalStoreContextProvider(props) {
@@ -22,6 +24,7 @@ function GlobalStoreContextProvider(props) {
         currentMapView: null,
         currentProfileView: null,
         currentProfileMaps: [],
+        shareMapId: null
     });
     
     const navigate = useNavigate()
@@ -37,7 +40,8 @@ function GlobalStoreContextProvider(props) {
                     communityMapCards: [],
                     currentMapView: null,
                     currentProfileView: null,
-                    currentProfileMaps: []
+                    currentProfileMaps: [],
+                    shareMapId: null
                 });
             }
 
@@ -47,7 +51,8 @@ function GlobalStoreContextProvider(props) {
                     communityMapCards: payload,
                     currentMapView: null,
                     currentProfileView: null,
-                    currentProfileMaps: []
+                    currentProfileMaps: [],
+                    shareMapId: null
                 });
             }
 
@@ -57,7 +62,8 @@ function GlobalStoreContextProvider(props) {
                     communityMapCards: [],
                     currentMapView: payload,
                     currentProfileView: null,
-                    currentProfileMaps: []
+                    currentProfileMaps: [],
+                    shareMapId: null
                 });
             }
 
@@ -68,6 +74,31 @@ function GlobalStoreContextProvider(props) {
                     currentMapView: null,
                     currentProfileView: payload.user,
                     currentProfileMaps: payload.maps,
+                    shareMapId: null
+                });
+            }
+
+            case GlobalStoreActionType.SHARE_MODAL: {
+                console.log("SHARE_MODAL reducer: " + payload)
+                return setStore({
+                    personalMapCards: store.personalMapCards,
+                    communityMapCards: [],
+                    currentMapView: null,
+                    currentProfileView: [],
+                    currentProfileMaps: [],
+                    shareMapId: payload
+                });
+            }
+
+            case GlobalStoreActionType.UPDATE_MAP: {
+                console.log("SHARE_MODAL reducer: " + payload)
+                return setStore({
+                    personalMapCards: payload.personalMapCards,
+                    communityMapCards: [],
+                    currentMapView: null,
+                    currentProfileView: [],
+                    currentProfileMaps: [],
+                    shareMapId: store.shareMapId
                 });
             }
 
@@ -78,11 +109,11 @@ function GlobalStoreContextProvider(props) {
 
     store.loadPersonalMaps = async function() {
         try {
-            const response = await api.getPersonalMaps({username: auth.user.username});
+            const response = await api.getPersonalMaps(auth.user.username);
             if (response.data.success) {
 
                 let personalMaps = response.data.personalMaps;
-                
+
                 storeReducer({
                     type: GlobalStoreActionType.SET_PERSONAL_MAPS,
                     payload: personalMaps
@@ -152,6 +183,73 @@ function GlobalStoreContextProvider(props) {
         } catch (err) {
             console.log(err);
         }
+    }
+
+    store.openShareModal = async function (mapId) {
+        console.log("openShareModal: " + mapId)
+        storeReducer({
+            type: GlobalStoreActionType.SHARE_MODAL,
+            payload: mapId
+        })
+    }
+
+    store.closeShareModal = async function () {
+        storeReducer({
+            type: GlobalStoreActionType.SHARE_MODAL,
+            payload: null
+        })
+    }
+
+
+    store.shareMap = async function (mapId, newUser) {
+
+        let userResponse = await api.getUser(newUser);
+
+        if (userResponse.data.success) {
+            const personalMaps = store.personalMapCards;
+            for(let i = 0; i < personalMaps.length; i++){
+                if(personalMaps[i]._id == mapId){
+                    if (!personalMaps[i].collaborators.includes(newUser)) {
+                        personalMaps[i].collaborators.push(newUser);
+                        store.updateMap(personalMaps[i])
+                    } else {
+                        auth.showModal(newUser + " has already been added!")
+                    }  
+                }
+            }
+        } else {
+            auth.showModal(newUser + " does not exist!")
+        }
+    }
+
+    store.removeShare = async function (mapId, user){
+        const personalMaps = store.personalMapCards;
+        let index = 0;
+        for(let i = 0; i < personalMaps.length; i++){
+            if(personalMaps[i]._id == mapId){
+                for(let j = 0; j < personalMaps[i].collaborators.length; j++){
+                    if(personalMaps[i].collaborators[j] == user){
+                        personalMaps[i].collaborators.splice(j,1);
+                    }
+                }
+            }
+        }
+
+        store.updateMap(personalMaps[index]);
+    }
+
+    store.updateMap = async function (map) {
+        const personalMaps = store.personalMapCards;
+        console.log(map)
+        const response = await api.updateMap(map);
+        if(response.status == 200){
+            for(let i = 0; i < personalMaps.length; i++){
+                if(personalMaps[i]._id == map._id){
+                    personalMaps[i] = map;
+                }
+            }
+        }
+        store.closeShareModal();
     }
 
     return (

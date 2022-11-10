@@ -56,15 +56,15 @@ export default function LoginScreen() {
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext)
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
+  const handleSubmit = (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
 
-        auth.loginUser({
-            username: formData.get('username'),
-            password: formData.get('password')
-        }, store);
-    };
+      auth.loginUser({
+          username: formData.get('username'),
+          password: formData.get('password')
+      }, store);
+  };
 
   return (
     <ThemeProvider theme={theme}>
