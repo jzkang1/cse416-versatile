@@ -2,7 +2,16 @@ const Map = require("../models/map-model")
 
 getPersonalMaps = async(req, res) => {
     try {
+        const { username } = req.query;
+      
+        let personalMaps = await Map.find({ owner: username });
 
+        if (personalMaps) {
+            return res.status(200).json({
+                success: true,
+                personalMaps: personalMaps
+            })
+        }
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not retrieve personal maps"
@@ -83,6 +92,7 @@ updateMap = async(req, res) => {
             collaborators, createdDate, modifiedDate, publishedDate, description, views, usersWhoLiked, usersWhoDisliked, 
             comments, thumbnailLarge, thumbnailSmall } = req.body;
 
+        console.log(req.body)
         Map.findOne({ _id: _id }, (err, map) => {
             if (!map) {
                 return res.status(400).json({

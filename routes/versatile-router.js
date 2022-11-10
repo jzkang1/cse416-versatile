@@ -21,7 +21,7 @@ router.get('/getPublicMaps', MapController.getPublicMaps)
 
 router.get('/getMap/:id', MapController.getMap)
 router.post('/createMap', MapController.createMap)
-router.put('/updateMap', MapController.updateMap)
+router.post('/updateMap', MapController.updateMap)
 router.delete('/deleteMap', MapController.deleteMap)
 
 router.get('/getMapsByUser/:username', MapController.getMapsByUser);

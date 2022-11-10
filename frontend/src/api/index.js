@@ -19,7 +19,7 @@ export const changePassword = (payload) => api.put(`/changePassword/`, payload).
 export const getUser = (username) => api.get(`/getUser/${username}`).catch(catcher);
 
 // map api
-export const getPersonalMaps = (payload) => api.get(`/getPublicMaps`, payload).catch(catcher);
+export const getPersonalMaps = (payload) => api.get(`/getPersonalMaps/`, {params: {username: payload}}).catch(catcher);
 export const getPublicMaps = (payload) => api.get(`/getPublicMaps`, payload).catch(catcher);
 
 export const getMap = (id) => api.get(`/getMap/${id}`).catch(catcher);

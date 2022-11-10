@@ -68,6 +68,16 @@ function AuthContextProvider(props) {
         }
     }
 
+    auth.redirectToLogin = function (text) {
+        authReducer({
+            type: AuthActionType.SHOW_MODAL,
+            payload: {
+                modalText: text
+            }
+        })
+        navigate("/login");
+    }
+
     auth.showModal = function (text) {
         authReducer({
             type: AuthActionType.SHOW_MODAL,
