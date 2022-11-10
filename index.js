@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const path = require('path')
+const cookies = require("cookie-parser")
 
 const app = express();
+app.use(cookies())
 
 app.use(express.urlencoded({ extended: true }))
 

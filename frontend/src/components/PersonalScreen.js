@@ -1,5 +1,6 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
+import React from 'react';
+import { useContext, useState, useEffect } from "react";
+
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -13,20 +14,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useContext, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SearchIcon from '@mui/icons-material/Search';
-import Modal from '@mui/material/Modal';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import Stack from '@mui/material/Stack';
-
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
+import TextModal from './TextModal';
 import ShareModal from './ShareModal';
-import { Avatar } from '@mui/material';
-
+import PersonalCard from './PersonalCard';
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -55,30 +50,24 @@ const style = {
     p: 4,
 };
 
-export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+export default function PersonalScreen() {
+    useEffect(() => {
+        if (!auth.loggedIn) {
+            auth.redirectToLogin("Please log in to view your personal screen.")
+        } else {
+            store.loadPersonalMaps();
+        }
+    }, []);
 
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => {
-        setOpen(true);
-        handleCloseUserMenu();
-    }
-    const handleClose = () => setOpen(false);
-
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
-
-    const handleShareModal = () => {
-        setAnchorElUser(null);
-    }
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
 
     return (
         <ThemeProvider theme={theme}>
+            <TextModal />
+            <ShareModal 
+                cards={store.personalMapCards}
+            />
             <CssBaseline />
             <main>
                 <Container maxWidth="lg" sx={{ pt: 4 }}
@@ -113,86 +102,12 @@ export default function Album() {
 
                 <Container maxWidth="lg">
                     <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
-                                <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>
-                                    <Link to='/editor'>
-                                        <CardMedia
-                                            component="img"
-                                            image="https://source.unsplash.com/random"
-                                            sx={{ height: '130px' }}
-                                        />
-
-                                    </Link>
-                                    <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
-                                        <Typography variant="body2">
-                                            Forest in Amazon
-                                        </Typography>
-
-                                        <Button onClick={handleOpenUserMenu}
-                                            variant="contained" sx={{ marginLeft: 'auto', p: 0, minWidth: '30px', maxHeight: '20px' }}>
-                                            <MoreVertIcon
-                                                fontSize='small'
-                                            />
-                                        </Button>
-
-                                        <Menu
-                                            sx={{ mt: "20px" }}
-                                            id="personal-map-dropdown"
-                                            anchorEl={anchorElUser}
-                                            anchorOrigin={{
-                                                vertical: "top",
-                                                horizontal: "right",
-                                            }}
-                                            keepMounted
-                                            transformOrigin={{
-                                                vertical: "top",
-                                                horizontal: "right",
-                                            }}
-                                            open={Boolean(anchorElUser)}
-                                            onClose={handleCloseUserMenu}
-                                        >
-                                            <MenuItem onClick={handleOpen}>Share</MenuItem>
-                                            <MenuItem onClick={handleCloseUserMenu}>Duplicate</MenuItem>
-                                            <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
-                                        </Menu>
-                                    </Container>
-                                </Card>
-                            </Grid>
+                        {store.personalMapCards?.map((card) => (
+                            <PersonalCard 
+                                card={card}
+                            />
                         ))}
                     </Grid>
-                    <div>
-
-                        <Modal
-                            open={open}
-                            onClose={handleClose}
-                            aria-labelledby="modal-modal-title"
-                            aria-describedby="modal-modal-description"
-                        >
-                            <Box sx={style}>
-                                <Typography id="modal-modal-title" variant="h4" component="h2">
-                                    Share "Forest in Amazon"
-                                </Typography>
-                                <FormControlLabel control={<Switch defaultChecked />} label="Public" />
-                                <TextField fullWidth label="Add people by username" id="fullWidth" sx={{ border: 2 }} />
-                                <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ pt: 2 }}>
-                                    People with access:
-                                </Typography>
-                                <Card id="fullWidth" sx={{ height: 50, bgcolor: '#69C6DE', border: 2, borderColor: '#002956' }}>
-                                    <Stack direction="row" spacing={2}>
-                                        <Avatar sx={{ bgcolor: 'blue', width: 24, height: 24, mt: 1.5, ml: 1 }}>N</Avatar>
-                                        <Typography sx={{ pt: 1.2 }}>@tyler_mcgergor</Typography>
-                                    </Stack>
-                                </Card>
-                                <Card id="fullWidth" sx={{ height: 50, bgcolor: '#69C6DE', border: 2, borderColor: '#002956', mt: 1 }}>
-                                    <Stack direction="row" spacing={2}>
-                                        <Avatar sx={{ bgcolor: 'red', width: 24, height: 24, mt: 1.5, ml: 1 }}>J</Avatar>
-                                        <Typography sx={{ pt: 1.2 }}>@joe_rogan</Typography>
-                                    </Stack>
-                                </Card>
-                            </Box>
-                        </Modal>
-                    </div>
                 </Container>
             </main>
         </ThemeProvider>

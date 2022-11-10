@@ -1,4 +1,9 @@
-import * as React from 'react';
+import React from 'react';
+import { useContext, useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
+import Box from "@mui/material/Box";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -6,55 +11,56 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';import { Link } from 'react-router-dom';
+import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useContext, useState } from "react";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 import SearchIcon from '@mui/icons-material/Search';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: "#002956"
-      },
-      background: {
-        default: "#69C6DE"
-      }
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
+    },
+
+    typography: {
+        fontFamily: [
+            "monospace",
+            "Roboto",
+            "Helvetica Neue",
+            "Arial",
+            "sans-serif",
+        ].join(",")
     }
-  });
+});
 
-export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+export default function CommunityScreen() {
+    useEffect(() => {
+        store.loadCommunityMaps();
+    }, []);
 
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
+    const handleClickMapCard = (event, id) => {
+        store.loadMapView(id);
+    }
 
     return (
         <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <main>
-            <Container maxWidth="lg" sx={{ pt: 4 }}
-            >
-                <Typography variant="h3" color="inherit" noWrap align="center">
-                    Community
-                </Typography>
-                <Typography align="center">
-                    Get inspirations from fellow users
-                </Typography>
+            <CssBaseline />
+            <Container maxWidth="lg" sx={{ pt: 4 }}>
+                <Typography variant="h3" color="inherit" noWrap align="center">Community</Typography>
+                <Typography align="center">Get inspirations from fellow users</Typography>
 
                 <Toolbar sx={{ borderTop: 1, mt: 3 }}>
-                    <Button disabled='true' disableFocusRipple='true' sx={{ 
+                    <Button disabled disableFocusRipple='true' sx={{ 
                         "&.MuiButtonBase-root": { color: "primary.main" }, 
                         backgroundColor: "#60DBA0", my: 2, borderRadius: '8px', border: 1, borderColor: 'primary.main' 
                         }}>
@@ -69,7 +75,7 @@ export default function Album() {
                         label="Search"
                         InputProps={{
                             endAdornment: (
-                                  <SearchIcon />
+                                    <SearchIcon />
                             )
                         }}
                     />
@@ -77,53 +83,41 @@ export default function Album() {
             </Container>
 
             <Container maxWidth="lg">
-            <Grid container spacing={4}>
-                {cards.map((card) => (
-                <Grid item key={card} xs={12} sm={6} md={4} lg={3}>
-                    <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px'}}>
-                        <Link to='/mapView'>
+            <Grid container spacing={3}>
+                {store.communityMapCards.map((map) => (
+                <Grid item key={map._id} md={12}>
+                    <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
+                        <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>
                             <CardMedia 
                                 component="img"
-                                image="https://source.unsplash.com/random"
-                                sx={{ height: '130px'}}
+                                image={require('../images/forest.png')}
+                                sx={{ height: "100%", width: "auto"}}
                             />
                         
                         </Link>
-                        <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
-                            <Typography variant="body2">
-                                Forest in Amazon
-                            </Typography>
-
-                            <FavoriteIcon fontSize='tiny' sx={{ marginLeft: 'auto', mt: .3 }}/>
-                            {/* PUT LIKE COUNT HERE */}
-                            3
-
-                            <Menu
-                                sx={{ mt: "20px" }}
-                                id="personal-map-dropdown"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: "top",
-                                    horizontal: "right",
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-                            >
-                                <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
-                                <MenuItem onClick={handleCloseUserMenu}>Duplicate</MenuItem>
-                            </Menu>
-                        </Container>
+                        
+                        <Box display="flex" flexDirection="column">
+                            <Typography variant="h4" sx={{ ml: 1 }}>{map.name}</Typography>
+                            <Typography variant="body2" sx={{ ml: 2 }}>By {map.owner}</Typography>
+                            <Typography variant="body2" sx={{ ml: 2 }}>{map.description ? map.description : "A green forest map with trees and bushes"}</Typography>
+                            
+                            <Box display="flex" flexDirection="row" marginTop="auto" sx={{ marginTop: "auto" }}>
+                                <ThumbUpIcon/>
+                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.likes === undefined ? 0 : map.likes}</Typography>
+                                <ThumbDownIcon/>
+                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.dislikes === undefined ? 0 : map.dislikes}</Typography>
+                                <QuestionAnswerIcon/>
+                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.comments.length === undefined ? 0 : map.comments.length}</Typography>
+                            </Box>
+                        </Box>
+                        
+                        
+                            
                     </Card>
                 </Grid>
                 ))}
             </Grid>
             </Container>
-        </main>
         </ThemeProvider>
     );
 }

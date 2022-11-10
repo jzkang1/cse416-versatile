@@ -1,15 +1,19 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
+import { Link } from 'react-router-dom'
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AuthContext from '../auth' 
+import { useContext } from 'react';
+import { GlobalStoreContext } from '../store'
+import TextModal from './TextModal';
 
 function Copyright(props) {
   return (
@@ -25,29 +29,47 @@ function Copyright(props) {
 }
 
 const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#002956"
+    palette: {
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
     },
-    background: {
-      default: "#69C6DE"
-    }
-  }
 });
 
-export default function SignIn() {
+const errorModalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+export default function LoginScreen() {
+
+  const { auth } = useContext(AuthContext);
+  const { store } = useContext(GlobalStoreContext)
+
   const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
+
+      auth.loginUser({
+          username: formData.get('username'),
+          password: formData.get('password')
+      }, store);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
+        <TextModal />
         <CssBaseline />
         <Box
           sx={{
@@ -68,9 +90,9 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
+              id="username"
               label="Username"
-              name="email"
+              name="username"
               autoComplete="email"
               autoFocus
             />
@@ -93,7 +115,7 @@ export default function SignIn() {
               Sign In
             </Button>
             <Grid item xs sx={{textAlign: "center"}}>
-              <Link href="recovery" variant="body2">
+              <Link to='/recovery' variant="body2">
                 Forgot password?
               </Link>
             </Grid>

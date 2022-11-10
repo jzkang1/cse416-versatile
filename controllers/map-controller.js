@@ -1,31 +1,38 @@
 const Map = require("../models/map-model")
 
-getMap = async (req, res) => {
+getPersonalMaps = async(req, res) => {
     try {
-        const { _id } = req.body;
+        const { username } = req.query;
+      
+        let personalMaps = await Map.find({ owner: username });
 
-        let maps = await Map.findOne({_id : _id}, (err, map) => {
+        if (personalMaps) {
             return res.status(200).json({
                 success: true,
-                map: map
+                personalMaps: personalMaps
             })
-        }).catch(err => console.log(err));
-
-        return res.status(400).json({
-            errorMessage: "Could not retrieve map"
-        });
+        }
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not retrieve map"
+            errorMessage: "Could not retrieve personal maps"
         });
     }
 }
 
 getPublicMaps = async (req, res) => {
     try {
-        let maps = await Map.find({}, (err, publicMaps) => {
-            
-        }).catch(err => console.log(err));
+        let publicMaps = await Map.find({ isPublished: true });
+
+        if (publicMaps) {
+            return res.status(200).json({
+                success: true,
+                publicMaps: publicMaps
+            })
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not retrieve public maps"
+        });
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not retrieve public maps"
@@ -33,12 +40,25 @@ getPublicMaps = async (req, res) => {
     }
 }
 
-getPersonalMaps = async(req, res) => {
+getMap = async (req, res) => {
     try {
+        const _id  = req.params.id;
 
+        let map = await Map.findOne({_id : _id});
+
+        if (map) {
+            return res.status(200).json({
+                success: true,
+                map: map
+            })
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not retrieve map"
+        });
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not retrieve personal maps"
+            errorMessage: "Could not retrieve map"
         });
     }
 }
@@ -58,10 +78,7 @@ createMap = async(req, res) => {
                 map: newMap
             })
         })
-
-
-
-
+        
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not create map"
@@ -75,6 +92,7 @@ updateMap = async(req, res) => {
             collaborators, createdDate, modifiedDate, publishedDate, description, views, usersWhoLiked, usersWhoDisliked, 
             comments, thumbnailLarge, thumbnailSmall } = req.body;
 
+        console.log(req.body)
         Map.findOne({ _id: _id }, (err, map) => {
             if (!map) {
                 return res.status(400).json({
@@ -131,6 +149,30 @@ deleteMap = async(req, res) => {
     }
 }
 
+getMapsByUser = async (req, res) => {
+    try {
+        const { username } = req.params;
+
+        let ownedMaps = await Map.find({ owner: username });
+        
+        if (ownedMaps) {
+            return res.status(200).json({
+                success: true,
+                maps: ownedMaps
+            });
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not delete map"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not delete map",
+            err: err
+        });
+    }
+}
+
 duplicateMap = async(req, res) => {
     try {
         
@@ -142,11 +184,12 @@ duplicateMap = async(req, res) => {
 }
 
 module.exports = {
-    getMap,
-    getPublicMaps,
     getPersonalMaps,
+    getPublicMaps,
+    getMap,
     createMap,
     updateMap,
     deleteMap,
-    duplicateMap
+    getMapsByUser,
+    duplicateMap,
 }

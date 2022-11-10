@@ -4,11 +4,11 @@ import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -20,13 +20,11 @@ export default function AppBanner() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    if (auth && store) {}
-
     const pages = ["Home", "Personal", "Community"];
     const settings = ["Log in", "Register"];
 
-    const [anchorElNav, setAnchorElNav] = useState(null);//(React.useState < null) | (HTMLElement > null);
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+    const [anchorElNav, setAnchorElNav] = useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -35,6 +33,27 @@ export default function AppBanner() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleLogout = () => {
+        handleCloseUserMenu();
+        auth.logoutUser();
+    }
+
+    const handleClickOwnProfile = (event) => {
+        handleCloseUserMenu(event);
+        store.loadProfile(auth.user.username);
+    }
+
+    let menuLinks = <div> 
+                        <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
+                        <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
+                    </div>
+    if (auth.loggedIn) {
+        menuLinks = <div>
+                        <MenuItem onClick={handleClickOwnProfile}>Profile</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                    </div>
+    }
 
     return (
         <AppBar position="static"
@@ -50,42 +69,28 @@ export default function AppBanner() {
                         noWrap
                         component="a"
                         sx={{
-                            ml: .6,
-                            mr: 2,
-                            display: { xs: "none", md: "flex" },
+                            ml: 1,
                             fontFamily: "monospace",
                             fontWeight: 700,
-                            letterSpacing: ".3rem",
-                            color: "inherit",
-                            textDecoration: "none",
+                            letterSpacing: ".3rem"
                         }}
                     >
                         ersatile
                     </Typography>
                     
-                    <Box
-                        sx={{
-                            flexGrow: 1,
-                            display: { xs: "none", md: "flex" },
-                        }}
-                    >
+                    <Stack direction="row" sx={{ ml: 2 }}>
                         <Link to='/'><Button sx={{ my: 2, color: "white", display: "block" }}>Home</Button></Link>
                         <Link to='/personal'><Button sx={{ my: 2, color: "white", display: "block" }}>Personal</Button></Link>
                         <Link to='/community'><Button sx={{ my: 2, color: "white", display: "block" }}>Community</Button></Link>
-                    </Box>
-
-                    <Box sx={{ flexGrow: 0 }}>
+                    </Stack>
+                    
+                    <Box sx={{ marginLeft: "auto" }}>
                         <Tooltip title="Open settings">
                             <IconButton
                                 onClick={handleOpenUserMenu}
                                 sx={{ p: 0 }}
                             >
-                                <Avatar
-                                    sx={{
-                                        backgroundColor: 'lightblue'
-                                    }}
-                                    // src={require("../images/logo.png")}
-                                />
+                                <Avatar sx={{ backgroundColor: 'lightblue' }}/>
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -104,9 +109,7 @@ export default function AppBanner() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            <Link to='/profile'><MenuItem onClick={handleCloseUserMenu}>Profile</MenuItem></Link>
-                            <Link to='/login'><MenuItem onClick={handleCloseUserMenu}>Login</MenuItem></Link>
-                            <Link to='/register'><MenuItem onClick={handleCloseUserMenu}>Register</MenuItem></Link>
+                            {menuLinks}
                         </Menu>
                     </Box>
                 </Toolbar>

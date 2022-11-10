@@ -17,6 +17,7 @@ import CommunityScreen from './components/CommunityScreen'
 import MapView from './components/MapView'
 
 import MapEditorScreen from './components/MapEditorScreen'
+import TileEditor from './components/TileEditor';
 
 
 const App = () => {
@@ -25,23 +26,23 @@ const App = () => {
             <AuthContextProvider>
                 <GlobalStoreContextProvider>
                     <AppBanner />
-
-
+                    
                     <Routes>
-                        <Route path="/" element={<HomeScreen />} />
-                        <Route path="/Home" element={<HomeScreen />} />
+                        <Route path="/" element={<HomeScreen/>} />
+                        <Route path="/Home" element={<HomeScreen/>} />
 
-                        <Route path="/profile" element={<ProfileScreen />} />
-                        <Route path="/login" element={<LoginScreen />} />
-                        <Route path="/register" element={<RegisterScreen />} />
-                        <Route path="/recovery" element={<RecoveryScreen />} />
+                        <Route path="/profile/:username" element={<ProfileScreen/>} />
+                        <Route path="/login" element={<LoginScreen/>} />
+                        <Route path="/register" element={<RegisterScreen/>} />
+                        <Route path="/recovery" element={<RecoveryScreen/>} />
 
-                        <Route path="/personal" element={<PersonalScreen />} />
-                        <Route path="/community" element={<CommunityScreen />} />
+                        <Route path="/personal" element={<PersonalScreen/>} />
+                        <Route path="/community" element={<CommunityScreen/>} />
 
-                        <Route path="/mapview" element={<MapView />} />
+                        <Route path="/mapView/:id" element={<MapView/>} />
 
-                        <Route path="/editor" element={<MapEditorScreen />} />
+                        <Route path="/editor" element={<MapEditorScreen/>} />
+                        <Route path="/tileEditor" element={<TileEditor/>} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>

@@ -1,10 +1,14 @@
-import * as React from "react";
+import React from "react";
+import { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack"
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -43,34 +47,27 @@ const theme = createTheme({
 });
 
 export default function MapView() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-    };
-
-    const map = {
-        "name": "Green Forest",
-        "owner": "joerogan123",
-        "height": 320,
-        "width": 320,
-        "layers": [
-            {
-                "grid": [
-                    [1,2,3,4],
-                    [5,6,7,8],
-                    [9,10,11,12],
-                    [13,14,15,16]
-                ]
-            }
-        ],
-        "tilesets": ["https://thumbs.dreamstime.com/b/seamless-texture-ground-small-stones-concept-design-cute-pattern-brown-cartoon-vector-stone-separate-layers-147597634.jpg"],
-        "isPublished": false
-    }
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
 
     const comments = [
         {username: "mckilla_gorilla", text: "I really like this one", date: "10/30/2022"},
         {username: "joerogan123", text: "Disliked lol", date: "10/29/2022"}
     ]
+
+    const handleClickViewProfile = (event) => {
+        store.loadProfile(store.currentMapView.owner);
+    }
+
+    let { id } = useParams();
+    
+    useEffect(() => {
+        store.loadMapView(id);
+    }, [])
+
+    if (!store.currentMapView) {
+        return null;
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -99,52 +96,18 @@ export default function MapView() {
                             noWrap
                             component="a"
                             sx={{
-                                ml: .6,
-                                mr: 2,
-                                display: { xs: "none", md: "flex" },
                                 flexGrow: 1,
                                 fontFamily: "monospace",
-                                fontWeight: 700,
-                                letterSpacing: ".3rem",
-                                color: "inherit",
-                                textDecoration: "none",
+                                fontWeight: 700
                             }}
                         >
-                            {map.name}
+                            {store.currentMapView.name}
 
                         </Typography>
-                        
-                        {/* <Typography
-                            variant="h4"
-                            noWrap
-                            component="a"
-                            sx={{
-                                ml: .6,
-                                mr: 2,
-                                display: { xs: "none", md: "flex" },
-                                fontFamily: "monospace",
-                                fontWeight: 700,
-                                letterSpacing: ".3rem",
-                                color: "inherit",
-                                textDecoration: "none",
-                            }}
-                        >
-                            @{map.owner}
-                        </Typography> */}
                     </Box>
                     
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                ml: 2,
-                                mr: 2,
-                            }}
-                        >
+                    <Box sx={{ display: "flex", flexDirection: "row"}}>
+                        <Box sx={{ ml: 2, mr: 2 }}>
                             <img src={require('../images/forest.png')} />
                         </Box>
                         
@@ -178,33 +141,28 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                @{map.owner}
+                                @{store.currentMapView.owner}
                             </Typography>
+                            
                             <Typography
-                                variant="h7"
+                                variant="h6"
                                 noWrap
                                 component="a"
-                                href="profile"
+                                onClick={handleClickViewProfile}
                                 sx={{
                                     display: { xs: "none", md: "flex" },
                                     fontFamily: "monospace",
                                     fontWeight: 700,
                                     color: "grey",
-                                    textDecoration: "none",
+                                    textDecoration: "none"
                                 }}
                             >
                                 View profile
                             </Typography>
-                            <Box
-                                sx={{
-                                    flexGrow: 1,
-                                }}
-                            >
-
-                            </Box>
 
                             <Box
                                 sx={{
+                                    marginTop: "auto",
                                     display: "flex",
                                     flexDirection: "row",
                                     gap: 2,
@@ -212,13 +170,13 @@ export default function MapView() {
                                 }}
                             >
 
-                            <Button variant="contained" >
-                                Export as JSON
-                            </Button>
+                                <Button variant="contained" >
+                                    Export as JSON
+                                </Button>
 
-                            <Button variant="contained" >
-                                Make a copy
-                            </Button>
+                                <Button variant="contained" >
+                                    Make a copy
+                                </Button>
                             
                             </Box>
                         </Box>
@@ -234,13 +192,7 @@ export default function MapView() {
                             gap: 3,
                         }}
                     >
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                flexGrow: 1
-                            }}
-                        >
+                        <Box sx={{ display: "flex", flexDirection: "row" }}>
                             <QuestionAnswerIcon/>
                             <Typography
                                 variant="h6"
@@ -257,17 +209,13 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                8 Comments
+                                2 Comments
                             </Typography>
                         </Box>
 
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                flexGrow: 0
-                            }}
-                        >
+                        <Box sx={{ flexGrow: 1 }}></Box>
+
+                        <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 0 }}>
                             <ThumbUpIcon/>
                             <Typography
                                 variant="h6"
@@ -288,13 +236,7 @@ export default function MapView() {
                             </Typography>
                         </Box>
 
-                        <Box
-                            sx={{
-                                display: "flex",
-                                flexDirection: "row",
-                                flexGrow: 0
-                            }}
-                        >
+                        <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 0 }}>
                             <ThumbDownIcon/>
                             <Typography
                                 variant="h6"
@@ -318,21 +260,13 @@ export default function MapView() {
                 </Box>
 
                 <Box minWidth={800} minHeight={200} backgroundColor={"white"}>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            mt: 2,
-                        }}
-                    >
+                    <Box sx={{ display: "flex", flexDirection: "row", mt: 2 }}>
                         <TextField
                             autoComplete=""
                             name="comment"
                             required
-                            
                             id="comment"
                             label="Write your comment"
-                            autoFocus
                             sx={{
                                 flexGrow: 1,
                                 m: 2,
@@ -340,23 +274,12 @@ export default function MapView() {
                             }}
                         />
 
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            sx={{
-                                m: 2,
-                            }}
-                        >
+                        <Button type="submit" variant="contained" sx={{ m: 2 }}>
                             Post Comment
                         </Button>
                     </Box>
 
-                    <Stack spacing={2}
-                        sx={{
-                            ml: 2,
-                            mr: 2,
-                        }}
-                    >
+                    <Stack spacing={2} sx={{ ml: 2, mr: 2 }}>
                         {comments.map((comment) => {
                             return (
                                 <Box
@@ -370,24 +293,14 @@ export default function MapView() {
                                     }}
                                 >
                                     <AccountCircleIcon/>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                        }}
-                                    >
-                                        <Typography>
-                                            @{comment.username}
-                                        </Typography>
-                                        <Typography>
-                                            {comment.text}
-                                        </Typography>
+                                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                                        <Typography>@{comment.username}</Typography>
+                                        <Typography>{comment.text}</Typography>
                                     </Box>
                                 </Box>
                             );
                         })}
                     </Stack>
-
                 </Box>
 
                 <Copyright sx={{ mt: 8, mb: 4 }} />

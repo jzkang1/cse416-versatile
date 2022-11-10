@@ -1,10 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,6 +13,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AuthContext from '../auth' 
 import { useContext } from 'react';
 import { GlobalStoreContext } from '../store'
+import TextModal from './TextModal';
 
 function Copyright(props) {
     return (
@@ -27,7 +26,8 @@ function Copyright(props) {
         {'.'}
       </Typography>
     );
-  }
+}
+
 const theme = createTheme({
     palette: {
         primary: {
@@ -46,7 +46,7 @@ export default function RegisterScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        console.log(formData.get('firstName'), formData.get('lastName'), formData.get('username'), formData.get('email'), formData.get('password'), formData.get('passwordVerify'))
+        
         auth.registerUser({
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
@@ -60,6 +60,7 @@ export default function RegisterScreen() {
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
+                <TextModal />
                 <CssBaseline />
                 <Box
                     sx={{
