@@ -1,8 +1,9 @@
 import React from "react";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -11,10 +12,12 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
+import IconButton from '@mui/material/IconButton';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function Copyright(props) {
@@ -50,12 +53,10 @@ export default function MapView() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
-    const comments = [
-        {username: "mckilla_gorilla", text: "I really like this one", date: "10/30/2022"},
-        {username: "joerogan123", text: "Disliked lol", date: "10/29/2022"}
-    ]
+    const commentRef = useRef();
 
     const handleClickViewProfile = (event) => {
+        event.stopPropagation();
         store.loadProfile(store.currentMapView.owner);
     }
 
@@ -67,6 +68,127 @@ export default function MapView() {
 
     if (!store.currentMapView) {
         return null;
+    }
+
+    const getLikeOrUnlikeButton = () => {
+        if (!auth.user) {
+            return (
+                <IconButton disabled>
+                    <ThumbUpOffAltIcon/>
+                </IconButton>
+            )
+        }
+
+        if (!store.currentMapView.usersWhoLiked.includes(auth.user.username)) {
+            return (
+                <IconButton onClick={handleClickLike}>
+                    <ThumbUpOffAltIcon/>
+                </IconButton>
+            )
+        } else {
+            return (
+                <IconButton onClick={handleClickUnlike}>
+                    <ThumbUpIcon/>
+                </IconButton>
+            )
+        }
+    }
+
+    const getDislikeOrUndislikeButton = () => {
+        if (!auth.user) {
+            return (
+                <IconButton disabled>
+                    <ThumbDownOffAltIcon/>
+                </IconButton>
+            )
+        }
+
+        if (!store.currentMapView.usersWhoDisliked.includes(auth.user.username)) {
+            return (
+                <IconButton onClick={handleClickDislike}>
+                    <ThumbDownOffAltIcon/>
+                </IconButton>
+            )
+        } else {
+            return (
+                <IconButton onClick={handleClickUndislike}>
+                    <ThumbDownIcon/>
+                </IconButton>
+            )
+        }
+    }
+
+    const getComments = () => {
+        let comments = [];
+        for (let i = 0; i < store.currentMapView.comments.length; i++) {
+            let comment = store.currentMapView.comments[i];
+
+            let commentDate = new Date(comment.date);
+            let month = ["January","February","March","April","May","June","July","August","September","October","November","December"][commentDate.getMonth()];
+            let day = commentDate.getDate();
+            let year = commentDate.getFullYear();
+            let dateString = month + " " + day + ", " + year;
+
+
+            comments.push(
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 2,
+                        p: 2,
+                        borderBottom: i === store.currentMapView.comments.length-1 ? 0 : 1,
+                    }}
+                >
+                    <AccountCircleIcon sx={{ fontSize: 40 }}/>
+                    <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        <Typography sx={{fontSize: 20}}>{comment.username} </Typography>
+                        <Typography sx={{color: "grey", fontSize: 16}}>{dateString} </Typography>
+                        <Typography sx={{fontSize: 16}}>{comment.text}</Typography>
+                    </Box>
+                </Box>
+            )
+        }
+
+        return comments;
+    }
+
+    const handleClickLike = (event) => {
+        event.stopPropagation();
+        store.likeMap();
+    }
+
+    const handleClickUnlike = (event) => {
+        event.stopPropagation();
+        store.unlikeMap();
+    }
+
+    const handleClickDislike = (event) => {
+        event.stopPropagation();
+        store.dislikeMap();
+    }
+
+    const handleClickUndislike = (event) => {
+        event.stopPropagation();
+        store.undislikeMap();
+    }
+
+    const handleSubmitComment = (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
+        let comment = {
+            username: auth.user.username,
+            text: formData.get("comment"),
+            date: new Date()
+        }
+
+        store.postComment(comment);
+        
+        commentRef.current.value = "";
+        commentRef.current.selected = false;
     }
 
     return (
@@ -125,7 +247,7 @@ export default function MapView() {
                                 src={require('../images/dog.jpg')}
                                 alt="pfp"
                                 style={{
-                                    "border-radius": "50%"
+                                    "borderRadius": "50%"
                                 }}
                             />
 
@@ -141,7 +263,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                @{store.currentMapView.owner}
+                                {store.currentMapView.owner}
                             </Typography>
                             
                             <Typography
@@ -209,14 +331,14 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                2 Comments
+                                {store.currentMapView.comments.length} comments
                             </Typography>
                         </Box>
 
                         <Box sx={{ flexGrow: 1 }}></Box>
 
                         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 0 }}>
-                            <ThumbUpIcon/>
+                            {getLikeOrUnlikeButton()}
                             <Typography
                                 variant="h6"
                                 noWrap
@@ -232,12 +354,12 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                25
+                                {store.currentMapView.usersWhoLiked.length}
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: "flex", flexDirection: "row", flexGrow: 0 }}>
-                            <ThumbDownIcon/>
+                            {getDislikeOrUndislikeButton()}
                             <Typography
                                 variant="h6"
                                 noWrap
@@ -253,20 +375,21 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                7
+                                {store.currentMapView.usersWhoDisliked.length}
                             </Typography>
                         </Box>
                     </Box>
                 </Box>
 
                 <Box minWidth={800} minHeight={200} backgroundColor={"white"}>
-                    <Box sx={{ display: "flex", flexDirection: "row", mt: 2 }}>
+                    <Box component="form" onSubmit={handleSubmitComment} noValidate sx={{ display: "flex", flexDirection: "row", mt: 2 }}>
                         <TextField
                             autoComplete=""
                             name="comment"
                             required
                             id="comment"
                             label="Write your comment"
+                            inputRef={commentRef}
                             sx={{
                                 flexGrow: 1,
                                 m: 2,
@@ -274,32 +397,13 @@ export default function MapView() {
                             }}
                         />
 
-                        <Button type="submit" variant="contained" sx={{ m: 2 }}>
+                        <Button type="submit" variant="contained" disabled={!auth.user} sx={{ m: 2 }}>
                             Post Comment
                         </Button>
                     </Box>
 
                     <Stack spacing={2} sx={{ ml: 2, mr: 2 }}>
-                        {comments.map((comment) => {
-                            return (
-                                <Box
-                                    sx={{
-                                        display: "flex",
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        gap: 2,
-                                        p: 2,
-                                        borderBottom: 1,
-                                    }}
-                                >
-                                    <AccountCircleIcon/>
-                                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                                        <Typography>@{comment.username}</Typography>
-                                        <Typography>{comment.text}</Typography>
-                                    </Box>
-                                </Box>
-                            );
-                        })}
+                        {getComments()}
                     </Stack>
                 </Box>
 

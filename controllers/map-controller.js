@@ -2,7 +2,7 @@ const Map = require("../models/map-model")
 
 getPersonalMaps = async(req, res) => {
     try {
-        const { username } = req.query;
+        const { username } = req.params;
       
         let personalMaps = await Map.find({ owner: username });
 
@@ -88,11 +88,20 @@ createMap = async(req, res) => {
 
 updateMap = async(req, res) => {
     try {
-        const { _id, name, owner, height, width, layers, tilesets, isPublished, 
-            collaborators, createdDate, modifiedDate, publishedDate, description, views, usersWhoLiked, usersWhoDisliked, 
-            comments, thumbnailLarge, thumbnailSmall } = req.body;
+        const {
+            _id, name, owner,
 
-        console.log(req.body)
+            height, width, layers, tilesets,
+             
+            collaborators, createDate, modifyDate,
+            
+            isPublished, publishDate,
+            
+            description, views, usersWhoLiked, usersWhoDisliked, comments,
+            
+            thumbnailLarge, thumbnailSmall
+        } = req.body;
+        
         Map.findOne({ _id: _id }, (err, map) => {
             if (!map) {
                 return res.status(400).json({
@@ -102,19 +111,24 @@ updateMap = async(req, res) => {
 
             if (name) map.name = name
             if (owner) map.owner = owner
+
             if (height) map.height = height
             if (width) map.width = width
             if (layers) map.layers = layers
             if (tilesets) map.tilesets = tilesets
-            if (isPublished) map.isPublished = isPublished
+
             if (collaborators) map.collaborators = collaborators
-            if (createdDate) map.createdDate = createdDate
-            if (modifiedDate) map.modifiedDate = modifiedDate
-            if (publishedDate) map.publishedDate = publishedDate
+            if (createDate) map.createDate = createDate
+            if (modifyDate) map.modifyDate = modifyDate
+
+            if (isPublished) map.isPublished = isPublished
+            if (publishDate) map.publishDate = publishDate
+
             if (description) map.description = description
             if (views) map.views = views
             if (usersWhoLiked) map.usersWhoLiked = usersWhoLiked
             if (usersWhoDisliked) map.usersWhoDisliked = usersWhoDisliked
+
             if (comments) map.comments = comments
             if (thumbnailLarge) map.thumbnailLarge = thumbnailLarge
             if (thumbnailSmall) map.thumbnailSmall = thumbnailSmall
@@ -136,7 +150,7 @@ deleteMap = async(req, res) => {
     try {
         const { _id } = req.body;
         await Map.findOneAndDelete({ _id: _id });
-        console.log("delete success");
+        
         return res.status(200).json({
             success: true
         })
@@ -183,6 +197,112 @@ duplicateMap = async(req, res) => {
     }
 }
 
+likeMap = async (req, res) => {
+    try {
+        const { _id, username } = req.body;
+
+        let map = await Map.findOne({ _id: _id });
+
+        map.usersWhoLiked.push(username);
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not like map"
+        });
+    }
+}
+
+unlikeMap = async (req, res) => {
+    try {
+        const { _id, username } = req.body;
+
+        let map = await Map.findOne({ _id: _id });
+
+        let index = map.usersWhoLiked.indexOf(username);
+        if (index !== -1) {
+            map.usersWhoLiked.splice(index, 1);
+        }
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not unlike map"
+        });
+    }
+}
+
+dislikeMap = async (req, res) => {
+    try {
+        const { _id, username } = req.body;
+
+        let map = await Map.findOne({ _id: _id });
+
+        map.usersWhoDisliked.push(username);
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not dislike map"
+        });
+    }
+}
+
+undislikeMap = async (req, res) => {
+    try {
+        const { _id, username } = req.body;
+
+        let map = await Map.findOne({ _id: _id });
+
+        let index = map.usersWhoDisliked.indexOf(username);
+        if (index !== -1) {
+            map.usersWhoDisliked.splice(index, 1);
+        }
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not undislike map"
+        });
+    }
+}
+
+postComment = async (req, res) => {
+    try {
+        const { _id, comment } = req.body;
+
+        let map = await Map.findOne({ _id: _id });
+        
+        map.comments.push(comment);
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not post comment"
+        });
+    }
+}
+
 module.exports = {
     getPersonalMaps,
     getPublicMaps,
@@ -192,4 +312,9 @@ module.exports = {
     deleteMap,
     getMapsByUser,
     duplicateMap,
+    likeMap,
+    unlikeMap,
+    dislikeMap,
+    undislikeMap,
+    postComment
 }
