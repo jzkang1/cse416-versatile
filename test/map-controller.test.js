@@ -37,12 +37,25 @@ test("Empty test for skipping the error", async () => {
         ],
         "tilesets": ["https://thumbs.dreamstime.com/b/seamless-texture-ground-small-stones-concept-design-cute-pattern-brown-cartoon-vector-stone-separate-layers-147597634.jpg"],
         
+        "collaborators": [],
+        "createDate": "2022-11-13",
+        "modifyDate": "2022-11-13",
+
         "isPublished": true
     }
 
-    const { name, owner, height, width, layers, tilesets, isPublished } = mapDefault;
+    const {
+        name, owner,
+        height, width, layers, tilesets,
+        collaborators, createDate, modifyDate,
+        isPublished
+    } = mapDefault;
+
     let map = new Map({
-        name, owner, height, width, layers, tilesets, isPublished
+        name, owner,
+        height, width, layers, tilesets, 
+        collaborators, createDate, modifyDate,
+        isPublished
     });
 
     //create
