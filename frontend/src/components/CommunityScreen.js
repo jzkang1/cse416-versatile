@@ -103,9 +103,9 @@ export default function CommunityScreen() {
                             
                             <Box display="flex" flexDirection="row" marginTop="auto" sx={{ marginTop: "auto" }}>
                                 <ThumbUpIcon/>
-                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.likes === undefined ? 0 : map.likes}</Typography>
+                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.usersWhoLiked.length}</Typography>
                                 <ThumbDownIcon/>
-                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.dislikes === undefined ? 0 : map.dislikes}</Typography>
+                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.usersWhoDisliked.length}</Typography>
                                 <QuestionAnswerIcon/>
                                 <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.comments.length === undefined ? 0 : map.comments.length}</Typography>
                             </Box>

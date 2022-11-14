@@ -203,6 +203,8 @@ likeMap = async (req, res) => {
 
         let map = await Map.findOne({ _id: _id });
 
+        console.log(map)
+
         map.usersWhoLiked.push(username);
 
         await map.save();
