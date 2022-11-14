@@ -45,16 +45,16 @@ const theme = createTheme({
 });
 
 const recoveryStateObj = {
-    1: "ENTER_EMAIL",
-    2: "ENTER_RECOVERY_CODE",
-    3: "CHANGE_PASSWORD"
+    ENTER_USERNAME: "ENTER_USERNAME",
+    ENTER_RECOVERY_CODE: "ENTER_RECOVERY_CODE",
+    CHANGE_PASSWORD: "CHANGE_PASSWORD"
 }
 
 export default function RecoveryScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     
-    const [recoveryState, setRecoveryState] = useState(recoveryStateObj[1]);
+    const [recoveryState, setRecoveryState] = useState(recoveryStateObj.ENTER_USERNAME);
     const [recoveryUsername, setRecoveryUsername] = useState(null);
 
     const handleSendRecoveryCode = async (event) => {
@@ -66,7 +66,7 @@ export default function RecoveryScreen() {
             username: inputUsername
         }, store).then((isValidUsername) => {
             if (isValidUsername) {
-                setRecoveryState(recoveryStateObj[2]);
+                setRecoveryState(recoveryStateObj.ENTER_RECOVERY_CODE);
                 setRecoveryUsername(inputUsername)
             }
         })
@@ -81,11 +81,10 @@ export default function RecoveryScreen() {
             username: recoveryUsername,
             recoveryCode: recoveryCode
         }).then((isValidatedCode) => {
-                if (isValidatedCode) {
-                    setRecoveryState(recoveryStateObj[3]);
-                }
+            if (isValidatedCode) {
+                setRecoveryState(recoveryStateObj.CHANGE_PASSWORD);
             }
-        )
+        })
     }
 
     const handleSubmitChangePassword = (event) => {
@@ -103,7 +102,7 @@ export default function RecoveryScreen() {
     }
 
     const getRecoveryContent = () => {
-        if (recoveryState === recoveryStateObj[1]) {
+        if (recoveryState === recoveryStateObj.ENTER_USERNAME) {
             return (
                 <Box
                     component="form"
@@ -132,7 +131,7 @@ export default function RecoveryScreen() {
                     </Button>
                 </Box>
             );
-        } else if (recoveryState === recoveryStateObj[2]) {
+        } else if (recoveryState === recoveryStateObj.ENTER_RECOVERY_CODE) {
             return (
                 <Box
                     component="form"
@@ -159,7 +158,7 @@ export default function RecoveryScreen() {
                     </Button>
                 </Box>
             );
-        } else if (recoveryState === recoveryStateObj[3]) {
+        } else if (recoveryState === recoveryStateObj.CHANGE_PASSWORD) {
             return (
                 <Box
                     component="form"

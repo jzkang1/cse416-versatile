@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";

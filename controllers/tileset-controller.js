@@ -59,7 +59,6 @@ updateTileset = async (req, res) => {
             if (tiles) tileset.tiles = tiles
 
             tileset.save();
-            console.log("tileset update success")
 
             return res.status(200).json({
                 success: true,
@@ -78,8 +77,7 @@ deleteTileset = async (req, res) => {
     try {
         const { _id } = req.body;
         await Tileset.findOneAndDelete({ _id: _id });
-
-        console.log("delete tileset success");
+        
         return res.status(200).json({
             success: true
         })

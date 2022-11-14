@@ -107,8 +107,6 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
-                // store.loadIdNamePairs();
-                navigate("/");
             }
         } catch (err) {
             console.log(err)

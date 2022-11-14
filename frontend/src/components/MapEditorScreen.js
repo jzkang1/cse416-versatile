@@ -31,14 +31,14 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: "#002956"
-      },
-      background: {
-        default: "#69C6DE"
-      }
-    }
-  });
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
+    },
+});
 
 export default function MapEditorScreen() {
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -123,7 +123,6 @@ export default function MapEditorScreen() {
                     </Grid>
 
                     <Grid md={10} component={Paper} elevation={6} square>
-                        {/* MAP EDITOR GOES HERE */}
                     </Grid>
 
                 </Grid>

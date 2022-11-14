@@ -16,15 +16,21 @@ router.put('/sendCode', UserController.sendRecoveryCode)
 router.put('/validateCode', UserController.validateRecoveryCode)
 router.put('/changePassword', UserController.changePassword)
 
-router.get('/getPersonalMaps', MapController.getPersonalMaps)
+router.get('/getPersonalMaps/:username', MapController.getPersonalMaps)
 router.get('/getPublicMaps', MapController.getPublicMaps)
 
 router.get('/getMap/:id', MapController.getMap)
 router.post('/createMap', MapController.createMap)
-router.post('/updateMap', MapController.updateMap)
+router.put('/updateMap', MapController.updateMap)
 router.delete('/deleteMap', MapController.deleteMap)
+router.get('/getMapsByUser/:username', MapController.getMapsByUser)
 
-router.get('/getMapsByUser/:username', MapController.getMapsByUser);
+router.put('/likeMap', MapController.likeMap)
+router.put('/unlikeMap', MapController.unlikeMap)
+router.put('/dislikeMap', MapController.dislikeMap)
+router.put('/undislikeMap', MapController.undislikeMap)
+
+router.put('/postComment', MapController.postComment)
 
 router.get('getTileset', TilesetController.getTileset)
 router.post('/createTileset', TilesetController.createTileset)

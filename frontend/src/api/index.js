@@ -19,15 +19,23 @@ export const changePassword = (payload) => api.put(`/changePassword/`, payload).
 export const getUser = (username) => api.get(`/getUser/${username}`).catch(catcher);
 
 // map api
-export const getPersonalMaps = (payload) => api.get(`/getPersonalMaps/`, {params: {username: payload}}).catch(catcher);
+export const getPersonalMaps = (username) => api.get(`/getPersonalMaps/${username}`).catch(catcher);
 export const getPublicMaps = (payload) => api.get(`/getPublicMaps`, payload).catch(catcher);
 
 export const getMap = (id) => api.get(`/getMap/${id}`).catch(catcher);
 export const createMap = (payload) => api.post(`/createMap`, payload).catch(catcher);
-export const updateMap = (payload) => api.post(`/updateMap`, payload).catch(catcher);
+export const updateMap = (payload) => api.put(`/updateMap`, payload).catch(catcher);
 export const deleteMap = (payload) => api.delete(`/deleteMap`, payload).catch(catcher);
-
 export const getMapsByUser = (username) => api.get(`/getMapsByUser/${username}`).catch(catcher);
+
+export const duplicateMap = (id) => api.post(`/duplicateMap/${id}`).catch(catcher);
+
+export const likeMap = (payload) => api.put(`/likeMap`, payload).catch(catcher);
+export const unlikeMap = (payload) => api.put(`/unlikeMap`, payload).catch(catcher);
+export const dislikeMap = (payload) => api.put(`/dislikeMap`, payload).catch(catcher);
+export const undislikeMap = (payload) => api.put(`/undislikeMap`, payload).catch(catcher);
+
+export const postComment = (payload) => api.put(`/postComment`, payload).catch(catcher);
 
 // tileset api
 export const getTileset = (id) => api.get(`/getTileset/${id}`).catch(catcher);
@@ -54,8 +62,16 @@ const apis = {
     createMap,
     updateMap,
     deleteMap,
-    
     getMapsByUser,
+
+    duplicateMap,
+
+    likeMap,
+    unlikeMap,
+    dislikeMap,
+    undislikeMap,
+
+    postComment,
 
     getTileset,
     createTileset,
