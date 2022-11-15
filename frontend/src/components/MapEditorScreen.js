@@ -1,4 +1,6 @@
-import * as React from 'react';
+import React from 'react';
+import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -6,18 +8,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';import { Link } from 'react-router-dom';
+import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useContext, useState } from "react";
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import Avatar from "@mui/material/Avatar";
 import PanToolIcon from '@mui/icons-material/PanTool';
 import PanToolAltIcon from '@mui/icons-material/PanToolAlt';
 import LayersIcon from '@mui/icons-material/Layers';
@@ -36,17 +31,17 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 const theme = createTheme({
     palette: {
-      primary: {
-        main: "#002956"
-      },
-      background: {
-        default: "#69C6DE"
-      }
-    }
-  });
+        primary: {
+            main: "#002956",
+        },
+        background: {
+            default: "#69C6DE",
+        },
+    },
+});
 
-export default function Album() {
-    const [anchorElUser, setAnchorElUser] = useState(null);//(React.useState < null) | (HTMLElement > null);
+export default function MapEditorScreen() {
+    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -73,7 +68,7 @@ export default function Album() {
 
                     
                 <Toolbar disableGutters sx={{ mt: 0, borderTop: 1, borderBottom: 1 }}>
-                    <Button sx={{  display: "block"}}><PanToolIcon/></Button>
+                    <Button sx={{ display: "block" }}><PanToolIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><PanToolAltIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><LayersIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}><FormatColorFillIcon/></Button>
@@ -110,10 +105,12 @@ export default function Album() {
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
                     <Grid container md={2}>
                         {cards.map((card) => (
-                            <Grid item key={card} md={4} sx={{ p: 1}}>
-                                <Card sx={{ height: '50px', width: '5, 0px' }}>
-                                    <CardMedia component="img" image="https://source.unsplash.com/random" sx={{ height: '50px'}}/>
-                                </Card>
+                            <Grid item key={card} md={4}>
+                                <Link to="/tileEditor">
+                                    <Card>
+                                        <CardMedia component="img" image={require("../images/tree.png")}/>
+                                    </Card>
+                                </Link>
                             </Grid>
                         ))}
                         <Toolbar disableGutters sx={{ mt: 0, borderTop: 1 }}>
@@ -126,7 +123,6 @@ export default function Album() {
                     </Grid>
 
                     <Grid md={10} component={Paper} elevation={6} square>
-                        {/* MAP EDITOR GOES HERE */}
                     </Grid>
 
                 </Grid>

@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { useContext, useState } from "react";
 import AuthContext from "../auth";
 import { GlobalStoreContext } from "../store";
@@ -8,12 +8,12 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Stack from '@mui/material/Stack';
 import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import TextModal from './TextModal';
 
 function Copyright(props) {
     return (
@@ -45,77 +45,81 @@ const theme = createTheme({
 });
 
 const recoveryStateObj = {
-    1: "ENTER_USERNAME",
-    2: "SECURITY_QUESTIONS",
-    3: "CHANGE_PASSWORD",
-    4: "SUCCESS",
+    ENTER_USERNAME: "ENTER_USERNAME",
+    ENTER_RECOVERY_CODE: "ENTER_RECOVERY_CODE",
+    CHANGE_PASSWORD: "CHANGE_PASSWORD"
 }
 
 export default function RecoveryScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     
-    const [recoveryState, setRecoveryState] = useState(recoveryStateObj[1]);
-    const [securityQuestions, setSecurityQuestions] = useState(null);
+    const [recoveryState, setRecoveryState] = useState(recoveryStateObj.ENTER_USERNAME);
+    const [recoveryUsername, setRecoveryUsername] = useState(null);
 
-    const handleSubmitUsername = async (event) => {
+    const handleSendRecoveryCode = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        
-        let username = data.get("username");
-        console.log(username);
-        // let securityQuestions = auth.getSecurityQuestions(username);
 
-        let securityQuestions = [
-            {question: "what was the name of this app?"},
-            {question: "what class is this project for?"},
-            {question: "what is the name of your professor"},
-        ];
-
-        if (securityQuestions) {
-            setRecoveryState(recoveryStateObj[2]);
-            setSecurityQuestions(securityQuestions);
-        }
+        let inputUsername = data.get("username");
+        auth.sendRecoveryCode({
+            username: inputUsername
+        }, store).then((isValidUsername) => {
+            if (isValidUsername) {
+                setRecoveryState(recoveryStateObj.ENTER_RECOVERY_CODE);
+                setRecoveryUsername(inputUsername)
+            }
+        })
     }
 
-    const handleSubmitSecurityQuestions = (event) => {
+    const handleSubmitRecoveryCode = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-
-        let correct = true;
-
-        if (correct) {
-            setRecoveryState(recoveryStateObj[3]);
-        }
+        let recoveryCode = data.get("recoveryCode");
+        
+        auth.validateRecoveryCode({
+            username: recoveryUsername,
+            recoveryCode: recoveryCode
+        }).then((isValidatedCode) => {
+            if (isValidatedCode) {
+                setRecoveryState(recoveryStateObj.CHANGE_PASSWORD);
+            }
+        })
     }
 
     const handleSubmitChangePassword = (event) => {
         event.preventDefault();
-        
+        const data = new FormData(event.currentTarget);
+
+        let password = data.get("password");
+        let passwordVerify = data.get("passwordVerify");
+
+        auth.changePassword({
+            username: recoveryUsername,
+            password: password,
+            passwordVerify: passwordVerify
+        })
     }
 
     const getRecoveryContent = () => {
-        if (recoveryState === recoveryStateObj[1]) {
+        if (recoveryState === recoveryStateObj.ENTER_USERNAME) {
             return (
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmitUsername}
+                    onSubmit={handleSendRecoveryCode}
                     sx={{ mt: 3 }}
                 >
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                autoComplete=""
-                                name="username"
-                                required
-                                fullWidth
-                                id="username"
-                                label="username"
-                                autoFocus
-                            />
-                        </Grid>
-                    </Grid>
+                    <Stack spacing={2}>
+                        <TextField
+                            autoComplete=""
+                            name="username"
+                            required
+                            fullWidth
+                            id="username"
+                            label="username"
+                        />
+                    </Stack>
 
                     <Button
                         type="submit"
@@ -127,33 +131,22 @@ export default function RecoveryScreen() {
                     </Button>
                 </Box>
             );
-        } else if (recoveryState === recoveryStateObj[2]) {
-            let securityQuestionFields = [];
-            for (let i = 0; i < securityQuestions.length; i++) {
-                let questionID = "q" + i;
-                securityQuestionFields.push(
-                    <TextField
-                        autoComplete=""
-                        name={questionID}
-                        required
-                        fullWidth
-                        id={questionID}
-                        label={securityQuestions[i].question}
-                        autoFocus
-                    />
-                );
-            }
-
+        } else if (recoveryState === recoveryStateObj.ENTER_RECOVERY_CODE) {
             return (
                 <Box
                     component="form"
                     noValidate
-                    onSubmit={handleSubmitSecurityQuestions}
+                    onSubmit={handleSubmitRecoveryCode}
                     sx={{ mt: 3 }}
                 >
-                    <Stack spacing={2}>
-                        {securityQuestionFields}
-                    </Stack>
+                    <TextField
+                        autoComplete=""
+                        name="recoveryCode"
+                        required
+                        fullWidth
+                        id="recoveryCode"
+                        label="Enter Recovery Code"
+                    />
                     
                     <Button
                         type="submit"
@@ -165,7 +158,7 @@ export default function RecoveryScreen() {
                     </Button>
                 </Box>
             );
-        } else if (recoveryState === recoveryStateObj[3]) {
+        } else if (recoveryState === recoveryStateObj.CHANGE_PASSWORD) {
             return (
                 <Box
                     component="form"
@@ -176,21 +169,21 @@ export default function RecoveryScreen() {
                     <Stack spacing={2}>
                         <TextField
                             autoComplete=""
-                            name=""
+                            name="password"
                             required
                             fullWidth
-                            id=""
-                            label={"New password"}
-                            autoFocus
+                            type="password"
+                            id="password"
+                            label="New password"
                         />
                         <TextField
                             autoComplete=""
-                            name=""
+                            name="passwordVerify"
                             required
                             fullWidth
-                            id=""
-                            label={"Confirm new password"}
-                            autoFocus
+                            type="password"
+                            id="passwordVerify"
+                            label="Confirm new password"
                         />
                     </Stack>
                     
@@ -209,6 +202,7 @@ export default function RecoveryScreen() {
     
     return (
         <ThemeProvider theme={theme}>
+            <TextModal />
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
