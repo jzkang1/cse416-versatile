@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import GlobalStoreContext from "../store";
 import AuthContext from "../auth";
+import ShareIcon from '@mui/icons-material/Share';
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -44,6 +45,7 @@ const style = {
 
 export default function PersonalCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
 
     const { card } = props
 
@@ -65,6 +67,24 @@ export default function PersonalCard(props) {
         store.openShareModal(mapId)
     };
 
+    const handleDuplicateMap = (e, mapId) => {
+        console.log("PersonalCard.js: handleDuplicateMap...")
+
+        store.duplicateMap()
+
+        console.log("PersonalCard.js: handleDuplicateMap!")
+    }
+
+    const handleDeleteMap = (e, mapId) => {
+        console.log("PersonalCard.js: handleDeleteMap...")
+
+        store.deleteMap(mapId)
+
+        console.log("PersonalCard.js: handleDeleteMap!")
+    }
+
+    console.log(card.owner, auth.user.username, card.owner == auth.user.username)
+
     return (
         <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>
@@ -81,6 +101,7 @@ export default function PersonalCard(props) {
                     <Typography variant="body2">
                         {card.name}
                     </Typography>
+                    {(card.owner != auth.user.username) ? <ShareIcon fontSize="small" sx={{ml:1}}/> : null }
 
                     <Button onClick={handleOpenUserMenu}
                         variant="contained" sx={{ marginLeft: 'auto', p: 0, minWidth: '30px', maxHeight: '20px' }}>
@@ -105,8 +126,8 @@ export default function PersonalCard(props) {
                         onClose={handleCloseUserMenu}
                     >
                         <MenuItem onClick={(e) => handleOpenShare(e, card._id)}>Share</MenuItem>
-                        <MenuItem onClick={handleCloseUserMenu}>Duplicate</MenuItem>
-                        <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
+                        <MenuItem onClick={(e) => handleDuplicateMap(e, card._id)}>Duplicate</MenuItem>
+                        <MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>Delete</MenuItem>
                     </Menu>
                 </Container>
             </Card>

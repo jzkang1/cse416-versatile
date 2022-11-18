@@ -22,6 +22,7 @@ import GlobalStoreContext from "../store";
 import TextModal from './TextModal';
 import ShareModal from './ShareModal';
 import PersonalCard from './PersonalCard';
+import Box from "@mui/material/Box";
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -62,6 +63,33 @@ export default function PersonalScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
+    const [sortState, setSortState] = useState("all");
+    
+    const handleSort = (e) => {
+        let newSortState = e.target.innerText.toLowerCase()
+
+        store.sortPersonalMaps(newSortState)
+
+        setSortState(newSortState);
+    }
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        const searchText = new FormData(e.currentTarget).get("search");
+
+        console.log(searchText)
+        store.searchPersonalMap(searchText)
+    }
+
+    const handleCreateMap = (e) => {
+        console.log("PersonalScreen.js: Creating Map...")
+
+        store.createMap()
+
+        console.log("PersonalScreen.js: Map Created!")
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <TextModal />
@@ -80,23 +108,29 @@ export default function PersonalScreen() {
                     </Typography>
 
                     <Toolbar sx={{ borderTop: 1, mt: 3 }}>
-                        <Button sx={{ backgroundColor: "#60DBA0", my: 2, borderRadius: '8px', border: 1, borderColor: 'primary.main' }}>
+                        <Button onClick={handleCreateMap} sx={{ backgroundColor: "#60DBA0", my: 2, borderRadius: '8px', border: 1, borderColor: 'primary.main' }}>
                             <AddCircleIcon sx={{ mr: 1 }} />
                             Create Map
                         </Button>
-                        <Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>All</Button>
-                        <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Owned</Button>
-                        <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Shared</Button>
-                        <TextField
-                            sx={{ ml: 3 }}
+                        <Button onClick={handleSort} sx={{ backgroundColor: (sortState == "all") ? '#CCBBFF' : '#E0D7FB', borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>All</Button>
+                        <Button onClick={handleSort} sx={{ backgroundColor: (sortState == "owned") ? '#CCBBFF' : '#E0D7FB', borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Owned</Button>
+                        <Button onClick={handleSort} sx={{ backgroundColor: (sortState == "shared") ? '#CCBBFF' : '#E0D7FB', borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Shared</Button>
+                        
+                        <Box component="form" onSubmit={handleSearch} noValidate sx={{ mr: 3, ml: 3, p: 1 }}>
+                            <TextField
+                            sx={{ width: '110%', marginLeft: "auto" }}
                             size="small"
+                            name="search"
                             label="Search"
                             InputProps={{
                                 endAdornment: (
-                                    <SearchIcon />
+                                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2, width: '20%' }}>
+                                        <SearchIcon />
+                                    </Button>
                                 )
-                            }}
-                        />
+                            }}/>
+                        </Box>
+
                     </Toolbar>
                 </Container>
 

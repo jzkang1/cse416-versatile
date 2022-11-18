@@ -250,6 +250,102 @@ function GlobalStoreContextProvider(props) {
         store.closeShareModal();
     }
 
+    store.searchCommunityMap = async function(searchText) {
+
+        try {
+            const response = await api.getPublicMaps();
+            if (response.data.success) {
+                let allPublicMaps = response.data.publicMaps
+                
+                const filteredMaps = allPublicMaps.filter(map => map.name.includes(searchText))
+                storeReducer({
+                    type: GlobalStoreActionType.SET_COMMUNITY_MAPS,
+                    payload: filteredMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+        
+    }
+    
+    store.sortCommunityMaps = async function(sort, isReversed){
+        try {
+            const response = await api.getPublicMaps();
+            if (response.data.success) {
+                
+                let sortedMaps = store.communityMapCards;
+                console.log(sortedMaps);
+                
+                if (sort == 'Date'){
+                    if (isReversed > 0) sortedMaps = sortedMaps.sort((a,b) => Date.parse(b.publishDate) - Date.parse(a.publishDate));
+                    else sortedMaps = sortedMaps.sort((a,b) => Date.parse(a.publishDate) - Date.parse(b.publishDate));
+                } 
+                else if(sort == "Like"){
+                    if (isReversed > 0) sortedMaps = sortedMaps.sort((a,b) => b.usersWhoLiked.length - a.usersWhoLiked.length);
+                    else sortedMaps = sortedMaps.sort((a,b) => a.usersWhoLiked.length - b.usersWhoLiked.length);
+                } 
+                else if(sort == "Views") {
+                    if (isReversed > 0) sortedMaps = sortedMaps.sort((a,b) => b.views - a.views);
+                    else sortedMaps = sortedMaps.sort((a,b) => a.views- b.views);
+                }
+
+                storeReducer({
+                    type: GlobalStoreActionType.SET_COMMUNITY_MAPS,
+                    payload: sortedMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+        
+    }
+
+    store.searchPersonalMap = async function(searchText) {
+
+        try {
+            const response = await api.getPersonalMaps(auth.user.username);
+            if (response.data.success) {
+                let personalMaps = response.data.personalMaps;
+
+                const filteredMaps = personalMaps.filter(map => map.name.includes(searchText))
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PERSONAL_MAPS,
+                    payload: filteredMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+        
+    }
+
+    store.sortPersonalMaps = async function(sort){
+        try {
+            const response = await api.getPersonalMaps(auth.user.username);
+            if (response.data.success) {
+
+                let personalMaps = response.data.personalMaps;
+                if(sort == 'owned'){
+                    personalMaps = personalMaps.filter(map => map.owner == auth.user.username);
+                }
+                if(sort == 'shared'){
+                    personalMaps = personalMaps.filter(map => map.collaborators.includes(auth.user.username));
+                }
+
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PERSONAL_MAPS,
+                    payload: personalMaps
+                });
+            }
+            else {
+                console.log("api failed to retrieve personal maps");
+            }
+        } catch (err) {
+            console.log("failed to get personal maps: " + err);
+        }
+    }
+
     store.likeMap = async function() {
         let _id = store.currentMapView._id;
         let username = auth.user.username;
@@ -330,6 +426,40 @@ function GlobalStoreContextProvider(props) {
                 payload: store.currentMapView
             });
         }
+    }
+
+    store.createMap = async function() {
+        console.log("store.createMap: Creating Map...")
+
+        // const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
+        let response = await api.createMap({name: "untitled",
+                                            owner: auth.user.username,
+                                            height: 320,
+                                            width: 320,
+                                            isPublished: false});
+        if (response.data.success) {
+            store.loadPersonalMaps()
+        }
+
+        console.log("store.createMap: Map Created!")
+    }
+
+    store.deleteMap = async function(mapId) {
+        console.log("store.deleteMap: deleteMap...")
+
+        console.log(mapId)
+        let response = await api.deleteMap({_id: mapId})
+        if (response.data.success) {
+            store.loadPersonalMaps()
+        }
+
+        console.log("store.deleteMap: deleteMap!")
+    }
+
+    store.duplicateMap = async function() {
+        console.log("store.deleteMap: duplicateMap...")
+
+        console.log("store.deleteMap: duplicateMap!")
     }
 
     return (
