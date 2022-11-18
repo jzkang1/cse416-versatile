@@ -32,8 +32,8 @@ const MapSchema = new Schema(
         tilesets: { type: [String], required: true },
         
         collaborators: { type: [String], required: true },
-        createDate: { type: Date, required: true },
-        modifyDate: { type: Date, required: true },
+        createDate: { type: Date, required: false },
+        modifyDate: { type: Date, required: false },
         
         isPublished: { type: Boolean, required: true },
         publishDate: { type: Date, required: false }, 

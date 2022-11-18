@@ -65,6 +65,22 @@ export default function PersonalCard(props) {
         store.openShareModal(mapId)
     };
 
+    const handleDuplicateMap = (e, mapId) => {
+        console.log("PersonalCard.js: handleDuplicateMap...")
+
+        store.duplicateMap()
+
+        console.log("PersonalCard.js: handleDuplicateMap!")
+    }
+
+    const handleDeleteMap = (e, mapId) => {
+        console.log("PersonalCard.js: handleDeleteMap...")
+        
+        store.deleteMap(mapId)
+
+        console.log("PersonalCard.js: handleDeleteMap!")
+    }
+
     return (
         <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>
@@ -105,8 +121,8 @@ export default function PersonalCard(props) {
                         onClose={handleCloseUserMenu}
                     >
                         <MenuItem onClick={(e) => handleOpenShare(e, card._id)}>Share</MenuItem>
-                        <MenuItem onClick={handleCloseUserMenu}>Duplicate</MenuItem>
-                        <MenuItem onClick={handleCloseUserMenu}>Delete</MenuItem>
+                        <MenuItem onClick={(e) => handleDuplicateMap(e, card._id)}>Duplicate</MenuItem>
+                        <MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>Delete</MenuItem>
                     </Menu>
                 </Container>
             </Card>
