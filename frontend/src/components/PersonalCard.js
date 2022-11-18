@@ -14,6 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import GlobalStoreContext from "../store";
 import AuthContext from "../auth";
+import ShareIcon from '@mui/icons-material/Share';
 
 const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -44,6 +45,7 @@ const style = {
 
 export default function PersonalCard(props) {
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
 
     const { card } = props
 
@@ -75,11 +77,13 @@ export default function PersonalCard(props) {
 
     const handleDeleteMap = (e, mapId) => {
         console.log("PersonalCard.js: handleDeleteMap...")
-        
+
         store.deleteMap(mapId)
 
         console.log("PersonalCard.js: handleDeleteMap!")
     }
+
+    console.log(card.owner, auth.user.username, card.owner == auth.user.username)
 
     return (
         <Grid item xs={12} sm={6} md={4} lg={3}>
@@ -97,6 +101,7 @@ export default function PersonalCard(props) {
                     <Typography variant="body2">
                         {card.name}
                     </Typography>
+                    {(card.owner != auth.user.username) ? <ShareIcon fontSize="small" sx={{ml:1}}/> : null }
 
                     <Button onClick={handleOpenUserMenu}
                         variant="contained" sx={{ marginLeft: 'auto', p: 0, minWidth: '30px', maxHeight: '20px' }}>
