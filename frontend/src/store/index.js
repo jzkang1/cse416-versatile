@@ -307,7 +307,7 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPersonalMaps(auth.user.username);
             if (response.data.success) {
                 let personalMaps = response.data.personalMaps;
-                
+
                 const filteredMaps = personalMaps.filter(map => map.name.includes(searchText))
                 storeReducer({
                     type: GlobalStoreActionType.SET_PERSONAL_MAPS,
@@ -426,6 +426,40 @@ function GlobalStoreContextProvider(props) {
                 payload: store.currentMapView
             });
         }
+    }
+
+    store.createMap = async function() {
+        console.log("store.createMap: Creating Map...")
+
+        // const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
+        let response = await api.createMap({name: "untitled",
+                                            owner: auth.user.username,
+                                            height: 320,
+                                            width: 320,
+                                            isPublished: false});
+        if (response.data.success) {
+            store.loadPersonalMaps()
+        }
+
+        console.log("store.createMap: Map Created!")
+    }
+
+    store.deleteMap = async function(mapId) {
+        console.log("store.deleteMap: deleteMap...")
+
+        console.log(mapId)
+        let response = await api.deleteMap({_id: mapId})
+        if (response.data.success) {
+            store.loadPersonalMaps()
+        }
+
+        console.log("store.deleteMap: deleteMap!")
+    }
+
+    store.duplicateMap = async function() {
+        console.log("store.deleteMap: duplicateMap...")
+
+        console.log("store.deleteMap: duplicateMap!")
     }
 
     return (

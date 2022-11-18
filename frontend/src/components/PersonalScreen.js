@@ -82,6 +82,14 @@ export default function PersonalScreen() {
         store.searchPersonalMap(searchText)
     }
 
+    const handleCreateMap = (e) => {
+        console.log("PersonalScreen.js: Creating Map...")
+
+        store.createMap()
+
+        console.log("PersonalScreen.js: Map Created!")
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <TextModal />
@@ -100,7 +108,7 @@ export default function PersonalScreen() {
                     </Typography>
 
                     <Toolbar sx={{ borderTop: 1, mt: 3 }}>
-                        <Button sx={{ backgroundColor: "#60DBA0", my: 2, borderRadius: '8px', border: 1, borderColor: 'primary.main' }}>
+                        <Button onClick={handleCreateMap} sx={{ backgroundColor: "#60DBA0", my: 2, borderRadius: '8px', border: 1, borderColor: 'primary.main' }}>
                             <AddCircleIcon sx={{ mr: 1 }} />
                             Create Map
                         </Button>

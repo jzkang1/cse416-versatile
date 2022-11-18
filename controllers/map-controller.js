@@ -73,6 +73,8 @@ createMap = async(req, res) => {
         const newMap = new Map({
             name, owner, height, width, layers, tilesets, isPublished
         });
+
+        // console.log(newMap)
         
         newMap.save().then(() => {
             return res.status(201).json({
@@ -152,6 +154,7 @@ updateMap = async(req, res) => {
 deleteMap = async(req, res) => {
     try {
         const { _id } = req.body;
+        
         await Map.findOneAndDelete({ _id: _id });
         
         return res.status(200).json({
