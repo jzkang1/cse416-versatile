@@ -250,7 +250,6 @@ function GlobalStoreContextProvider(props) {
         store.closeShareModal();
     }
 
-<<<<<<< HEAD
     store.searchCommunityMap = async function(searchText) {
 
         try {
@@ -270,36 +269,26 @@ function GlobalStoreContextProvider(props) {
         
     }
     
-    store.sortCommunityMaps = async function(sort){
+    store.sortCommunityMaps = async function(sort, isReversed){
         try {
             const response = await api.getPublicMaps();
             if (response.data.success) {
-
-                // let allPublicMaps = response.data.publicMaps
                 
-                // allPublicMaps.forEach(
-                //     (x) => {
-                //         console.log(x)
-                //         console.log(x.publishDate)
-                //         console.log(Date.parse(x.publishDate))
-                //     }
-                // )
-
-                // console.log(allPublicMaps)
+                let sortedMaps = store.communityMapCards;
+                console.log(sortedMaps);
                 
-                let sortedMaps = allPublicMaps;
-                
-                if (sort == 'DATE'){
-                    sortedMaps = allPublicMaps.sort((a,b) => Date.parse(b.publishDate) - Date.parse(a.publishDate))
+                if (sort == 'Date'){
+                    if (isReversed > 0) sortedMaps = sortedMaps.sort((a,b) => Date.parse(b.publishDate) - Date.parse(a.publishDate));
+                    else sortedMaps = sortedMaps.sort((a,b) => Date.parse(a.publishDate) - Date.parse(b.publishDate));
                 } 
-                else if(sort == "LIKE"){
-                    sortedMaps = allPublicMaps.sort((a,b) => b.usersWhoLiked.length - a.usersWhoLiked.length);
+                else if(sort == "Like"){
+                    if (isReversed > 0) sortedMaps = sortedMaps.sort((a,b) => b.usersWhoLiked.length - a.usersWhoLiked.length);
+                    else sortedMaps = sortedMaps.sort((a,b) => a.usersWhoLiked.length - b.usersWhoLiked.length);
                 } 
-                else if(sort == "VIEWS") {
-                    sortedMaps = allPublicMaps.sort((a,b) => b.views - a.views)
+                else if(sort == "Views") {
+                    if (isReversed > 0) sortedMaps = sortedMaps.sort((a,b) => b.views - a.views);
+                    else sortedMaps = sortedMaps.sort((a,b) => a.views- b.views);
                 }
-
-                // console.log(sortedMaps)
 
                 storeReducer({
                     type: GlobalStoreActionType.SET_COMMUNITY_MAPS,
@@ -312,7 +301,51 @@ function GlobalStoreContextProvider(props) {
         
     }
 
-=======
+    store.searchPersonalMap = async function(searchText) {
+
+        try {
+            const response = await api.getPersonalMaps(auth.user.username);
+            if (response.data.success) {
+                let personalMaps = response.data.personalMaps;
+                
+                const filteredMaps = personalMaps.filter(map => map.name.includes(searchText))
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PERSONAL_MAPS,
+                    payload: filteredMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+        
+    }
+
+    store.sortPersonalMaps = async function(sort){
+        try {
+            const response = await api.getPersonalMaps(auth.user.username);
+            if (response.data.success) {
+
+                let personalMaps = response.data.personalMaps;
+                if(sort == 'owned'){
+                    personalMaps = personalMaps.filter(map => map.owner == auth.user.username);
+                }
+                if(sort == 'shared'){
+                    personalMaps = personalMaps.filter(map => map.collaborators.includes(auth.user.username));
+                }
+
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PERSONAL_MAPS,
+                    payload: personalMaps
+                });
+            }
+            else {
+                console.log("api failed to retrieve personal maps");
+            }
+        } catch (err) {
+            console.log("failed to get personal maps: " + err);
+        }
+    }
+
     store.likeMap = async function() {
         let _id = store.currentMapView._id;
         let username = auth.user.username;
@@ -394,7 +427,6 @@ function GlobalStoreContextProvider(props) {
             });
         }
     }
->>>>>>> cse416/main
 
     return (
         <GlobalStoreContext.Provider value={{

@@ -5,6 +5,9 @@ getPersonalMaps = async(req, res) => {
         const { username } = req.params;
       
         let personalMaps = await Map.find({ owner: username });
+        let sharedMaps = await Map.find({collaborators: username})
+
+        personalMaps = personalMaps.concat(sharedMaps);
 
         if (personalMaps) {
             return res.status(200).json({
