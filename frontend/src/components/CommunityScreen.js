@@ -48,8 +48,28 @@ export default function CommunityScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
+    const [search, setSearch] = useState("");
+
     const handleClickMapCard = (event, id) => {
         store.loadMapView(id);
+    }
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        const searchText = new FormData(e.currentTarget).get("search");
+
+        store.searchCommunityMap(searchText)
+    }
+
+    const [sortState, setSortState] = useState("none");
+    
+    const handleSort = (e) => {
+        setSortState(e.target.innerText)
+
+        console.log(sortState)
+
+        store.sortCommunityMaps(sortState)
     }
 
     return (
@@ -59,32 +79,43 @@ export default function CommunityScreen() {
                 <Typography variant="h3" color="inherit" noWrap align="center">Community</Typography>
                 <Typography align="center">Get inspirations from fellow users</Typography>
 
+
                 <Toolbar sx={{ borderTop: 1, mt: 3 }}>
-                    <Button disabled disableFocusRipple='true' sx={{ 
+                    <Button disabled disableFocusRipple='true'  sx={{ 
                         "&.MuiButtonBase-root": { color: "primary.main" }, 
                         backgroundColor: "#60DBA0", my: 2, borderRadius: '8px', border: 1, borderColor: 'primary.main' 
                         }}>
                         Sort By
                     </Button>
-                    <Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Date</Button>
-                    <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Like</Button>
-                    <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Views</Button>
-                    <TextField
-                        sx={{ marginLeft: "auto" }}
-                        size="small"
-                        label="Search"
-                        InputProps={{
-                            endAdornment: (
-                                    <SearchIcon />
-                            )
-                        }}
-                    />
+                    <Button onClick={handleSort} sx={{ backgroundColor: (sortState == "DATE") ? '#CCBBFF' : '#E0D7FB', borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Date</Button>
+                    <Button onClick={handleSort} sx={{ backgroundColor: (sortState == "LIKE") ? '#CCBBFF' : '#E0D7FB', borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Like</Button>
+                    <Button onClick={handleSort} sx={{ backgroundColor: (sortState == "VIEWS") ? '#CCBBFF' : '#E0D7FB', borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Views</Button>
+                    
+                    <Box component="form" onSubmit={handleSearch} noValidate sx={{ mr: 3, p: 1, marginLeft: 'auto' }}>
+                            
+                            <TextField
+                            sx={{ width: '110%', marginLeft: "auto" }}
+                            size="small"
+                            name="search"
+                            label="Search"
+                            InputProps={{
+                                endAdornment: (
+                                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2, width: '20%' }}>
+                                        <SearchIcon />
+                                    </Button>
+                                )
+                            }}
+                        />
+                        
+                    </Box>
+
+                    
                 </Toolbar>
             </Container>
 
             <Container maxWidth="lg">
             <Grid container spacing={3}>
-                {store.communityMapCards.map((map) => (
+                {store.communityMapCards?.map((map) => (
                 <Grid item key={map._id} md={12}>
                     <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
                         <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>

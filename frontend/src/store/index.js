@@ -252,6 +252,68 @@ function GlobalStoreContextProvider(props) {
         store.closeShareModal();
     }
 
+    store.searchCommunityMap = async function(searchText) {
+
+        try {
+            const response = await api.getPublicMaps();
+            if (response.data.success) {
+                let allPublicMaps = response.data.publicMaps
+                
+                const filteredMaps = allPublicMaps.filter(map => map.name.includes(searchText))
+                storeReducer({
+                    type: GlobalStoreActionType.SET_COMMUNITY_MAPS,
+                    payload: filteredMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+        
+    }
+    
+    store.sortCommunityMaps = async function(sort){
+        try {
+            const response = await api.getPublicMaps();
+            if (response.data.success) {
+
+                // let allPublicMaps = response.data.publicMaps
+                
+                // allPublicMaps.forEach(
+                //     (x) => {
+                //         console.log(x)
+                //         console.log(x.publishDate)
+                //         console.log(Date.parse(x.publishDate))
+                //     }
+                // )
+
+                // console.log(allPublicMaps)
+                
+                let sortedMaps = allPublicMaps;
+                
+                if (sort == 'DATE'){
+                    sortedMaps = allPublicMaps.sort((a,b) => Date.parse(b.publishDate) - Date.parse(a.publishDate))
+                } 
+                else if(sort == "LIKE"){
+                    sortedMaps = allPublicMaps.sort((a,b) => b.usersWhoLiked.length - a.usersWhoLiked.length);
+                } 
+                else if(sort == "VIEWS") {
+                    sortedMaps = allPublicMaps.sort((a,b) => b.views - a.views)
+                }
+
+                // console.log(sortedMaps)
+
+                storeReducer({
+                    type: GlobalStoreActionType.SET_COMMUNITY_MAPS,
+                    payload: sortedMaps
+                });
+            }
+        } catch (err) {
+            console.log("failed to get public maps: " + err);
+        }
+        
+    }
+
+
     return (
         <GlobalStoreContext.Provider value={{
             store
