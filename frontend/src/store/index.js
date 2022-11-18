@@ -1,3 +1,4 @@
+import { Global } from '@emotion/react';
 import { createContext, useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
@@ -27,7 +28,7 @@ function GlobalStoreContextProvider(props) {
         shareMapId: null
     });
     
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const { auth } = useContext(AuthContext);
     
     const storeReducer = (action) => {
@@ -91,7 +92,6 @@ function GlobalStoreContextProvider(props) {
             }
 
             case GlobalStoreActionType.UPDATE_MAP: {
-                console.log("SHARE_MODAL reducer: " + payload)
                 return setStore({
                     personalMapCards: payload.personalMapCards,
                     communityMapCards: [],
@@ -176,10 +176,9 @@ function GlobalStoreContextProvider(props) {
                 storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
                     payload: map
-                })
+                });
                 navigate(`/mapView/${id}`);
             }
-            
         } catch (err) {
             console.log(err);
         }
@@ -200,15 +199,14 @@ function GlobalStoreContextProvider(props) {
         })
     }
 
-
     store.shareMap = async function (mapId, newUser) {
 
         let userResponse = await api.getUser(newUser);
 
         if (userResponse.data.success) {
             const personalMaps = store.personalMapCards;
-            for(let i = 0; i < personalMaps.length; i++){
-                if(personalMaps[i]._id == mapId){
+            for (let i = 0; i < personalMaps.length; i++){
+                if (personalMaps[i]._id == mapId){
                     if (!personalMaps[i].collaborators.includes(newUser)) {
                         personalMaps[i].collaborators.push(newUser);
                         store.updateMap(personalMaps[i])
@@ -238,13 +236,13 @@ function GlobalStoreContextProvider(props) {
         store.updateMap(personalMaps[index]);
     }
 
-    store.updateMap = async function (map) {
+    store.updateMap = async function(map) {
         const personalMaps = store.personalMapCards;
         console.log(map)
         const response = await api.updateMap(map);
-        if(response.status == 200){
-            for(let i = 0; i < personalMaps.length; i++){
-                if(personalMaps[i]._id == map._id){
+        if (response.status == 200){
+            for (let i = 0; i < personalMaps.length; i++) {
+                if (personalMaps[i]._id == map._id){
                     personalMaps[i] = map;
                 }
             }
@@ -252,6 +250,7 @@ function GlobalStoreContextProvider(props) {
         store.closeShareModal();
     }
 
+<<<<<<< HEAD
     store.searchCommunityMap = async function(searchText) {
 
         try {
@@ -313,6 +312,89 @@ function GlobalStoreContextProvider(props) {
         
     }
 
+=======
+    store.likeMap = async function() {
+        let _id = store.currentMapView._id;
+        let username = auth.user.username;
+
+        if (store.currentMapView.usersWhoDisliked.includes(username)) {
+            await store.undislikeMap();
+        }
+
+        let response = await api.likeMap({_id, username});
+        if (response.data.success) {
+            store.currentMapView.usersWhoLiked.push(username);
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+                payload: store.currentMapView
+            })
+        }
+    }
+
+    store.unlikeMap = async function() {
+        let _id = store.currentMapView._id;
+        let username = auth.user.username;
+
+        let response = await api.unlikeMap({_id, username});
+        if (response.data.success) {
+            let index = store.currentMapView.usersWhoLiked.indexOf(username);
+            if (index !== -1) {
+                store.currentMapView.usersWhoLiked.splice(index, 1);
+            }
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+                payload: store.currentMapView
+            })
+        }
+    }
+
+    store.dislikeMap = async function() {
+        let _id = store.currentMapView._id;
+        let username = auth.user.username;
+
+        if (store.currentMapView.usersWhoLiked.includes(username)) {
+            await store.unlikeMap();
+        }
+
+        let response = await api.dislikeMap({_id, username});
+        if (response.data.success) {
+            store.currentMapView.usersWhoDisliked.push(username);
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+                payload: store.currentMapView
+            })
+        }
+    }
+
+    store.undislikeMap = async function() {
+        let _id = store.currentMapView._id;
+        let username = auth.user.username;
+
+        let response = await api.undislikeMap({_id, username});
+        if (response.data.success) {
+            let index = store.currentMapView.usersWhoDisliked.indexOf(username);
+            if (index !== -1) {
+                store.currentMapView.usersWhoDisliked.splice(index, 1);
+            }
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+                payload: store.currentMapView
+            });
+        }
+    }
+
+    store.postComment = async function(comment) {
+        let _id = store.currentMapView._id;
+        let response = await api.postComment({_id, comment});
+        if (response.data.success) {
+            store.currentMapView.comments.push(comment);
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+                payload: store.currentMapView
+            });
+        }
+    }
+>>>>>>> cse416/main
 
     return (
         <GlobalStoreContext.Provider value={{

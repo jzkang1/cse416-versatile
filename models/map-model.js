@@ -31,17 +31,17 @@ const MapSchema = new Schema(
         layers: { type: [LayerSchema], required: true },
         tilesets: { type: [String], required: true },
         
-        collaborators: { type: [String], required: false },
-        createdDate: { type: Date, required: false },
-        modifiedDate: { type: Date, required: false },
+        collaborators: { type: [String], required: true },
+        createDate: { type: Date, required: true },
+        modifyDate: { type: Date, required: true },
         
         isPublished: { type: Boolean, required: true },
-        publishedDate: { type: Date, required: false }, 
+        publishDate: { type: Date, required: false }, 
 
         description: { type: String, required: false },
         views: { type: Number, required: false },
-        likes: { type: Number, required: false },
-        dislikes: { type: Number, required: false },
+        usersWhoLiked: { type: [String], required: false },
+        usersWhoDisliked: { type: [String], required: false },
         comments: { type: [CommentSchema], required: false },
 
         thumbnailLarge: { type: String, required: false },
