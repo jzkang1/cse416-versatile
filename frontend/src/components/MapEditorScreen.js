@@ -233,17 +233,6 @@ export default function MapEditorScreen() {
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
 
                     <Grid container md={2}>
-                        {getTilesets()}
-                        <Toolbar disableGutters sx={{ borderTop: 1 }}>
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><UndoIcon/></Button>
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><RedoIcon/></Button>
-                            <Button variant="contained" component="label" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}>
-                                <CloudUploadIcon/>
-                                <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload}/>
-                            </Button>
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
-
-                    
                         <Stage width={TILESET_WIDTH} height={TILESET_HEIGHT} style={{ backgroundColor: "gray", width: "100%", height: "95%" }}>
                             <Layer onClick={handleTilesetClick}>
                                 <URLImage src={tilesets[tilesetSelected[0]]} setTilesetSelected={setTilesetSelected}/>
@@ -257,7 +246,18 @@ export default function MapEditorScreen() {
                                 />
                             </Layer>
                         </Stage>
+                        <Toolbar disableGutters sx={{ borderTop: 1 }}>
+                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><UndoIcon/></Button>
+                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><RedoIcon/></Button>
+                            <Button variant="contained" component="label" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}>
+                                <CloudUploadIcon/>
+                                <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload}/>
+                            </Button>
+                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
                         </Toolbar>
+                    
+
+                        
                     </Grid>
                     
                     
