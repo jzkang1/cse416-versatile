@@ -110,13 +110,6 @@ export default function MapEditorScreen() {
 
         return tilesets;
     }
-    
-    let map = [[]]
-
-    let layers = []
-
-    let tilesets = ["https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png", 
-                    "https://assets.codepen.io/21542/SeedCharacter.xl.png"]
 
     const [tilesetSelected, setTilesetSelected] = useState([0, null]);
     const [tileSelected, setTileSelected] = useState([0, 0]);
@@ -178,6 +171,13 @@ export default function MapEditorScreen() {
 
         reader.readAsDataURL(file);
     }
+
+    if (!store.currentMapEdit) {
+        return null;
+    }
+
+    let tilesets = ["https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png", 
+                    "https://assets.codepen.io/21542/SeedCharacter.xl.png"]
 
     return (
         <ThemeProvider theme={theme}>
@@ -255,6 +255,8 @@ export default function MapEditorScreen() {
                             </Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
                         </Toolbar>
+
+                        <img src={store.currentMapEdit.tilesets.length > 0 ? store.currentMapEdit.tilesets[0].data : ""} alt="?"/>
                     
 
                         
