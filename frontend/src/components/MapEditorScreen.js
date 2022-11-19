@@ -1,6 +1,6 @@
 import React from 'react';
-import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import Button from '@mui/material/Button';
@@ -44,6 +44,11 @@ export default function MapEditorScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
+    let { id } = useParams();
+    
+    useEffect(() => {
+        store.loadMapEdit(id);
+    }, []);
 
     const [anchorElUser, setAnchorElUser] = useState(null);
 
@@ -73,7 +78,7 @@ export default function MapEditorScreen() {
             console.log(typeof imageString)
             console.log(imageString)
 
-            // store.uploadTileset(imageString)
+            store.createTileset(imageString)
         }
 
         reader.readAsDataURL(file);

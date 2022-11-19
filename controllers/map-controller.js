@@ -70,6 +70,12 @@ createMap = async(req, res) => {
     try {
         const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
 
+        if (!name || !owner || !height || !width || !layers || !tilesets || !isPublished)  {
+            return res.status(400).json({
+                errorMessage: "Could not create map"
+            });
+        }
+
         const newMap = new Map({
             name, owner, height, width, layers, tilesets, isPublished
         });

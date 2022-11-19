@@ -15,7 +15,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_MAP_VIEW: "SET_CURRENT_MAP_VIEW",
     SET_CURRENT_PROFILE_VIEW: "SET_CURRENT_PROFILE_VIEW",
     SHARE_MODAL: "SHARE_MODAL",
-    UPDATE_MAP: "UPDATE_MAP"
+    SET_CURRENT_MAP_EDIT: "SET_CURRENT_MAP_EDIT"
 }
 
 function GlobalStoreContextProvider(props) {
@@ -25,7 +25,8 @@ function GlobalStoreContextProvider(props) {
         currentMapView: null,
         currentProfileView: null,
         currentProfileMaps: [],
-        shareMapId: null
+        shareMapId: null,
+        currentMapEdit: null
     });
     
     const navigate = useNavigate();
@@ -42,7 +43,8 @@ function GlobalStoreContextProvider(props) {
                     currentMapView: null,
                     currentProfileView: null,
                     currentProfileMaps: [],
-                    shareMapId: null
+                    shareMapId: null,
+                    currentMapEdit: null
                 });
             }
 
@@ -53,7 +55,8 @@ function GlobalStoreContextProvider(props) {
                     currentMapView: null,
                     currentProfileView: null,
                     currentProfileMaps: [],
-                    shareMapId: null
+                    shareMapId: null,
+                    currentMapEdit: null
                 });
             }
 
@@ -64,7 +67,8 @@ function GlobalStoreContextProvider(props) {
                     currentMapView: payload,
                     currentProfileView: null,
                     currentProfileMaps: [],
-                    shareMapId: null
+                    shareMapId: null,
+                    currentMapEdit: null
                 });
             }
 
@@ -75,7 +79,8 @@ function GlobalStoreContextProvider(props) {
                     currentMapView: null,
                     currentProfileView: payload.user,
                     currentProfileMaps: payload.maps,
-                    shareMapId: null
+                    shareMapId: null,
+                    currentMapEdit: null
                 });
             }
 
@@ -87,18 +92,20 @@ function GlobalStoreContextProvider(props) {
                     currentMapView: null,
                     currentProfileView: [],
                     currentProfileMaps: [],
-                    shareMapId: payload
+                    shareMapId: payload,
+                    currentMapEdit: null
                 });
             }
 
-            case GlobalStoreActionType.UPDATE_MAP: {
+            case GlobalStoreActionType.SET_CURRENT_MAP_EDIT: {
                 return setStore({
-                    personalMapCards: payload.personalMapCards,
+                    personalMapCards: [],
                     communityMapCards: [],
                     currentMapView: null,
                     currentProfileView: [],
                     currentProfileMaps: [],
-                    shareMapId: store.shareMapId
+                    shareMapId: store.shareMapId,
+                    currentMapEdit: payload
                 });
             }
 
@@ -302,7 +309,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.searchPersonalMap = async function(searchText) {
-
         try {
             const response = await api.getPersonalMaps(auth.user.username);
             if (response.data.success) {
@@ -460,6 +466,39 @@ function GlobalStoreContextProvider(props) {
         console.log("store.deleteMap: duplicateMap...")
 
         console.log("store.deleteMap: duplicateMap!")
+    }
+
+    store.loadMapEdit = async function(id) {
+        let response = await api.getMap(id);
+        if (response.data.success) {
+            let map = response.data.map;
+
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
+                payload: map
+            })
+        }
+    }
+
+    store.createTileset = async function(mapID, name, imageString) {
+        if (!mapID) {
+            return;
+        }
+
+        console.log("store.createTileset: Creating tileset... ")
+
+        let payload = {
+            mapID: mapID,
+            name: name,
+            data: imageString
+        }
+
+        let response = await api.createTileset(payload);
+
+        if (response.data.success) {
+            let tileset = response.data.tileset;
+            store.currentMapEdit.tilesets.push(tileset)
+        }
     }
 
     return (

@@ -2,7 +2,7 @@ const Tileset = require("../models/tileset-model")
 
 getTileset = async (req, res) => {
     try {
-        const { _id } = req.body;
+        const _id = req.params.id;
 
         let tileset = await Tileset.findOne({ _id: _id });
         
@@ -31,7 +31,6 @@ createTileset = async (req, res) => {
         newTileset.save().then(() => {
             return res.status(201).json({
                 success: true,
-                message: "Tileset Created!",
                 tileset: newTileset
             })
         })
