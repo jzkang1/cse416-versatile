@@ -1,31 +1,35 @@
 const Map = require("../models/map-model")
 
-getTilesets = async (req, res) => {
-    try {
+// getTilesets = async (req, res) => {
+//     try {
 
-        let maps = await Map.find();
+//         let maps = await Map.find();
 
-        let tilesets = [];
-        for (let map of maps) {
-            tilesets = tilesets.concat(map.tilesets)
-        }
+//         let tilesets = [];
+//         for (let map of maps) {
+//             console.log(map)
+//             for (let tileset of map.tilesets) {
+//                 tilesets.push(tileset)
+//             }
+//             // tilesets = tilesets.concat(map.tilesets)
+//         }
         
-        if (tilesets) {
-            return res.status(200).json({
-                success: true,
-                tilesets: tilesets,
-            });
-        }
+//         if (tilesets) {
+//             return res.status(200).json({
+//                 success: true,
+//                 tilesets: tilesets,
+//             });
+//         }
 
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    }
-}
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     } catch (err) {
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     }
+// }
 
 // getTileset = async (req, res) => {
 //     try {
@@ -122,18 +126,27 @@ deleteTileset = async (req, res) => {
             });
         }
 
+        let deleted = false;
         for (let i = 0; i < map.tilesets.length; i++) {
-            if (map.tilesets[i]._id === _id) {
+            if (map.tilesets[i]._id.toString() === _id) {
                 map.tilesets.splice(i, 1);
+                deleted = true;
                 break;
             }
         }
 
         await map.save();
 
-        return res.status(200).json({
-            success: true,
-            map: map,
+        if (deleted) {
+            console.log("deleted tileset")
+            return res.status(200).json({
+                success: true,
+                map: map,
+            })
+        }
+
+        return res.status(400).json({
+            success: false
         })
     } catch (err) {
         return res.status(400).json({
@@ -145,7 +158,6 @@ deleteTileset = async (req, res) => {
 
 
 module.exports = {
-    getTilesets,
     createTileset,
     updateTileset,
     deleteTileset
