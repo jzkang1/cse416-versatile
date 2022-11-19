@@ -1,6 +1,13 @@
 import React from 'react';
+<<<<<<< HEAD
 import { useRef, useEffect, useContext, useState } from "react";
 import { Link } from "react-router-dom";
+=======
+import { useContext, useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
+>>>>>>> cse416/main
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -28,11 +35,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import EditIcon from '@mui/icons-material/Edit';
 
+<<<<<<< HEAD
 import { Stage, Layer, Text, Image, Rect } from 'react-konva';
 
 const TILESET_HEIGHT = 512
 const TILESET_WIDTH = 239
  
+=======
+>>>>>>> cse416/main
 const theme = createTheme({
     palette: {
         primary: { main: "#002956" },
@@ -68,6 +78,15 @@ function URLImage(props) {
 
 
 export default function MapEditorScreen() {
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+
+    let { id } = useParams();
+    
+    useEffect(() => {
+        store.loadMapEdit(id);
+    }, []);
+
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -123,22 +142,33 @@ export default function MapEditorScreen() {
         setTileSelected(getCoords(e))
     }
 
-    const handleUploadTileset = (e) => {
+    const handleTilesetUpload = (event) => {
+        if (!event.target.files) {
+            return;
+        }
 
-    }
+        const file = event.target.files[0];
 
-    const handleCreateTileset = (e) => {
-        
-    }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (!event?.target?.result) {
+              return;
+            }
 
-    const handleEditTileset = (e) => {
+            const imageString = event.target.result;
 
+            console.log(typeof imageString)
+            console.log(imageString)
+
+            store.createTileset(imageString)
+        }
+
+        reader.readAsDataURL(file);
     }
 
     return (
         <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <main>
+            <CssBaseline />
             <Container disableGutters maxWidth="lg" sx={{ mt: 4, pt: 2, border: 1, backgroundColor: "#DDD2FF" }}
             >
                 <Toolbar sx={{ mt: -1.5, justifyContent: "center" }}>
@@ -208,8 +238,8 @@ export default function MapEditorScreen() {
                             <Button variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><RedoIcon/></Button>
                             <Button variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><EditIcon/></Button>
                             
-                            <Button onClick={handleUploadTileset} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><CloudUploadIcon/></Button>
-                            <Link to='/tileEditor'><Button onClick={handleCreateTileset} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><AddIcon/></Button></Link>
+                            <Button onClick={handleTilesetUpload} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><CloudUploadIcon/></Button>
+                            <Link to='/tileEditor'><Button onClick={} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><AddIcon/></Button></Link>
                         </Toolbar>
                     </Grid>
                     
@@ -223,9 +253,12 @@ export default function MapEditorScreen() {
 
                 </Grid>
             </Container>
+<<<<<<< HEAD
 
             
         </main>
+=======
+>>>>>>> cse416/main
         </ThemeProvider>
     );
 }

@@ -2,12 +2,13 @@ const Tileset = require("../models/tileset-model")
 
 getTileset = async (req, res) => {
     try {
-        let tileset = await Tileset.findOne({ _id: req.body._id });
+        const _id = req.params.id;
+
+        let tileset = await Tileset.findOne({ _id: _id });
         
         if (tileset) {
             return res.status(200).json({
                 success: true,
-                message: "Tileset found",
                 tileset: tileset,
             });
         }
@@ -24,17 +25,15 @@ getTileset = async (req, res) => {
 
 createTileset = async (req, res) => {
     try {
-        const { name, height, width, tiles } = req.body;
-        const newTileset = new Tileset({
-            name, height, width, tiles
-        });
-        const savedTileset = await newTileset.save()
-                                            .then(() => {
-                                                return res.status(201).json({
-                                                    success: true,
-                                                    message: "Tilset Created!"
-                                                })
-                                            })
+        const { name, data } = req.body;
+        const newTileset = new Tileset({ name, data });
+
+        newTileset.save().then(() => {
+            return res.status(201).json({
+                success: true,
+                tileset: newTileset
+            })
+        })
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not create tileset"
@@ -44,7 +43,7 @@ createTileset = async (req, res) => {
 
 updateTileset = async (req, res) => {
     try {
-        const { _id, name, height, width, tiles } = req.body;
+        const { _id, name, data } = req.body;
 
         Tileset.findOne({ _id: _id }, (err, tileset) => {
             if (!tileset) {
@@ -54,9 +53,7 @@ updateTileset = async (req, res) => {
             }
             
             if (name) tileset.name = name
-            if (height) tileset.height = height
-            if (width) tileset.width = width
-            if (tiles) tileset.tiles = tiles
+            if (data) tileset.data = data
 
             tileset.save();
 
@@ -76,11 +73,18 @@ updateTileset = async (req, res) => {
 deleteTileset = async (req, res) => {
     try {
         const { _id } = req.body;
-        await Tileset.findOneAndDelete({ _id: _id });
-        
-        return res.status(200).json({
-            success: true
-        })
+        await Tileset.findOneAndDelete({ _id: _id }, (err, tileset) => {
+            if (!tileset) {
+                return res.status(400).json({
+                    success: false
+                })
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: "Tileset deleted!",
+            })
+        });
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not delete tileset"
@@ -94,6 +98,5 @@ module.exports = {
     getTileset,
     createTileset,
     updateTileset,
-    deleteTileset,
-    getTileset
+    deleteTileset
 }

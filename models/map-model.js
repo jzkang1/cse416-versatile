@@ -29,11 +29,11 @@ const MapSchema = new Schema(
         height: { type: Number, required: true },
         width: { type: Number, required: true },
         layers: { type: [LayerSchema], required: true },
-        tilesets: { type: [String], required: true },
+        tilesets: { type: [mongoose.Schema.Types.ObjectId], ref: 'Tileset', required: true },
         
         collaborators: { type: [String], required: true },
-        createDate: { type: Date, required: false },
-        modifyDate: { type: Date, required: false },
+        createDate: { type: Date, required: true },
+        modifyDate: { type: Date, required: true },
         
         isPublished: { type: Boolean, required: true },
         publishDate: { type: Date, required: false }, 
