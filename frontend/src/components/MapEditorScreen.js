@@ -243,7 +243,7 @@ export default function MapEditorScreen() {
                             </Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
 
-                    <Grid container sx={{ backgroundColor: "yellow", width: "20%", height: '550px'}}>
+                    
                         <Stage width={TILESET_WIDTH} height={TILESET_HEIGHT} style={{ backgroundColor: "gray", width: "100%", height: "95%" }}>
                             <Layer onClick={handleTilesetClick}>
                                 <URLImage src={tilesets[tilesetSelected[0]]} setTilesetSelected={setTilesetSelected}/>
