@@ -41,7 +41,7 @@ const App = () => {
 
                         <Route path="/mapView/:id" element={<MapView/>} />
 
-                        <Route path="/editor" element={<MapEditorScreen/>} />
+                        <Route path="/editor/:id" element={<MapEditorScreen/>} />
                         <Route path="/tileEditor" element={<TileEditor/>} />
                     </Routes>
                 </GlobalStoreContextProvider>

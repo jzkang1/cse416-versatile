@@ -35,7 +35,7 @@ test("Empty test for skipping the error", async () => {
                 }
             }
         ],
-        "tilesets": ["https://thumbs.dreamstime.com/b/seamless-texture-ground-small-stones-concept-design-cute-pattern-brown-cartoon-vector-stone-separate-layers-147597634.jpg"],
+        "tilesets": [],
         
         "collaborators": [],
         "createDate": "2022-11-13",
