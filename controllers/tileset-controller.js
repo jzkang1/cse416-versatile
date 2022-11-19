@@ -1,5 +1,27 @@
 const Tileset = require("../models/tileset-model")
 
+getTilesets = async (req, res) => {
+    try {
+
+        let tilesets = await Tileset.find();
+        
+        if (tilesets) {
+            return res.status(200).json({
+                success: true,
+                tilesets: tilesets,
+            });
+        }
+
+        return res.status(400).json({
+            errorMessage: "Could not get tileset"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not get tileset"
+        });
+    }
+}
+
 getTileset = async (req, res) => {
     try {
         const _id = req.params.id;
@@ -73,18 +95,18 @@ updateTileset = async (req, res) => {
 deleteTileset = async (req, res) => {
     try {
         const { _id } = req.body;
-        await Tileset.findOneAndDelete({ _id: _id }, (err, tileset) => {
-            if (!tileset) {
-                return res.status(400).json({
-                    success: false
-                })
-            }
+        let tileset = await Tileset.findOneAndDelete({ _id: _id });
 
-            return res.status(200).json({
-                success: true,
-                message: "Tileset deleted!",
+        if (!tileset) {
+            return res.status(400).json({
+                success: false
             })
-        });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Tileset deleted!",
+        })
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not delete tileset"
@@ -95,6 +117,7 @@ deleteTileset = async (req, res) => {
 
 
 module.exports = {
+    getTilesets,
     getTileset,
     createTileset,
     updateTileset,

@@ -116,6 +116,7 @@ function GlobalStoreContextProvider(props) {
 
     store.loadPersonalMaps = async function() {
         try {
+            console.log("loading personal maps")
             const response = await api.getPersonalMaps(auth.user.username);
             if (response.data.success) {
 
@@ -125,6 +126,7 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.SET_PERSONAL_MAPS,
                     payload: personalMaps
                 });
+                console.log("loaded personal maps")
             }
             else {
                 console.log("api failed to retrieve personal maps");
@@ -438,11 +440,13 @@ function GlobalStoreContextProvider(props) {
         console.log("store.createMap: Creating Map...")
 
         // const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
-        let response = await api.createMap({name: "untitled",
-                                            owner: auth.user.username,
-                                            height: 320,
-                                            width: 320,
-                                            isPublished: false});
+        let payload = {
+            name: "untitled",
+            owner: auth.user.username,
+            height: 320,
+            width: 320
+        }
+        let response = await api.createMap(payload);
         if (response.data.success) {
             store.loadPersonalMaps()
         }
@@ -496,8 +500,14 @@ function GlobalStoreContextProvider(props) {
         let response = await api.createTileset(payload);
 
         if (response.data.success) {
-            let tileset = response.data.tileset;
-            store.currentMapEdit.tilesets.push(tileset)
+            let map = response.data.map;
+            console.log(map)
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
+                payload: map
+            })
+
+            console.log("store.createTileset: tileset created")
         }
     }
 

@@ -1,13 +1,8 @@
 import React from 'react';
-<<<<<<< HEAD
 import { useRef, useEffect, useContext, useState } from "react";
-import { Link } from "react-router-dom";
-=======
-import { useContext, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
->>>>>>> cse416/main
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -34,15 +29,9 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import EditIcon from '@mui/icons-material/Edit';
-
-<<<<<<< HEAD
 import { Stage, Layer, Text, Image, Rect } from 'react-konva';
-
 const TILESET_HEIGHT = 512
 const TILESET_WIDTH = 239
- 
-=======
->>>>>>> cse416/main
 const theme = createTheme({
     palette: {
         primary: { main: "#002956" },
@@ -97,6 +86,31 @@ export default function MapEditorScreen() {
         setAnchorElUser(null);
     };
 
+    const getTilesets = () => {
+        if (!store.currentMapEdit) {
+            return null;
+        }
+
+        let tilesets = [];
+        for (let i = 0; i < store.currentMapEdit.tilesets.length; i++) {
+            let tileset = store.currentMapEdit.tilesets[i];
+
+            console.log(tileset)
+
+            tilesets.push(
+                <Grid item key={tileset._id} md={4}>
+                    <Link to="/tileEditor">
+                        <Card>
+                            <CardMedia component="img" image={tileset.data}/>
+                        </Card>
+                    </Link>
+                </Grid>
+            );
+        }
+
+        return tilesets;
+    }
+    
     let map = [[]]
 
     let layers = []
@@ -149,6 +163,8 @@ export default function MapEditorScreen() {
 
         const file = event.target.files[0];
 
+        const filename = file.name;
+
         const reader = new FileReader();
         reader.onload = (event) => {
             if (!event?.target?.result) {
@@ -157,10 +173,7 @@ export default function MapEditorScreen() {
 
             const imageString = event.target.result;
 
-            console.log(typeof imageString)
-            console.log(imageString)
-
-            store.createTileset(imageString)
+            store.createTileset(store.currentMapEdit._id, filename, imageString);
         }
 
         reader.readAsDataURL(file);
@@ -218,6 +231,18 @@ export default function MapEditorScreen() {
             <Container disableGutters maxWidth="lg" sx={{ border: 1, backgroundColor: "#DDD2FF" }}>
                 
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
+
+                    <Grid container md={2}>
+                        {getTilesets()}
+                        <Toolbar disableGutters sx={{ borderTop: 1 }}>
+                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><UndoIcon/></Button>
+                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><RedoIcon/></Button>
+                            <Button variant="contained" component="label" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}>
+                                <CloudUploadIcon/>
+                                <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload}/>
+                            </Button>
+                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
+
                     <Grid container sx={{ backgroundColor: "yellow", width: "20%", height: '550px'}}>
                         <Stage width={TILESET_WIDTH} height={TILESET_HEIGHT} style={{ backgroundColor: "gray", width: "100%", height: "95%" }}>
                             <Layer onClick={handleTilesetClick}>
@@ -232,14 +257,6 @@ export default function MapEditorScreen() {
                                 />
                             </Layer>
                         </Stage>
-
-                        <Toolbar disableGutters style={{ width: "100%", height: "15px" }}>
-                            <Button variant="contained" sx={{ ml: 3, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><UndoIcon/></Button>
-                            <Button variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><RedoIcon/></Button>
-                            <Button variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><EditIcon/></Button>
-                            
-                            <Button onClick={handleTilesetUpload} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><CloudUploadIcon/></Button>
-                            <Link to='/tileEditor'><Button onClick={} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><AddIcon/></Button></Link>
                         </Toolbar>
                     </Grid>
                     
@@ -253,12 +270,6 @@ export default function MapEditorScreen() {
 
                 </Grid>
             </Container>
-<<<<<<< HEAD
-
-            
-        </main>
-=======
->>>>>>> cse416/main
         </ThemeProvider>
     );
 }

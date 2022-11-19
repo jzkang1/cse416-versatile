@@ -1,4 +1,37 @@
 const Map = require("../models/map-model")
+const Tileset = require("../models/tileset-model")
+
+createTileset = async (req, res) => {
+    try {
+        const { mapID, name, data } = req.body;
+
+        let map = await Map.findOne({ _id: mapID })
+
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not create tileset"
+            });
+        }
+
+        const newTileset = new Tileset({ name, data });
+        await newTileset.save();
+
+        map.tilesets.push(newTileset);
+
+        console.log(map.tilesets)
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+            map: map,
+        })
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: err
+        });
+    }
+}
 
 getPersonalMaps = async(req, res) => {
     try {
@@ -47,7 +80,9 @@ getMap = async (req, res) => {
     try {
         const _id  = req.params.id;
 
-        let map = await Map.findOne({_id : _id});
+        let map = await Map.findOne({_id : _id}).populate("tilesets");
+
+        console.log(map)
 
         if (map) {
             return res.status(200).json({
@@ -68,26 +103,38 @@ getMap = async (req, res) => {
 
 createMap = async(req, res) => {
     try {
-        const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
+        const { name, owner, height, width } = req.body;
 
-        if (!name || !owner || !height || !width || !layers || !tilesets || !isPublished)  {
+        if (!name || !owner || !height || !width)  {
             return res.status(400).json({
                 errorMessage: "Could not create map"
             });
         }
 
+        const layers = [];
+        const tilesets = [];
+
+        const collaborators = [];
+
+        const createDate = new Date();
+        const modifyDate = new Date();
+
+        const isPublished = false;
+
         const newMap = new Map({
-            name, owner, height, width, layers, tilesets, isPublished
+            name, owner,
+            height, width, layers, tilesets,
+            collaborators, createDate, modifyDate,
+            isPublished
         });
         
-        newMap.save().then(() => {
-            return res.status(201).json({
-                success: true,
-                message: "Map Created!",
-                map: newMap
-            })
+        await newMap.save();
+
+        return res.status(201).json({
+            success: true,
+            message: "Map Created!",
+            map: newMap
         })
-        
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not create map"
@@ -159,10 +206,16 @@ deleteMap = async(req, res) => {
     try {
         const { _id } = req.body;
         
-        await Map.findOneAndDelete({ _id: _id });
-        
-        return res.status(200).json({
-            success: true
+        let map = await Map.findOneAndDelete({ _id: _id });
+
+        if (map) {
+            return res.status(200).json({
+                success: true
+            })
+        }
+
+        return res.status(400).json({
+            success: false
         })
         
     } catch (err) {
@@ -328,5 +381,7 @@ module.exports = {
     unlikeMap,
     dislikeMap,
     undislikeMap,
-    postComment
+    postComment,
+
+    createTileset
 }
