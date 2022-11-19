@@ -83,8 +83,6 @@ export default function PersonalCard(props) {
         console.log("PersonalCard.js: handleDeleteMap!")
     }
 
-    console.log(card.owner, auth.user.username, card.owner == auth.user.username)
-
     return (
         <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>

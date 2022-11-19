@@ -73,8 +73,6 @@ createMap = async(req, res) => {
         const newMap = new Map({
             name, owner, height, width, layers, tilesets, isPublished
         });
-
-        // console.log(newMap)
         
         newMap.save().then(() => {
             return res.status(201).json({

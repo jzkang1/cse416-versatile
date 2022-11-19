@@ -1,6 +1,8 @@
 import React from 'react';
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import AuthContext from "../auth";
+import GlobalStoreContext from "../store";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -27,8 +29,6 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
-
 const theme = createTheme({
     palette: {
         primary: {
@@ -41,6 +41,10 @@ const theme = createTheme({
 });
 
 export default function MapEditorScreen() {
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+
+
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -51,10 +55,33 @@ export default function MapEditorScreen() {
         setAnchorElUser(null);
     };
 
+    const handleTilesetUpload = (event) => {
+        if (!event.target.files) {
+            return;
+        }
+
+        const file = event.target.files[0];
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            if (!event?.target?.result) {
+              return;
+            }
+
+            const imageString = event.target.result;
+
+            console.log(typeof imageString)
+            console.log(imageString)
+
+            // store.uploadTileset(imageString)
+        }
+
+        reader.readAsDataURL(file);
+    }
+
     return (
         <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <main>
+            <CssBaseline />
             <Container disableGutters maxWidth="lg" sx={{ mt: 4, pt: 2, border: 1, backgroundColor: "#DDD2FF" }}
             >
                 <Toolbar sx={{ mt: -1.5, justifyContent: "center" }}>
@@ -104,7 +131,7 @@ export default function MapEditorScreen() {
             <Container disableGutters maxWidth="lg" sx={{ border: 1, backgroundColor: "#DDD2FF" }}>
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
                     <Grid container md={2}>
-                        {cards.map((card) => (
+                        {[].map((card) => (
                             <Grid item key={card} md={4}>
                                 <Link to="/tileEditor">
                                     <Card>
@@ -113,11 +140,13 @@ export default function MapEditorScreen() {
                                 </Link>
                             </Grid>
                         ))}
-                        <Toolbar disableGutters sx={{ mt: 0, borderTop: 1 }}>
+                        <Toolbar disableGutters sx={{ borderTop: 1 }}>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><UndoIcon/></Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><RedoIcon/></Button>
-                            
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><CloudUploadIcon/></Button>
+                            <Button variant="contained" component="label" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}>
+                                <CloudUploadIcon/>
+                                <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload}/>
+                            </Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
                         </Toolbar>
                     </Grid>
@@ -127,7 +156,6 @@ export default function MapEditorScreen() {
 
                 </Grid>
             </Container>
-        </main>
         </ThemeProvider>
     );
 }

@@ -11,9 +11,7 @@ const Tile = new Schema(
 const TilesetSchema = new Schema(
     {
         name: { type: String, required: true },
-        width: { type: Number, required: true },
-        height: { type: Number, required: true },
-        tiles: { type: [Tile], required: true }
+        data: { type: Buffer, required: true }
     },
     { timestamps: true },
 )

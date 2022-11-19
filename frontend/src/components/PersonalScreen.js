@@ -37,20 +37,6 @@ const theme = createTheme({
     }
 });
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 500,
-    height: 400,
-    bgcolor: '#69C6DE',
-    border: '2px solid #000',
-    borderRadius: 8,
-    boxShadow: 24,
-    p: 4,
-};
-
 export default function PersonalScreen() {
     useEffect(() => {
         if (!auth.loggedIn) {
@@ -97,7 +83,6 @@ export default function PersonalScreen() {
                 cards={store.personalMapCards}
             />
             <CssBaseline />
-            <main>
                 <Container maxWidth="lg" sx={{ pt: 4 }}
                 >
                     <Typography variant="h3" color="inherit" noWrap align="center">
@@ -143,7 +128,6 @@ export default function PersonalScreen() {
                         ))}
                     </Grid>
                 </Container>
-            </main>
         </ThemeProvider>
     );
 }
