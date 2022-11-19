@@ -2,8 +2,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
 
-const Tileset = require("./tileset-model")
-
 const CommentSchema = new Schema(
     {
         username: { type: String, required: true },
@@ -21,6 +19,14 @@ const LayerSchema = new Schema(
     { timestamps: true },
 )
 
+const TilesetSchema = new Schema(
+    {
+        name: { type: String, required: true },
+        data: { type: String, required: true },
+    },
+    { timestamps: true },
+)
+
 const MapSchema = new Schema(
     {
         name: { type: String, required: true },
@@ -29,7 +35,7 @@ const MapSchema = new Schema(
         height: { type: Number, required: true },
         width: { type: Number, required: true },
         layers: { type: [LayerSchema], required: true },
-        tilesets: { type: [String], required: true },
+        tilesets: { type: [TilesetSchema], required: true },
         
         collaborators: { type: [String], required: true },
         createDate: { type: Date, required: true },

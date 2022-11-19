@@ -25,7 +25,7 @@ export const getPublicMaps = (payload) => api.get(`/getPublicMaps`, payload).cat
 export const getMap = (id) => api.get(`/getMap/${id}`).catch(catcher);
 export const createMap = (payload) => api.post(`/createMap`, payload).catch(catcher);
 export const updateMap = (payload) => api.put(`/updateMap`, payload).catch(catcher);
-export const deleteMap = (payload) => api.delete(`/deleteMap`, payload).catch(catcher);
+export const deleteMap = (payload) => api.delete(`/deleteMap`, { data: payload }).catch(catcher);
 export const getMapsByUser = (username) => api.get(`/getMapsByUser/${username}`).catch(catcher);
 
 export const duplicateMap = (id) => api.post(`/duplicateMap/${id}`).catch(catcher);

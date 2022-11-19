@@ -1,71 +1,113 @@
-const Tileset = require("../models/tileset-model")
+const Map = require("../models/map-model")
 
-getTileset = async (req, res) => {
-    try {
-        let tileset = await Tileset.findOne({ _id: req.body._id });
+// getTilesets = async (req, res) => {
+//     try {
+
+//         let maps = await Map.find();
+
+//         let tilesets = [];
+//         for (let map of maps) {
+//             console.log(map)
+//             for (let tileset of map.tilesets) {
+//                 tilesets.push(tileset)
+//             }
+//             // tilesets = tilesets.concat(map.tilesets)
+//         }
         
-        if (tileset) {
-            return res.status(200).json({
-                success: true,
-                message: "Tileset found",
-                tileset: tileset,
-            });
-        }
+//         if (tilesets) {
+//             return res.status(200).json({
+//                 success: true,
+//                 tilesets: tilesets,
+//             });
+//         }
 
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    }
-}
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     } catch (err) {
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     }
+// }
+
+// getTileset = async (req, res) => {
+//     try {
+//         const _id = req.params.id;
+
+//         let tileset = await Tileset.findOne({ _id: _id });
+        
+//         if (tileset) {
+//             return res.status(200).json({
+//                 success: true,
+//                 tileset: tileset,
+//             });
+//         }
+
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     } catch (err) {
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     }
+// }
+
 
 createTileset = async (req, res) => {
     try {
-        const { name, height, width, tiles } = req.body;
-        const newTileset = new Tileset({
-            name, height, width, tiles
-        });
-        const savedTileset = await newTileset.save()
-                                            .then(() => {
-                                                return res.status(201).json({
-                                                    success: true,
-                                                    message: "Tilset Created!"
-                                                })
-                                            })
+        const { mapID, name, data } = req.body;
+
+        let map = await Map.findOne({ _id: mapID })
+
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not create tileset"
+            });
+        }
+
+        const newTileset = {name, data};
+        map.tilesets.push(newTileset);
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+            map: map,
+        })
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not create tileset"
+            errorMessage: err
         });
     }
 }
 
 updateTileset = async (req, res) => {
     try {
-        const { _id, name, height, width, tiles } = req.body;
+        const { mapID, _id, name, data } = req.body;
+        
+        let map = await Map.findOne({_id: mapID});
 
-        Tileset.findOne({ _id: _id }, (err, tileset) => {
-            if (!tileset) {
-                return res.status(400).json({
-                    success: false
-                })
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not update tileset"
+            });
+        }
+
+        for (let i = 0; i < map.tilesets.length; i++) {
+            if (map.tilesets[i]._id === _id) {
+                map.tilesets[i] = {name, data};
+                break;
             }
-            
-            if (name) tileset.name = name
-            if (height) tileset.height = height
-            if (width) tileset.width = width
-            if (tiles) tileset.tiles = tiles
+        }
 
-            tileset.save();
+        await map.save();
 
-            return res.status(200).json({
-                success: true,
-                _id: _id,
-                message: "Tileset updated!",
-            })
-        });
+        return res.status(200).json({
+            success: true,
+            map: map,
+        })
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not update tileset"
@@ -75,11 +117,36 @@ updateTileset = async (req, res) => {
 
 deleteTileset = async (req, res) => {
     try {
-        const { _id } = req.body;
-        await Tileset.findOneAndDelete({ _id: _id });
-        
-        return res.status(200).json({
-            success: true
+        const { mapID, _id } = req.body;
+        let map = await Map.findOne({_id: mapID});
+
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not delete tileset"
+            });
+        }
+
+        let deleted = false;
+        for (let i = 0; i < map.tilesets.length; i++) {
+            if (map.tilesets[i]._id.toString() === _id) {
+                map.tilesets.splice(i, 1);
+                deleted = true;
+                break;
+            }
+        }
+
+        await map.save();
+
+        if (deleted) {
+            console.log("deleted tileset")
+            return res.status(200).json({
+                success: true,
+                map: map,
+            })
+        }
+
+        return res.status(400).json({
+            success: false
         })
     } catch (err) {
         return res.status(400).json({
@@ -91,9 +158,7 @@ deleteTileset = async (req, res) => {
 
 
 module.exports = {
-    getTileset,
     createTileset,
     updateTileset,
-    deleteTileset,
-    getTileset
+    deleteTileset
 }

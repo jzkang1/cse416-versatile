@@ -64,7 +64,7 @@ export default function MapView() {
     
     useEffect(() => {
         store.loadMapView(id);
-    }, [])
+    }, []);
 
     if (!store.currentMapView) {
         return null;
