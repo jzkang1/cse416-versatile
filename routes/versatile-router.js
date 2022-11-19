@@ -33,8 +33,8 @@ router.put('/undislikeMap', MapController.undislikeMap)
 router.put('/postComment', MapController.postComment)
 
 router.get('/getTilesets', TilesetController.getTilesets)
-router.get('/getTileset/:id', TilesetController.getTileset)
-router.post('/createTileset', MapController.createTileset)
+// router.get('/getTileset/:id', TilesetController.getTileset)
+router.post('/createTileset', TilesetController.createTileset)
 router.put('/updateTileset', TilesetController.updateTileset)
 router.delete('/deleteTileset', TilesetController.deleteTileset)
 

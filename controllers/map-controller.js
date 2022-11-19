@@ -1,37 +1,4 @@
 const Map = require("../models/map-model")
-const Tileset = require("../models/tileset-model")
-
-createTileset = async (req, res) => {
-    try {
-        const { mapID, name, data } = req.body;
-
-        let map = await Map.findOne({ _id: mapID })
-
-        if (!map) {
-            return res.status(400).json({
-                errorMessage: "Could not create tileset"
-            });
-        }
-
-        const newTileset = new Tileset({ name, data });
-        await newTileset.save();
-
-        map.tilesets.push(newTileset);
-
-        console.log(map.tilesets)
-
-        await map.save();
-
-        return res.status(200).json({
-            success: true,
-            map: map,
-        })
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: err
-        });
-    }
-}
 
 getPersonalMaps = async(req, res) => {
     try {
@@ -381,7 +348,5 @@ module.exports = {
     unlikeMap,
     dislikeMap,
     undislikeMap,
-    postComment,
-
-    createTileset
+    postComment
 }

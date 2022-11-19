@@ -1,9 +1,14 @@
-const Tileset = require("../models/tileset-model")
+const Map = require("../models/map-model")
 
 getTilesets = async (req, res) => {
     try {
 
-        let tilesets = await Tileset.find();
+        let maps = await Map.find();
+
+        let tilesets = [];
+        for (let map of maps) {
+            tilesets = tilesets.concat(map.tilesets)
+        }
         
         if (tilesets) {
             return res.status(200).json({
@@ -22,69 +27,83 @@ getTilesets = async (req, res) => {
     }
 }
 
-getTileset = async (req, res) => {
-    try {
-        const _id = req.params.id;
+// getTileset = async (req, res) => {
+//     try {
+//         const _id = req.params.id;
 
-        let tileset = await Tileset.findOne({ _id: _id });
+//         let tileset = await Tileset.findOne({ _id: _id });
         
-        if (tileset) {
-            return res.status(200).json({
-                success: true,
-                tileset: tileset,
-            });
-        }
+//         if (tileset) {
+//             return res.status(200).json({
+//                 success: true,
+//                 tileset: tileset,
+//             });
+//         }
 
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not get tileset"
-        });
-    }
-}
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     } catch (err) {
+//         return res.status(400).json({
+//             errorMessage: "Could not get tileset"
+//         });
+//     }
+// }
+
 
 createTileset = async (req, res) => {
     try {
-        const { name, data } = req.body;
-        const newTileset = new Tileset({ name, data });
+        const { mapID, name, data } = req.body;
 
-        newTileset.save().then(() => {
-            return res.status(201).json({
-                success: true,
-                tileset: newTileset
-            })
+        let map = await Map.findOne({ _id: mapID })
+
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not create tileset"
+            });
+        }
+
+        const newTileset = {name, data};
+        map.tilesets.push(newTileset);
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true,
+            map: map,
         })
     } catch (err) {
         return res.status(400).json({
-            errorMessage: "Could not create tileset"
+            errorMessage: err
         });
     }
 }
 
 updateTileset = async (req, res) => {
     try {
-        const { _id, name, data } = req.body;
+        const { mapID, _id, name, data } = req.body;
+        
+        let map = await Map.findOne({_id: mapID});
 
-        Tileset.findOne({ _id: _id }, (err, tileset) => {
-            if (!tileset) {
-                return res.status(400).json({
-                    success: false
-                })
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not update tileset"
+            });
+        }
+
+        for (let i = 0; i < map.tilesets.length; i++) {
+            if (map.tilesets[i]._id === _id) {
+                map.tilesets[i] = {name, data};
+                break;
             }
-            
-            if (name) tileset.name = name
-            if (data) tileset.data = data
+        }
 
-            tileset.save();
+        await map.save();
 
-            return res.status(200).json({
-                success: true,
-                _id: _id,
-                message: "Tileset updated!",
-            })
-        });
+        return res.status(200).json({
+            success: true,
+            map: map,
+        })
     } catch (err) {
         return res.status(400).json({
             errorMessage: "Could not update tileset"
@@ -94,18 +113,27 @@ updateTileset = async (req, res) => {
 
 deleteTileset = async (req, res) => {
     try {
-        const { _id } = req.body;
-        let tileset = await Tileset.findOneAndDelete({ _id: _id });
+        const { mapID, _id } = req.body;
+        let map = await Map.findOne({_id: mapID});
 
-        if (!tileset) {
+        if (!map) {
             return res.status(400).json({
-                success: false
-            })
+                errorMessage: "Could not delete tileset"
+            });
         }
+
+        for (let i = 0; i < map.tilesets.length; i++) {
+            if (map.tilesets[i]._id === _id) {
+                map.tilesets.splice(i, 1);
+                break;
+            }
+        }
+
+        await map.save();
 
         return res.status(200).json({
             success: true,
-            message: "Tileset deleted!",
+            map: map,
         })
     } catch (err) {
         return res.status(400).json({
@@ -118,7 +146,6 @@ deleteTileset = async (req, res) => {
 
 module.exports = {
     getTilesets,
-    getTileset,
     createTileset,
     updateTileset,
     deleteTileset
