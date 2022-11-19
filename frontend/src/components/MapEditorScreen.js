@@ -60,12 +60,39 @@ export default function MapEditorScreen() {
         setAnchorElUser(null);
     };
 
+    const getTilesets = () => {
+        if (!store.currentMapEdit) {
+            return null;
+        }
+
+        let tilesets = [];
+        for (let i = 0; i < store.currentMapEdit.tilesets.length; i++) {
+            let tileset = store.currentMapEdit.tilesets[i];
+
+            console.log(tileset)
+
+            tilesets.push(
+                <Grid item key={tileset._id} md={4}>
+                    <Link to="/tileEditor">
+                        <Card>
+                            <CardMedia component="img" image={tileset.data}/>
+                        </Card>
+                    </Link>
+                </Grid>
+            );
+        }
+
+        return tilesets;
+    }
+
     const handleTilesetUpload = (event) => {
         if (!event.target.files) {
             return;
         }
 
         const file = event.target.files[0];
+
+        const filename = file.name;
 
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -75,10 +102,7 @@ export default function MapEditorScreen() {
 
             const imageString = event.target.result;
 
-            console.log(typeof imageString)
-            console.log(imageString)
-
-            store.createTileset(imageString)
+            store.createTileset(store.currentMapEdit._id, filename, imageString);
         }
 
         reader.readAsDataURL(file);
@@ -136,15 +160,7 @@ export default function MapEditorScreen() {
             <Container disableGutters maxWidth="lg" sx={{ border: 1, backgroundColor: "#DDD2FF" }}>
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
                     <Grid container md={2}>
-                        {[].map((card) => (
-                            <Grid item key={card} md={4}>
-                                <Link to="/tileEditor">
-                                    <Card>
-                                        <CardMedia component="img" image={require("../images/tree.png")}/>
-                                    </Card>
-                                </Link>
-                            </Grid>
-                        ))}
+                        {getTilesets()}
                         <Toolbar disableGutters sx={{ borderTop: 1 }}>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><UndoIcon/></Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><RedoIcon/></Button>
