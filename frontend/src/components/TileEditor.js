@@ -4,8 +4,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
-import LC from "literallycanvas";
-import "../literallycanvas/css/literallycanvas.css"
+// import LC from "literallycanvas";
+// import "../literallycanvas/css/literallycanvas.css"
 
 const theme = createTheme({
     palette: {
@@ -35,7 +35,7 @@ export default function TileEditor() {
             <CssBaseline />
             <Container maxWidth="lg" sx={{ pt: 4 }}>
                 <Box>
-                    <LC.LiterallyCanvasReactComponent imageURLPrefix="../src/literallycanvas/img" />
+                    {/* <LC.LiterallyCanvasReactComponent imageURLPrefix="../src/literallycanvas/img" /> */}
                 </Box>
             </Container>
         </ThemeProvider>

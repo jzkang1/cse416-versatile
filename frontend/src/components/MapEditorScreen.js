@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState } from "react";
+import { useRef, useEffect, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -26,19 +26,46 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
+import EditIcon from '@mui/icons-material/Edit';
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+import { Stage, Layer, Text, Image, Rect } from 'react-konva';
 
+const TILESET_HEIGHT = 512
+const TILESET_WIDTH = 239
+ 
 const theme = createTheme({
     palette: {
-        primary: {
-            main: "#002956",
-        },
-        background: {
-            default: "#69C6DE",
-        },
+        primary: { main: "#002956" },
+        background: { default: "#69C6DE" },
     },
 });
+
+function URLImage(props) {
+    const [image, setImage] = useState(null);
+    
+    useEffect(() => {
+        loadImage();
+    }, [props.src]);
+    
+    function loadImage() {
+        if (props.src) {
+            const image = new window.Image();
+            image.src = props.src;
+            
+            // console.log(image)
+            props.setTilesetSelected(image)
+
+            image.onload = () => {
+                setImage(image);
+            };
+        }
+        
+    }
+    return (
+        <Image image={image} x={props.x} y={props.y}></Image>
+    );
+}
+
 
 export default function MapEditorScreen() {
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -50,6 +77,63 @@ export default function MapEditorScreen() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    let map = [[]]
+
+    let layers = []
+
+    let tilesets = ["https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png", 
+                    "https://assets.codepen.io/21542/SeedCharacter.xl.png"]
+
+    const [tilesetSelected, setTilesetSelected] = useState([0, null]);
+    const [tileSelected, setTileSelected] = useState([0, 0]);
+
+    function getCoords(e) {
+        const stage = e.target.getStage();
+        const pointerPosition = stage.getPointerPosition(); 
+
+        const { x, y } = pointerPosition;
+        return [Math.floor(x / 32), Math.floor(y / 32)];
+    }
+
+    const handleAddTile = (e) => {
+        console.log(getCoords(e))
+
+        let ctx = e.target.getStage().children[0].canvas.context
+
+        const size_of_crop = 32
+
+        console.log(ctx, tilesetSelected)
+
+        ctx.drawImage(
+            tilesetSelected, 
+            0, 
+            0, 
+            size_of_crop, 
+            size_of_crop,
+            32,
+            32,
+            size_of_crop,
+            size_of_crop
+        );
+        console.log(e.target.getStage().bufferCanvas.context)
+    }
+
+    const handleTilesetClick = (e) => {
+        setTileSelected(getCoords(e))
+    }
+
+    const handleUploadTileset = (e) => {
+
+    }
+
+    const handleCreateTileset = (e) => {
+        
+    }
+
+    const handleEditTileset = (e) => {
+
+    }
 
     return (
         <ThemeProvider theme={theme}>
@@ -100,33 +184,47 @@ export default function MapEditorScreen() {
                     </Menu>
                 </Toolbar>
             </Container>
-
+            
             <Container disableGutters maxWidth="lg" sx={{ border: 1, backgroundColor: "#DDD2FF" }}>
+                
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
-                    <Grid container md={2}>
-                        {cards.map((card) => (
-                            <Grid item key={card} md={4}>
-                                <Link to="/tileEditor">
-                                    <Card>
-                                        <CardMedia component="img" image={require("../images/tree.png")}/>
-                                    </Card>
-                                </Link>
-                            </Grid>
-                        ))}
-                        <Toolbar disableGutters sx={{ mt: 0, borderTop: 1 }}>
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><UndoIcon/></Button>
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><RedoIcon/></Button>
+                    <Grid container sx={{ backgroundColor: "yellow", width: "20%", height: '550px'}}>
+                        <Stage width={TILESET_WIDTH} height={TILESET_HEIGHT} style={{ backgroundColor: "gray", width: "100%", height: "95%" }}>
+                            <Layer onClick={handleTilesetClick}>
+                                <URLImage src={tilesets[tilesetSelected[0]]} setTilesetSelected={setTilesetSelected}/>
+                                <Rect
+                                    x={tileSelected[0] * 32}
+                                    y={tileSelected[1] * 32}
+                                    width={32}
+                                    height={32}
+                                    fill="transparent"
+                                    stroke="black"
+                                />
+                            </Layer>
+                        </Stage>
+
+                        <Toolbar disableGutters style={{ width: "100%", height: "15px" }}>
+                            <Button variant="contained" sx={{ ml: 3, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><UndoIcon/></Button>
+                            <Button variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><RedoIcon/></Button>
+                            <Button variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><EditIcon/></Button>
                             
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><CloudUploadIcon/></Button>
-                            <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
+                            <Button onClick={handleUploadTileset} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><CloudUploadIcon/></Button>
+                            <Link to='/tileEditor'><Button onClick={handleCreateTileset} variant="contained" sx={{ ml: 1, maxWidth: '0', minWidth: '0', maxHeight: '20px' }}><AddIcon/></Button></Link>
                         </Toolbar>
                     </Grid>
+                    
+                    
 
-                    <Grid md={10} component={Paper} elevation={6} square>
-                    </Grid>
+                    <Stage onClick={handleAddTile} width={830} height={510} style={{ backgroundColor: "white", marginLeft: "60px", marginTop:'15px', width: "70%", height: '520px' , border: '3px solid black'}}>
+                        <Layer>
+                            <Text text="Map" />
+                        </Layer>
+                    </Stage>
 
                 </Grid>
             </Container>
+
+            
         </main>
         </ThemeProvider>
     );
