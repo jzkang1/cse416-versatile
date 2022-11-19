@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState, useEffect } from "react";
+import { useRef, useEffect, useContext, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
@@ -28,17 +28,43 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
-
+import EditIcon from '@mui/icons-material/Edit';
+import { Stage, Layer, Text, Image, Rect } from 'react-konva';
+const TILESET_HEIGHT = 512
+const TILESET_WIDTH = 239
 const theme = createTheme({
     palette: {
-        primary: {
-            main: "#002956",
-        },
-        background: {
-            default: "#69C6DE",
-        },
+        primary: { main: "#002956" },
+        background: { default: "#69C6DE" },
     },
 });
+
+function URLImage(props) {
+    const [image, setImage] = useState(null);
+    
+    useEffect(() => {
+        loadImage();
+    }, [props.src]);
+    
+    function loadImage() {
+        if (props.src) {
+            const image = new window.Image();
+            image.src = props.src;
+            
+            // console.log(image)
+            props.setTilesetSelected(image)
+
+            image.onload = () => {
+                setImage(image);
+            };
+        }
+        
+    }
+    return (
+        <Image image={image} x={props.x} y={props.y}></Image>
+    );
+}
+
 
 export default function MapEditorScreen() {
     const { auth } = useContext(AuthContext);
@@ -83,6 +109,51 @@ export default function MapEditorScreen() {
         }
 
         return tilesets;
+    }
+    
+    let map = [[]]
+
+    let layers = []
+
+    let tilesets = ["https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png", 
+                    "https://assets.codepen.io/21542/SeedCharacter.xl.png"]
+
+    const [tilesetSelected, setTilesetSelected] = useState([0, null]);
+    const [tileSelected, setTileSelected] = useState([0, 0]);
+
+    function getCoords(e) {
+        const stage = e.target.getStage();
+        const pointerPosition = stage.getPointerPosition(); 
+
+        const { x, y } = pointerPosition;
+        return [Math.floor(x / 32), Math.floor(y / 32)];
+    }
+
+    const handleAddTile = (e) => {
+        console.log(getCoords(e))
+
+        let ctx = e.target.getStage().children[0].canvas.context
+
+        const size_of_crop = 32
+
+        console.log(ctx, tilesetSelected)
+
+        ctx.drawImage(
+            tilesetSelected, 
+            0, 
+            0, 
+            size_of_crop, 
+            size_of_crop,
+            32,
+            32,
+            size_of_crop,
+            size_of_crop
+        );
+        console.log(e.target.getStage().bufferCanvas.context)
+    }
+
+    const handleTilesetClick = (e) => {
+        setTileSelected(getCoords(e))
     }
 
     const handleTilesetUpload = (event) => {
@@ -156,9 +227,11 @@ export default function MapEditorScreen() {
                     </Menu>
                 </Toolbar>
             </Container>
-
+            
             <Container disableGutters maxWidth="lg" sx={{ border: 1, backgroundColor: "#DDD2FF" }}>
+                
                 <Grid container component="main" sx={{ minHeight: '60vh' }}>
+
                     <Grid container md={2}>
                         {getTilesets()}
                         <Toolbar disableGutters sx={{ borderTop: 1 }}>
@@ -169,11 +242,31 @@ export default function MapEditorScreen() {
                                 <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload}/>
                             </Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
+
+                    <Grid container sx={{ backgroundColor: "yellow", width: "20%", height: '550px'}}>
+                        <Stage width={TILESET_WIDTH} height={TILESET_HEIGHT} style={{ backgroundColor: "gray", width: "100%", height: "95%" }}>
+                            <Layer onClick={handleTilesetClick}>
+                                <URLImage src={tilesets[tilesetSelected[0]]} setTilesetSelected={setTilesetSelected}/>
+                                <Rect
+                                    x={tileSelected[0] * 32}
+                                    y={tileSelected[1] * 32}
+                                    width={32}
+                                    height={32}
+                                    fill="transparent"
+                                    stroke="black"
+                                />
+                            </Layer>
+                        </Stage>
                         </Toolbar>
                     </Grid>
+                    
+                    
 
-                    <Grid md={10} component={Paper} elevation={6} square>
-                    </Grid>
+                    <Stage onClick={handleAddTile} width={830} height={510} style={{ backgroundColor: "white", marginLeft: "60px", marginTop:'15px', width: "70%", height: '520px' , border: '3px solid black'}}>
+                        <Layer>
+                            <Text text="Map" />
+                        </Layer>
+                    </Stage>
 
                 </Grid>
             </Container>
