@@ -26,7 +26,7 @@ function GlobalStoreContextProvider(props) {
         currentProfileView: null,
         currentProfileMaps: [],
         shareMapId: null,
-        currentMapEdit: null
+        currentMapEdit: null,
     });
     
     const navigate = useNavigate();
@@ -476,8 +476,8 @@ function GlobalStoreContextProvider(props) {
         let response = await api.getMap(id);
         if (response.data.success) {
             let map = response.data.map;
-
-            storeReducer({
+            
+            storeReducer({  
                 type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
                 payload: map
             })

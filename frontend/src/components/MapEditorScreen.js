@@ -30,6 +30,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import EditIcon from '@mui/icons-material/Edit';
 import { Stage, Layer, Text, Image, Rect } from 'react-konva';
+import MenuList from '@mui/material/MenuList';
+import ListItemText from '@mui/material/ListItemText';
 const TILESET_HEIGHT = 512
 const TILESET_WIDTH = 239
 const theme = createTheme({
@@ -50,21 +52,16 @@ function URLImage(props) {
         if (props.src) {
             const image = new window.Image();
             image.src = props.src;
-            
-            // console.log(image)
-            props.setTilesetSelected(image)
 
             image.onload = () => {
                 setImage(image);
             };
         }
-        
     }
     return (
         <Image image={image} x={props.x} y={props.y}></Image>
     );
 }
-
 
 export default function MapEditorScreen() {
     const { auth } = useContext(AuthContext);
@@ -86,66 +83,55 @@ export default function MapEditorScreen() {
         setAnchorElUser(null);
     };
 
-    const getTilesets = () => {
-        if (!store.currentMapEdit) {
-            return null;
-        }
+    const [anchorTilesetList, setAnchorTilesetList] = useState(null);
 
-        let tilesets = [];
-        for (let i = 0; i < store.currentMapEdit.tilesets.length; i++) {
-            let tileset = store.currentMapEdit.tilesets[i];
+    const handleOpenTilesetList = (event) => {
+        setAnchorTilesetList(event.currentTarget);
+    };
 
-            console.log(tileset)
+    const handleCloseTilesetList = () => {
+        setAnchorTilesetList(null);
+    };
 
-            tilesets.push(
-                <Grid item key={tileset._id} md={4}>
-                    <Link to="/tileEditor">
-                        <Card>
-                            <CardMedia component="img" image={tileset.data}/>
-                        </Card>
-                    </Link>
-                </Grid>
-            );
-        }
+    const handleTilesetClick = (e, tilesetId) => {
+        let index = tilesetId
+        const image = new window.Image();
+        image.src = store.currentMapEdit.tilesets[index].data;
 
-        return tilesets;
+        image.onload = () => {
+            setTilesetSelected([index, image])
+        };
     }
 
-    const [tilesetSelected, setTilesetSelected] = useState([0, null]);
+    const [tilesetSelected, setTilesetSelected] = useState([-1, null]);
     const [tileSelected, setTileSelected] = useState([0, 0]);
 
     function getCoords(e) {
         const stage = e.target.getStage();
-        const pointerPosition = stage.getPointerPosition(); 
-
-        const { x, y } = pointerPosition;
+        const { x, y } = stage.getPointerPosition();
         return [Math.floor(x / 32), Math.floor(y / 32)];
     }
 
     const handleAddTile = (e) => {
-        console.log(getCoords(e))
-
+        const coords = getCoords(e)
+        let x = coords[0]
+        let y = coords[1]
         let ctx = e.target.getStage().children[0].canvas.context
-
         const size_of_crop = 32
-
-        console.log(ctx, tilesetSelected)
-
         ctx.drawImage(
-            tilesetSelected, 
-            0, 
-            0, 
+            tilesetSelected[1], 
+            tileSelected[0] * size_of_crop, 
+            tileSelected[1] * size_of_crop, 
             size_of_crop, 
             size_of_crop,
-            32,
-            32,
+            x * size_of_crop,
+            y * size_of_crop,
             size_of_crop,
             size_of_crop
         );
-        console.log(e.target.getStage().bufferCanvas.context)
     }
 
-    const handleTilesetClick = (e) => {
+    const handleTileClick = (e) => {
         setTileSelected(getCoords(e))
     }
 
@@ -168,16 +154,12 @@ export default function MapEditorScreen() {
 
             store.createTileset(store.currentMapEdit._id, filename, imageString);
         }
-
         reader.readAsDataURL(file);
     }
 
     if (!store.currentMapEdit) {
         return null;
     }
-
-    let tilesets = ["https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png", 
-                    "https://assets.codepen.io/21542/SeedCharacter.xl.png"]
 
     return (
         <ThemeProvider theme={theme}>
@@ -190,7 +172,7 @@ export default function MapEditorScreen() {
                     </Typography>
                     <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>Share</Button>
                     <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Save</Button>
-                    <Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Exit</Button>
+                    <Link to='/personal' style={{ textDecoration: 'none'}}><Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Exit</Button></Link>
                 </Toolbar>
 
                     
@@ -200,6 +182,36 @@ export default function MapEditorScreen() {
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><LayersIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}><FormatColorFillIcon/></Button>
                     <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}><LayersClearIcon/></Button>
+                    <Button onClick={handleOpenTilesetList} sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}>Tilesets</Button>
+                    <Menu
+                        sx={{ mt: "36px" }}
+                        id="menu-appbar"
+                        anchorEl={anchorTilesetList}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: "top",
+                            horizontal: "left",
+                        }}
+                        open={Boolean(anchorTilesetList)}
+                        onClose={handleCloseTilesetList}
+                    >
+                    
+                        <MenuList sx={{ width: 320, maxWidth: '100%' }}>
+                            {store.currentMapEdit.tilesets?.map((tileset, i) => (
+                                <MenuItem onClick={(event) => handleTilesetClick(event, i)}sx={{ width: '100%'}}>
+                                     <ListItemText>
+                                         {tileset.name}
+                                     </ListItemText>
+                                </MenuItem>
+                            ))}
+                
+                            
+                        </MenuList>
+                    </Menu>
 
                     <Button onClick={handleOpenUserMenu} sx={{ display: "block", marginLeft: "auto" }}><DynamicFeedIcon/></Button>
                     <Button sx={{ display: "block" }}><SettingsIcon/></Button>
@@ -234,8 +246,8 @@ export default function MapEditorScreen() {
 
                     <Grid container md={2}>
                         <Stage width={TILESET_WIDTH} height={TILESET_HEIGHT} style={{ backgroundColor: "gray", width: "100%", height: "95%" }}>
-                            <Layer onClick={handleTilesetClick}>
-                                <URLImage src={tilesets[tilesetSelected[0]]} setTilesetSelected={setTilesetSelected}/>
+                            <Layer onClick={handleTileClick}>
+                                <URLImage src={tilesetSelected[0] >= 0 ? store.currentMapEdit.tilesets[tilesetSelected[0]].data : ""}/>
                                 <Rect
                                     x={tileSelected[0] * 32}
                                     y={tileSelected[1] * 32}
@@ -254,15 +266,8 @@ export default function MapEditorScreen() {
                                 <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload}/>
                             </Button>
                             <Button variant="contained" sx={{ marginLeft: 'auto', p: 1, ml: 1, minWidth: '30px', maxHeight: '20px' }}><AddIcon/></Button>
-                        </Toolbar>
-
-                        <img src={store.currentMapEdit.tilesets.length > 0 ? store.currentMapEdit.tilesets[0].data : ""} alt="?"/>
-                    
-
-                        
+                        </Toolbar>                        
                     </Grid>
-                    
-                    
 
                     <Stage onClick={handleAddTile} width={830} height={510} style={{ backgroundColor: "white", marginLeft: "60px", marginTop:'15px', width: "70%", height: '520px' , border: '3px solid black'}}>
                         <Layer>
