@@ -49,7 +49,7 @@ getMap = async (req, res) => {
 
         let map = await Map.findOne({_id : _id}).populate("tilesets");
 
-        console.log(map)
+        // console.log(map)
 
         if (map) {
             return res.status(200).json({
