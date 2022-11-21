@@ -12,7 +12,7 @@ app.use(cors({
     origin: ["http://localhost:3000"],
     credentials: true
 }));
-app.use(express.json())
+app.use(express.json({limit: "50mb"}))
 
 const versatileRouter = require('./routes/versatile-router');
 app.use('/api', versatileRouter);

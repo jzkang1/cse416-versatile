@@ -485,10 +485,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.createTileset = async function(mapID, name, imageString) {
-        if (!mapID) {
-            return;
-        }
-
         console.log("store.createTileset: Creating tileset... ")
 
         let payload = {
@@ -508,6 +504,30 @@ function GlobalStoreContextProvider(props) {
             })
 
             console.log("store.createTileset: tileset created")
+        }
+    }
+
+    store.updateTileset = async function(mapID, tilesetID, name, imageString) {
+
+        console.log("store.createTileset: Creating tileset... ")
+        let payload = {
+            mapID: mapID,
+            tilesetID: tilesetID,
+            name: name,
+            data: imageString
+        }
+
+        let response = await api.updateTileset(payload);
+
+        if (response.data.success) {
+            let map = response.data.map;
+            console.log(map)
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
+                payload: map
+            })
+
+            console.log("store.createTileset: tileset updated")
         }
     }
 
