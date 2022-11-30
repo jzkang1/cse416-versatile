@@ -46,9 +46,19 @@ export default function MapEditorScreen() {
     const { store } = useContext(GlobalStoreContext);
 
     let { id } = useParams();
+
+    let [mapName, setMapName] = useState(null)
     
     useEffect(() => {
-        store.loadMapEdit(id);
+        store.loadMapEdit(id).then((map) => {
+            setMapName(map.name)
+            setTileHeight(map.tileHeight)
+            setTileWidth(map.tileWidth)
+            setEditorHeight(map.height)
+            setEditorWidth(map.width)
+            setMapLayers(map.layers)
+            // handleRenderTile()
+        });
     }, []);
 
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -87,55 +97,68 @@ export default function MapEditorScreen() {
         setTileSelected(getCoords(e))
     }
 
-    const [SIZE_OF_CROP, setCropSize] = useState(32)
-    const handleChangeCropSize = (e) => {
+    const [TILE_HEIGHT, setTileHeight] = useState(32)
+    const [TILE_WIDTH, setTileWidth] = useState(32)
+    const [EDITOR_HEIGHT, setEditorHeight] = useState(1024)
+    const [EDITOR_WIDTH, setEditorWidth] = useState(1024)
+    const handleChangeTileHeight = (e) => {
         e.preventDefault();
-
-        const newCropSize = new FormData(e.currentTarget).get("cropSize");
-
-        setCropSize(newCropSize)
+        const newTileHeight = new FormData(e.currentTarget).get("tileHeight");
+        setTileHeight(Number(newTileHeight))
     }
 
-    const [EDITOR_HEIGHT, setEditorHeight] = useState(1024)
+    const handleChangeTileWidth = (e) => {
+        e.preventDefault();
+        const newTileWidth = new FormData(e.currentTarget).get("tileWidth");
+        setTileWidth(Number(newTileWidth))
+    }
+
     const handleChangeEditorHeight = (e) => {
         e.preventDefault();
-
         const newHeight = new FormData(e.currentTarget).get("editorHeight");
-
-        setEditorHeight(newHeight)
+        setEditorHeight(Number(newHeight))
     }
 
-    const [EDITOR_WIDTH, setEditorWidth] = useState(1024)
     const handleChangeEditorWidth = (e) => {
         e.preventDefault();
-
         const newWidth = new FormData(e.currentTarget).get("editorWidth");
-
-        setEditorWidth(newWidth)
+        setEditorWidth(Number(newWidth))
     }
+
+    const [MAP_LAYERS, setMapLayers] = useState([])
 
     function getCoords(e) {
         const stage = e.target.getStage();
         const { x, y } = stage.getPointerPosition();
-        return [Math.floor(x / SIZE_OF_CROP), Math.floor(y / SIZE_OF_CROP)];
-    }
+        return [Math.floor(x / TILE_WIDTH), Math.floor(y / TILE_HEIGHT)];
+    }  
 
     const handleAddTile = (e) => {
         const coords = getCoords(e)
         let x = coords[0]
         let y = coords[1]
-        let ctx = e.target.getStage().children[0].canvas.context
-        ctx.drawImage(
-            tilesetSelected[1], 
-            tileSelected[0] * SIZE_OF_CROP, 
-            tileSelected[1] * SIZE_OF_CROP, 
-            SIZE_OF_CROP, 
-            SIZE_OF_CROP,
-            x * SIZE_OF_CROP,
-            y * SIZE_OF_CROP,
-            SIZE_OF_CROP,
-            SIZE_OF_CROP
-        );
+
+        console.log("TILE: ", tileSelected)
+        console.log("MAP: ", x, y)
+        
+        let newMap = [...MAP_LAYERS]
+        newMap[x][y] = [tilesetSelected[0], tileSelected[0], tileSelected[1]]
+        setMapLayers(newMap)
+    }
+
+    const stageRef = useRef(null);
+
+    const handleSave = () => {
+        const uri = stageRef.current.children[0].canvas.toDataURL();
+        let map = store.currentMapEdit;
+        map.layers = MAP_LAYERS
+        map.name = mapName;
+        map.tileHeight = TILE_HEIGHT
+        map.tileWidth = TILE_WIDTH
+        map.height = EDITOR_HEIGHT
+        map.width = EDITOR_WIDTH
+        map.thumbnail = uri;
+        store.updateMap(map);
     }
 
     const handleTilesetUpload = (event) => {
@@ -160,22 +183,62 @@ export default function MapEditorScreen() {
         reader.readAsDataURL(file);
     }
 
+    const onKeyEnter = (e) => {
+        if (e.key === "Enter") {
+          console.log('Input value', e.target.value);
+          setMapName(e.target.value);
+          
+          e.preventDefault();
+        }
+      }
+
     if (!store.currentMapEdit) {
         return null;
     }
 
+    
     let editorGrid = []
+    if (stageRef.current) {
                     
-    for (let i = 0; i < EDITOR_WIDTH/SIZE_OF_CROP; i++) {
-        for (let j = 0; j < EDITOR_HEIGHT/SIZE_OF_CROP; j++) {
-            editorGrid.push(<Rect
-                x={i * SIZE_OF_CROP}
-                y={j * SIZE_OF_CROP}
-                width={SIZE_OF_CROP}
-                height={SIZE_OF_CROP}
-                fill="transparent"
-                stroke="black"
-            />)
+        for (let i = 0; i < MAP_LAYERS.length; i++) {
+            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                editorGrid.push(<Rect
+                    x={i * TILE_WIDTH}
+                    y={j * TILE_HEIGHT}
+                    width={TILE_WIDTH}
+                    height={TILE_HEIGHT}
+                    fill="transparent"
+                    stroke="black"
+                />)
+            }
+        }
+
+        console.log(MAP_LAYERS)
+        let ctx = stageRef.current.children[0].canvas.context
+
+        for (let i = 0; i < MAP_LAYERS.length; i++) {
+            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                let tilesetIndex = MAP_LAYERS[i][j][0]
+                if (tilesetIndex >= 0) {
+                    const image = new window.Image();
+                    image.src = store.currentMapEdit.tilesets[tilesetIndex].data;
+
+                    image.onload = () => {
+                        ctx.drawImage(
+                            image, 
+                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
+                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
+                            TILE_WIDTH, 
+                            TILE_HEIGHT,
+                            i * TILE_WIDTH,
+                            j * TILE_HEIGHT,
+                            TILE_WIDTH,
+                            TILE_HEIGHT
+                        );
+                    };
+                    
+                }
+            }
         }
     }
 
@@ -185,11 +248,13 @@ export default function MapEditorScreen() {
             <Container disableGutters maxWidth={false} maxHeight={false} sx={{ width: "75%", height: "50%" }}>
                 <Container maxWidth={false} disableGutters sx={{ width: "100%", mt: 4, pt: 2, border: 1, backgroundColor: "#DDD2FF" }}>
                     <Toolbar sx={{ mt: -1.5, justifyContent: "center" }}>
-                        <Typography variant="h3" color="inherit" noWrap align="center" sx={{ ml: 3 }}>
-                            {store.currentMapEdit.name}
-                        </Typography>
+                        <TextField 
+                            label= {mapName}
+                            onKeyPress={onKeyEnter}
+                            sx={{ ml: 3 }}>
+                        </TextField>
                         <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>Share</Button>
-                        <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Save</Button>
+                        <Button onClick={handleSave} sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Save</Button>
                         <Link to='/personal' style={{ textDecoration: 'none'}}><Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Exit</Button></Link>
                     </Toolbar>
 
@@ -201,12 +266,25 @@ export default function MapEditorScreen() {
                         <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}><FormatColorFillIcon/></Button>
                         <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block"}}><LayersClearIcon/></Button>
 
-                        <Box component="form" onSubmit={handleChangeCropSize} noValidate sx={{ m: 1 }}>
+                        <Box component="form" onSubmit={handleChangeTileHeight} noValidate sx={{ m: 1 }}>
                                 <TextField
-                                // sx={{ width: '50%' }}
                                 size="small"
-                                name="cropSize"
-                                label={"Crop size: " + SIZE_OF_CROP}
+                                name="tileHeight"
+                                label={"Tile Height: " + TILE_HEIGHT}
+                                InputProps={{
+                                    endAdornment: (
+                                        <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
+                                            Enter
+                                        </Button>
+                                    )
+                                }}/>
+                        </Box>
+
+                        <Box component="form" onSubmit={handleChangeTileWidth} noValidate sx={{ m: 1 }}>
+                                <TextField
+                                size="small"
+                                name="tileWidth"
+                                label={"Tile Width: " + TILE_WIDTH}
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
@@ -218,10 +296,9 @@ export default function MapEditorScreen() {
 
                         <Box component="form" onSubmit={handleChangeEditorWidth} noValidate sx={{ m: 1 }}>
                                 <TextField
-                                // sx={{ width: '50%' }}
                                 size="small"
                                 name="editorWidth"
-                                label={"Width: " + SIZE_OF_CROP}
+                                label={"Map Width: " + EDITOR_WIDTH}
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
@@ -233,10 +310,9 @@ export default function MapEditorScreen() {
 
                         <Box component="form" onSubmit={handleChangeEditorHeight} noValidate sx={{ m: 1 }}>
                                 <TextField
-                                // sx={{ width: '50%' }}
                                 size="small"
                                 name="editorHeight"
-                                label={"Height: " + SIZE_OF_CROP}
+                                label={"Map Height: " + EDITOR_HEIGHT}
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
@@ -331,10 +407,10 @@ export default function MapEditorScreen() {
                                 <Layer onClick={handleTileClick} style={{ backgroundColor: "yellow" }}>
                                     <Image image={tilesetSelected[0] >= 0 ? tilesetSelected[1] : ""} x={0} y={0} style={{ backgroundColor: "yellow" }}></Image>
                                     <Rect
-                                        x={tileSelected[0] * SIZE_OF_CROP}
-                                        y={tileSelected[1] * SIZE_OF_CROP}
-                                        width={SIZE_OF_CROP}
-                                        height={SIZE_OF_CROP}
+                                        x={tileSelected[0] * TILE_WIDTH}
+                                        y={tileSelected[1] * TILE_HEIGHT}
+                                        width={TILE_WIDTH}
+                                        height={TILE_HEIGHT}
                                         fill="transparent"
                                         stroke="black"
                                     />
@@ -342,7 +418,7 @@ export default function MapEditorScreen() {
                             </Stage>                 
                         </Grid>
 
-                        <Stage onClick={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "65%", maxHeight: '60vh' , border: '3px solid black'}}>
+                        <Stage onClick={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} ref={stageRef} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "65%", maxHeight: '60vh' , border: '3px solid black'}}>
                             <Layer>
                                 {editorGrid.map((rect) => rect )}
                             </Layer>

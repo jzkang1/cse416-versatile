@@ -219,6 +219,8 @@ function GlobalStoreContextProvider(props) {
                     if (!personalMaps[i].collaborators.includes(newUser)) {
                         personalMaps[i].collaborators.push(newUser);
                         store.updateMap(personalMaps[i])
+
+                        return newUser
                     } else {
                         auth.showModal(newUser + " has already been added!")
                     }  
@@ -256,7 +258,7 @@ function GlobalStoreContextProvider(props) {
                 }
             }
         }
-        store.closeShareModal();
+        // store.closeShareModal();
     }
 
     store.searchCommunityMap = async function(searchText) {
@@ -438,13 +440,14 @@ function GlobalStoreContextProvider(props) {
 
     store.createMap = async function() {
         console.log("store.createMap: Creating Map...")
-
-        // const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
+        
         let payload = {
             name: "untitled",
             owner: auth.user.username,
-            height: 320,
-            width: 320
+            height: 4096,
+            width: 4096,
+            tileHeight: 32,
+            tileWidth: 32
         }
         let response = await api.createMap(payload);
         if (response.data.success) {
@@ -481,6 +484,8 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
                 payload: map
             })
+
+            return map
         }
     }
 
