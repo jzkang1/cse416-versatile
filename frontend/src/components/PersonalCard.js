@@ -20,7 +20,6 @@ export default function PersonalCard(props) {
     const { auth } = useContext(AuthContext);
 
     const { card } = props;
-
     const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -35,7 +34,7 @@ export default function PersonalCard(props) {
         console.log("handleOpenShare: " + mapId)
         e.stopPropagation();
         // const mapId = event.currentTarget.parentNode.childNodes[0].innerHTML
-
+        
         store.openShareModal(mapId)
     };
 
@@ -62,7 +61,7 @@ export default function PersonalCard(props) {
                 <Link to={`/editor/${card._id}`}>
                     <CardMedia
                         component="img"
-                        image={require('../images/forest.png')}
+                        src={card.thumbnail}
                         sx={{ height: '130px' }}
                     />
                 </Link>

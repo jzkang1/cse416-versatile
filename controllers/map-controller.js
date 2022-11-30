@@ -70,7 +70,7 @@ getMap = async (req, res) => {
 
 createMap = async(req, res) => {
     try {
-        const { name, owner, height, width } = req.body;
+        const { name, owner, height, width, tileHeight, tileWidth } = req.body;
 
         if (!name || !owner || !height || !width)  {
             return res.status(400).json({
@@ -78,9 +78,16 @@ createMap = async(req, res) => {
             });
         }
 
-        const layers = [];
-        const tilesets = [];
+        let map = []
+        for (let i = 0; i < width/tileWidth; i++) {
+            map.push([])
+            for (let j = 0; j < height/tileHeight; j++) {
+                map[i].push([-1, -1, -1])
+            }
+        }
 
+        const layers = map
+        const tilesets = [];
         const collaborators = [];
 
         const createDate = new Date();
@@ -90,7 +97,7 @@ createMap = async(req, res) => {
 
         const newMap = new Map({
             name, owner,
-            height, width, layers, tilesets,
+            height, width, tileHeight, tileWidth, layers, tilesets,
             collaborators, createDate, modifyDate,
             isPublished
         });
@@ -114,7 +121,7 @@ updateMap = async(req, res) => {
         const {
             _id, name, owner,
 
-            height, width, layers, tilesets,
+            height, width, tileHeight, tileWidth, layers, tilesets,
              
             collaborators, createDate, modifyDate,
             
@@ -122,7 +129,7 @@ updateMap = async(req, res) => {
             
             description, views, usersWhoLiked, usersWhoDisliked, comments,
             
-            thumbnailLarge, thumbnailSmall
+            thumbnail
         } = req.body;
         
         Map.findOne({ _id: _id }, (err, map) => {
@@ -137,6 +144,8 @@ updateMap = async(req, res) => {
 
             if (height) map.height = height
             if (width) map.width = width
+            if (tileHeight) map.tileHeight = tileHeight
+            if (tileWidth) map.tileWidth = tileWidth
             if (layers) map.layers = layers
             if (tilesets) map.tilesets = tilesets
 
@@ -153,8 +162,7 @@ updateMap = async(req, res) => {
             if (usersWhoDisliked) map.usersWhoDisliked = usersWhoDisliked
 
             if (comments) map.comments = comments
-            if (thumbnailLarge) map.thumbnailLarge = thumbnailLarge
-            if (thumbnailSmall) map.thumbnailSmall = thumbnailSmall
+            if (thumbnail) map.thumbnail = thumbnail
 
             map.save();
             console.log("map update success")
