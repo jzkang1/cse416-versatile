@@ -175,10 +175,18 @@ export default function MapEditorScreen() {
             if (!event?.target?.result) {
               return;
             }
+            
+            let img = new window.Image();
+            img.src = event.target.result;
 
-            const imageString = event.target.result;
+            img.onload = () => {
+                const imageString = event.target.result;
 
-            store.createTileset(store.currentMapEdit._id, filename, imageString);
+                store.createTileset(store.currentMapEdit._id, filename, imageString, img.width, img.height);
+
+            }
+
+            
         }
         reader.readAsDataURL(file);
     }
@@ -212,8 +220,7 @@ export default function MapEditorScreen() {
                 />)
             }
         }
-
-        console.log(MAP_LAYERS)
+        
         let ctx = stageRef.current.children[0].canvas.context
 
         for (let i = 0; i < MAP_LAYERS.length; i++) {

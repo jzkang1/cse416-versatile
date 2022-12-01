@@ -57,7 +57,7 @@ const Map = require("../models/map-model")
 
 createTileset = async (req, res) => {
     try {
-        const { mapID, name, data } = req.body;
+        const { mapID, name, data, imageWidth, imageHeight } = req.body;
 
         let map = await Map.findOne({ _id: mapID })
 
@@ -67,7 +67,7 @@ createTileset = async (req, res) => {
             });
         }
 
-        const newTileset = {name, data};
+        const newTileset = {name, data, imageWidth, imageHeight};
         map.tilesets.push(newTileset);
 
         await map.save();

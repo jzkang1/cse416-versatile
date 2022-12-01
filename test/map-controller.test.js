@@ -22,40 +22,33 @@ test("Empty test for skipping the error", async () => {
     
         "height": 320,
         "width": 320,
-        "layers": [
-            {
-                "name" : "grass layer",
-                "grid": {
-                    "data": [
-                        [1,2,3,4],
-                        [5,6,7,8],
-                        [9,10,11,12],
-                        [13,14,15,16]
-                    ]
-                }
-            }
-        ],
+        "layers": [],
         "tilesets": [],
         
         "collaborators": [],
         "createDate": "2022-11-13",
         "modifyDate": "2022-11-13",
 
-        "isPublished": true
+        "isPublished": true,
+
+        "tileWidth": 32,
+        "tileHeight": 32,
     }
 
     const {
         name, owner,
         height, width, layers, tilesets,
         collaborators, createDate, modifyDate,
-        isPublished
+        isPublished,
+        tileWidth, tileHeight
     } = mapDefault;
 
     let map = new Map({
         name, owner,
         height, width, layers, tilesets, 
         collaborators, createDate, modifyDate,
-        isPublished
+        isPublished,
+        tileWidth, tileHeight,
     });
 
     //create

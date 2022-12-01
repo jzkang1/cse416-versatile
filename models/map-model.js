@@ -23,6 +23,8 @@ const TilesetSchema = new Schema(
     {
         name: { type: String, required: true },
         data: { type: String, required: true },
+        imageWidth: { type: Number, required: true },
+        imageHeight: { type: Number, required: true },
     },
     { timestamps: true },
 )

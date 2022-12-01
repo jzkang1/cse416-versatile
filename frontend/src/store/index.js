@@ -489,13 +489,15 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.createTileset = async function(mapID, name, imageString) {
+    store.createTileset = async function(mapID, name, imageString, imageWidth, imageHeight) {
         console.log("store.createTileset: Creating tileset... ")
 
         let payload = {
             mapID: mapID,
             name: name,
-            data: imageString
+            data: imageString,
+            imageWidth: imageWidth,
+            imageHeight: imageHeight
         }
 
         let response = await api.createTileset(payload);
@@ -514,7 +516,7 @@ function GlobalStoreContextProvider(props) {
 
     store.updateTileset = async function(mapID, tilesetID, name, imageString) {
 
-        console.log("store.createTileset: Creating tileset... ")
+        console.log("store.updateTileset: Updating tileset ")
         let payload = {
             mapID: mapID,
             tilesetID: tilesetID,
@@ -532,7 +534,7 @@ function GlobalStoreContextProvider(props) {
                 payload: map
             })
 
-            console.log("store.createTileset: tileset updated")
+            console.log("store.updateTileset: tileset updated")
         }
     }
 
