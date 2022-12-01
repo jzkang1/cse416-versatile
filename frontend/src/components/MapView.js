@@ -191,6 +191,86 @@ export default function MapView() {
         commentRef.current.selected = false;
     }
 
+    const handleExportAsJSON = (event) => {
+        event.preventDefault();
+
+        if (!store.currentMapView) {
+            return;
+        }
+
+        // let fs = require('fs');
+        let fs;
+
+        let exportMap = {
+            backgroundcolor: "00FFFFFF",
+            class: "",
+            compressionlevel: -1,
+            height: store.currentMapView.height,
+            hexsidelength: 0,
+            infinite: false,
+            layers: [],
+            nextlayerid: store.currentMapView.layers.length,
+            orientation: "orthogonal",
+            parallaxoriginx: 0,
+            parallaxoriginy: 0,
+            properties: [],
+            renderorder: "right-down",
+            staggeraxis: 0,
+            staggerindex: 0,
+            tiledversion: "1.9.1",
+            tileheight: store.currentMapView.tileheight,
+            tilesets: [],
+            tilewidth: store.currentMapView.tilewidth,
+            type: "map",
+            version: "1.0",
+            width: store.currentMapView.width,
+        }
+
+        let firstgid = 0;
+        for (let i = 0; i < store.currentMapView.tilesets.length; i++) {
+            let tileset = store.currentMapView.tilesets[i];
+
+            let exportTileset = {
+                backgroundcolor: "00FFFFFF",
+                columns: Math.ceil(store.currentMapView.width * store.currentMapView.tileWidth),
+                fillmode: "",
+                firstgid: firstgid,
+                image: tileset.data,
+                imageheight: tileset.imageHeight,
+                imagewidth: tileset.imageWidth,
+                margin: 0,
+                name: tileset.name,
+                objectalignment: "unspecified",
+                properties: [],
+                source: tileset.data,
+                spacing: 0,
+                tilecount: Math.ceil((tileset.imageWidth*tileset.imageHeight) / (store.currentMapView.tileWidth*store.currentMapView.tileHeight)),
+                tiledversion: "1.9.1",
+                tileheight: store.currentMapView.tileHeight,
+                tilerendersize: "tile",
+                tilewidth: store.currentMapView.tileWidth,
+                type: "tileset",
+                version: "1.6",
+
+            }
+            exportMap.tilesets.push(exportTileset);
+
+            firstgid += exportTileset.tilecount;
+        }
+
+        for (let i = 0; i < store.currentMapView.layers.length; i++) {
+            let layer = store.currentMapView.layers[i];
+
+            let exportLayer = {
+
+            }
+        }
+
+
+
+        fs.writeFile('test.json', JSON.stringify({ a:1, b:2, c:3 }, null, 4));
+    }
+
     return (
         <ThemeProvider theme={theme}>
             <Container component="main">
