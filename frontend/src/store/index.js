@@ -444,8 +444,8 @@ function GlobalStoreContextProvider(props) {
         let payload = {
             name: "untitled",
             owner: auth.user.username,
-            height: 4096,
-            width: 4096,
+            height: 1024,
+            width: 1024,
             tileHeight: 32,
             tileWidth: 32
         }
