@@ -241,18 +241,10 @@ export default function MapEditorScreen() {
             if (!event?.target?.result) {
               return;
             }
-            
-            let img = new window.Image();
-            img.src = event.target.result;
 
-            img.onload = () => {
-                const imageString = event.target.result;
+            const imageString = event.target.result;
 
-                store.createTileset(store.currentMapEdit._id, filename, imageString, img.width, img.height);
-
-            }
-
-            
+            store.createTileset(store.currentMapEdit._id, filename, imageString);
         }
         reader.readAsDataURL(file);
     }
