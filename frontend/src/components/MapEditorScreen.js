@@ -304,30 +304,21 @@ export default function MapEditorScreen() {
                 }
             })
         }
-        
-        let ctx = stageRef.current.children[0].canvas.context
+    }
 
-        for (let i = 0; i < MAP_LAYERS.length; i++) {
-            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                let tilesetIndex = MAP_LAYERS[i][j][0]
-                if (tilesetIndex >= 0) {
-                    const image = new window.Image();
-                    image.src = store.currentMapEdit.tilesets[tilesetIndex].data;
-
-                    image.onload = () => {
-                        ctx.drawImage(
-                            image, 
-                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
-                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
-                            TILE_WIDTH, 
-                            TILE_HEIGHT,
-                            i * TILE_WIDTH,
-                            j * TILE_HEIGHT,
-                            TILE_WIDTH,
-                            TILE_HEIGHT
-                        );
-                    };
-                    
+    const renderGridLines = () => {
+        let gridLines = []
+        if (stageRef.current) {
+            for (let i = 0; i < MAP_LAYERS.length; i++) {
+                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                    gridLines.push(<Rect
+                        x={i * TILE_WIDTH}
+                        y={j * TILE_HEIGHT}
+                        width={TILE_WIDTH}
+                        height={TILE_HEIGHT}
+                        fill="transparent"
+                        stroke="black"
+                    />)
                 }
             }
         }
