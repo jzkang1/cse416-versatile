@@ -57,7 +57,6 @@ export default function MapEditorScreen() {
             setEditorHeight(map.height)
             setEditorWidth(map.width)
             setMapLayers(map.layers)
-            // handleRenderTile()
         });
     }, []);
 
@@ -97,6 +96,8 @@ export default function MapEditorScreen() {
         setTileSelected(getCoords(e))
     }
 
+    let gridLines = []
+
     const [TILE_HEIGHT, setTileHeight] = useState(32)
     const [TILE_WIDTH, setTileWidth] = useState(32)
     const [EDITOR_HEIGHT, setEditorHeight] = useState(1024)
@@ -105,24 +106,32 @@ export default function MapEditorScreen() {
         e.preventDefault();
         const newTileHeight = new FormData(e.currentTarget).get("tileHeight");
         setTileHeight(Number(newTileHeight))
+        renderMap()
+        gridLines = renderGridLines()
     }
 
     const handleChangeTileWidth = (e) => {
         e.preventDefault();
         const newTileWidth = new FormData(e.currentTarget).get("tileWidth");
         setTileWidth(Number(newTileWidth))
+        renderMap()
+        gridLines = renderGridLines()
     }
 
     const handleChangeEditorHeight = (e) => {
         e.preventDefault();
         const newHeight = new FormData(e.currentTarget).get("editorHeight");
         setEditorHeight(Number(newHeight))
+        renderMap()
+        gridLines = renderGridLines()
     }
 
     const handleChangeEditorWidth = (e) => {
         e.preventDefault();
         const newWidth = new FormData(e.currentTarget).get("editorWidth");
         setEditorWidth(Number(newWidth))
+        renderMap()
+        gridLines = renderGridLines()
     }
 
     const [MAP_LAYERS, setMapLayers] = useState([])
@@ -140,8 +149,22 @@ export default function MapEditorScreen() {
 
         console.log("TILE: ", tileSelected)
         console.log("MAP: ", x, y)
+
+        let ctx = stageRef.current.children[0].canvas.context
+        ctx.drawImage(
+            tilesetSelected[1], 
+            tileSelected[0] * TILE_WIDTH, 
+            tileSelected[1] * TILE_HEIGHT, 
+            TILE_WIDTH, 
+            TILE_HEIGHT,
+            x * TILE_WIDTH,
+            y * TILE_HEIGHT,
+            TILE_WIDTH,
+            TILE_HEIGHT
+        );
         
-        let newMap = [...MAP_LAYERS]
+        let newMap = MAP_LAYERS
+        // let newMap = [...MAP_LAYERS]
         newMap[x][y] = [tilesetSelected[0], tileSelected[0], tileSelected[1]]
         setMapLayers(newMap)
     }
@@ -190,56 +213,64 @@ export default function MapEditorScreen() {
           
           e.preventDefault();
         }
-      }
+    }
 
     if (!store.currentMapEdit) {
         return null;
     }
 
-    
-    let editorGrid = []
-    if (stageRef.current) {
-                    
-        for (let i = 0; i < MAP_LAYERS.length; i++) {
-            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                editorGrid.push(<Rect
-                    x={i * TILE_WIDTH}
-                    y={j * TILE_HEIGHT}
-                    width={TILE_WIDTH}
-                    height={TILE_HEIGHT}
-                    fill="transparent"
-                    stroke="black"
-                />)
-            }
-        }
+    const renderMap = () => {
+        if (stageRef.current) {
+            let ctx = stageRef.current.children[0].canvas.context
+            for (let i = 0; i < MAP_LAYERS.length; i++) {
+                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                    let tilesetIndex = MAP_LAYERS[i][j][0]
+                    if (tilesetIndex >= 0) {
+                        const image = new window.Image();
+                        image.src = store.currentMapEdit.tilesets[tilesetIndex].data;
 
-        console.log(MAP_LAYERS)
-        let ctx = stageRef.current.children[0].canvas.context
-
-        for (let i = 0; i < MAP_LAYERS.length; i++) {
-            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                let tilesetIndex = MAP_LAYERS[i][j][0]
-                if (tilesetIndex >= 0) {
-                    const image = new window.Image();
-                    image.src = store.currentMapEdit.tilesets[tilesetIndex].data;
-
-                    image.onload = () => {
-                        ctx.drawImage(
-                            image, 
-                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
-                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
-                            TILE_WIDTH, 
-                            TILE_HEIGHT,
-                            i * TILE_WIDTH,
-                            j * TILE_HEIGHT,
-                            TILE_WIDTH,
-                            TILE_HEIGHT
-                        );
-                    };
-                    
+                        image.onload = () => {
+                            ctx.drawImage(
+                                image, 
+                                MAP_LAYERS[i][j][1] * TILE_WIDTH, 
+                                MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
+                                TILE_WIDTH, 
+                                TILE_HEIGHT,
+                                i * TILE_WIDTH,
+                                j * TILE_HEIGHT,
+                                TILE_WIDTH,
+                                TILE_HEIGHT
+                            );
+                        };
+                        
+                    }
                 }
             }
         }
+    }
+
+    const renderGridLines = () => {
+        let gridLines = []
+        if (stageRef.current) {
+            for (let i = 0; i < MAP_LAYERS.length; i++) {
+                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                    gridLines.push(<Rect
+                        x={i * TILE_WIDTH}
+                        y={j * TILE_HEIGHT}
+                        width={TILE_WIDTH}
+                        height={TILE_HEIGHT}
+                        fill="transparent"
+                        stroke="black"
+                    />)
+                }
+            }
+        }
+        return gridLines
+    }
+
+    if (tilesetSelected[0] == -1) { 
+        gridLines = renderGridLines()
+        renderMap()
     }
 
     return (
@@ -420,7 +451,7 @@ export default function MapEditorScreen() {
 
                         <Stage onClick={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} ref={stageRef} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "65%", maxHeight: '60vh' , border: '3px solid black'}}>
                             <Layer>
-                                {editorGrid.map((rect) => rect )}
+                                {gridLines.map((rect) => rect )}
                             </Layer>
                         </Stage>
 
