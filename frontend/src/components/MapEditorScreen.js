@@ -66,6 +66,7 @@ export default function MapEditorScreen() {
             setEditorWidth(map.width)
             setMapLayers(map.layers)
         });
+        
     }, []);
 
     const handleOpenUserMenu = (event) => {
@@ -263,55 +264,50 @@ export default function MapEditorScreen() {
     }
 
     const renderMap = () => {
-        if (stageRef.current) {
-            const loadImage = (src) =>
-                new Promise((resolve, reject) => {
-                const img = new window.Image();
-                img.src = src.data;
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-                
-                })  
-
-            Promise.all(store.currentMapEdit.tilesets.map(loadImage)).then(images => {
-                let ctx = editorRef.current.canvas.context
-                for (let i = 0; i < MAP_LAYERS.length; i++) {
-                    for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                        let tilesetIndex = MAP_LAYERS[i][j][0]
-                        if (tilesetIndex >= 0) {
-                            ctx.drawImage(
-                                images[tilesetIndex], 
-                                MAP_LAYERS[i][j][1] * TILE_WIDTH, 
-                                MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
-                                TILE_WIDTH, 
-                                TILE_HEIGHT,
-                                i * TILE_WIDTH,
-                                j * TILE_HEIGHT,
-                                TILE_WIDTH,
-                                TILE_HEIGHT
-                            );
-                            
-                        }
+        const loadImage = (src) =>
+            new Promise((resolve, reject) => {
+            const img = new window.Image();
+            img.src = src.data;
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            
+            })  
+        
+        Promise.all(store.currentMapEdit.tilesets.map(loadImage)).then(images => {
+            let ctx = editorRef.current.canvas.context
+            for (let i = 0; i < MAP_LAYERS.length; i++) {
+                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                    let tilesetIndex = MAP_LAYERS[i][j][0]
+                    if (tilesetIndex >= 0) {
+                        ctx.drawImage(
+                            images[tilesetIndex], 
+                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
+                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
+                            TILE_WIDTH, 
+                            TILE_HEIGHT,
+                            i * TILE_WIDTH,
+                            j * TILE_HEIGHT,
+                            TILE_WIDTH,
+                            TILE_HEIGHT
+                        );
                     }
                 }
-            })
-        }
+            }
+        })
     }
 
     const renderGridLines = () => {
         let gridLines = []
-        if (stageRef.current) {
-            for (let i = 0; i < MAP_LAYERS.length; i++) {
-                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                    gridLines.push(<Rect
-                        x={i * TILE_WIDTH}
-                        y={j * TILE_HEIGHT}
-                        width={TILE_WIDTH}
-                        height={TILE_HEIGHT}
-                        fill="transparent"
-                        stroke="black"
-                    />)
-                }
+        for (let i = 0; i < MAP_LAYERS.length; i++) {
+            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                gridLines.push(<Rect
+                    x={i * TILE_WIDTH}
+                    y={j * TILE_HEIGHT}
+                    width={TILE_WIDTH}
+                    height={TILE_HEIGHT}
+                    fill="transparent"
+                    stroke="black"
+                />)
             }
         }
         return gridLines
@@ -322,8 +318,6 @@ export default function MapEditorScreen() {
         renderMap()
     }
 
-    
-
     const handleToggleIsDeleting = (e) => { 
         setIsDeleting(!isDeleting)
     }
@@ -333,7 +327,6 @@ export default function MapEditorScreen() {
         deleteButton = <Button onClick={handleToggleIsDeleting} variant="contained" sx={{ ml: 1, borderRadius: '0px', display: "block"}}><LayersClearIcon/></Button>
     }
 
-    
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
