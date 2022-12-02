@@ -78,11 +78,11 @@ createMap = async(req, res) => {
             });
         }
 
-        let map = []
+        let map = [[]]
         for (let i = 0; i < width/tileWidth; i++) {
-            map.push([])
+            map[0].push([])
             for (let j = 0; j < height/tileHeight; j++) {
-                map[i].push([-1, -1, -1])
+                map[0][i].push([-1, -1, -1])
             }
         }
 

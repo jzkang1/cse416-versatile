@@ -19,12 +19,15 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { Stage, Layer, Text, Image, Rect } from 'react-konva';
+import { IconButton } from '@mui/material';
 import MenuList from '@mui/material/MenuList';
 import ListItemText from '@mui/material/ListItemText';
 import TextField from '@mui/material/TextField';
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 import MapSection from './Map'
 import TilesetSection from './Tileset'
@@ -55,10 +58,12 @@ export default function MapEditorScreen() {
     const [tilesetSelected, setTilesetSelected] = useState([-1, null]);
     const [tileSelected, setTileSelected] = useState([0, 0]);
     const [MAP_LAYERS, setMapLayers] = useState([])
+    const [selectedLayer, setSelectedLayer] = useState(0)
 
+    const stageRef = useRef(null);
     const editorRef = useRef(null);
 
-    const renderMap = (context) => {
+    const renderMap = () => {
         const loadImage = (src) =>
             new Promise((resolve, reject) => {
             const img = new window.Image();
@@ -69,24 +74,25 @@ export default function MapEditorScreen() {
             })  
 
         Promise.all(store.currentMapEdit.tilesets.map(loadImage)).then(images => {
-            let ctx = context ? context : editorRef.current.canvas.context
-            MAP_LAYERS[0][0] = [-1, -1, -1]
-            for (let i = 0; i < MAP_LAYERS.length; i++) {
-                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                    let tilesetIndex = MAP_LAYERS[i][j][0]
-                    if (tilesetIndex >= 0) {
-                        ctx.drawImage(
-                            images[tilesetIndex], 
-                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
-                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
-                            TILE_WIDTH, 
-                            TILE_HEIGHT,
-                            i * TILE_WIDTH,
-                            j * TILE_HEIGHT,
-                            TILE_WIDTH,
-                            TILE_HEIGHT
-                        );
-                        
+            for (let layerI = 0; layerI < MAP_LAYERS.length; layerI++) { 
+                let ctx = stageRef.current.children[layerI+1].canvas.context
+                for (let i = 0; i < MAP_LAYERS[layerI].length; i++) {
+                    for (let j = 0; j < MAP_LAYERS[layerI][i].length; j++) {
+                        let tilesetIndex = MAP_LAYERS[layerI][i][j][0]
+                        if (tilesetIndex >= 0) {
+                            ctx.drawImage(
+                                images[tilesetIndex], 
+                                MAP_LAYERS[layerI][i][j][1] * TILE_WIDTH, 
+                                MAP_LAYERS[layerI][i][j][2] * TILE_HEIGHT, 
+                                TILE_WIDTH, 
+                                TILE_HEIGHT,
+                                i * TILE_WIDTH,
+                                j * TILE_HEIGHT,
+                                TILE_WIDTH,
+                                TILE_HEIGHT
+                            );
+                            
+                        }
                     }
                 }
             }
@@ -159,20 +165,23 @@ export default function MapEditorScreen() {
             newHeight = TILE_HEIGHT * Math.floor(newHeight/TILE_HEIGHT)
         }
 
-        let newMap;
+        let newLayers = MAP_LAYERS;
+
         if (newHeight/TILE_HEIGHT < MAP_LAYERS[0].length) {
-            newMap = MAP_LAYERS.map(row => row.slice(0, newHeight/TILE_HEIGHT))
-            console.log(newMap)
+            for (let i = 0; i < newLayers.length; i++) {
+                newLayers[i] = newLayers[i].map(row => row.slice(0, newHeight/TILE_HEIGHT))
+            }
         } else {
-            newMap = MAP_LAYERS
-            for (let i = 0; i < MAP_LAYERS.length; i++) {
-                for (let j = MAP_LAYERS[i].length; j < EDITOR_HEIGHT/TILE_HEIGHT; j++) {
-                    newMap[i].push([-1, -1, -1])
+            for (let layeri = 0; layeri < newLayers.length; layeri++) {
+                for (let i = 0; i < MAP_LAYERS[layeri].length; i++) {
+                    for (let j = MAP_LAYERS[layeri][i].length; j < newHeight/TILE_HEIGHT; j++) {
+                        newLayers[layeri][i].push([-1, -1, -1])
+                    }
                 }
             }
         }
         
-        setMapLayers(newMap)
+        setMapLayers(newLayers)
         setEditorHeight(newHeight)
     }
 
@@ -184,20 +193,26 @@ export default function MapEditorScreen() {
             newWidth = TILE_WIDTH * Math.floor(newWidth/TILE_WIDTH)
         }
 
-        let newMap;
-        if (newWidth/TILE_WIDTH < MAP_LAYERS.length) {
-            newMap = MAP_LAYERS.slice(0, newWidth/TILE_WIDTH)
+        let newLayers = MAP_LAYERS;
+        if (newWidth/TILE_WIDTH < MAP_LAYERS[0].length) {
+            for (let i = 0; i < newLayers.length; i++) {
+                console.log(i)
+                newLayers[i] = newLayers[i].slice(0, newWidth/TILE_WIDTH)
+            }
         } else {
-            newMap = MAP_LAYERS
-            for (let i = MAP_LAYERS.length; i < newWidth/TILE_WIDTH; i++) {
-                newMap.push([])
-                for (let j = 0; j < EDITOR_HEIGHT/TILE_HEIGHT; j++) {
-                    newMap[i].push([-1, -1, -1])
+            for (let layeri = 0; layeri < newLayers.length; layeri++) {
+                for (let i = MAP_LAYERS[layeri].length; i < newWidth/TILE_WIDTH; i++) {
+                    newLayers[layeri].push([])
+                    for (let j = 0; j < newWidth/TILE_HEIGHT; j++) {
+                        newLayers[layeri][i].push([-1, -1, -1])
+                    }
                 }
             }
         }
         
-        setMapLayers(newMap)
+        
+        console.log(newLayers)
+        setMapLayers(newLayers)
         setEditorWidth(newWidth) 
     }
 
@@ -223,14 +238,15 @@ export default function MapEditorScreen() {
         const coords = getCoords(e)
         let x = coords[0]
         let y = coords[1]
-
-        let ctx = editorRef.current.canvas.context
+        
+        let ctx = stageRef.current.children[Number(selectedLayer)+1].canvas.context
         let newMap = MAP_LAYERS
         if (isDeleting) {
             ctx.clearRect(x * TILE_WIDTH,y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-            newMap[x][y] = [-1, -1, -1]
+            newMap[selectedLayer][x][y] = [-1, -1, -1]
         } else {
             if (tilesetSelected[0] == -1) return
+            ctx.clearRect(x * TILE_WIDTH,y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
             ctx.drawImage(
                 tilesetSelected[1], 
                 tileSelected[0] * TILE_WIDTH, 
@@ -242,13 +258,13 @@ export default function MapEditorScreen() {
                 TILE_WIDTH,
                 TILE_HEIGHT
             );
-            newMap[x][y] = [tilesetSelected[0], tileSelected[0], tileSelected[1]]
+            newMap[selectedLayer][x][y] = [tilesetSelected[0], tileSelected[0], tileSelected[1]]
         }
         setMapLayers(newMap)
     }
 
     const handleSave = () => {
-        const uri = editorRef.current.canvas.toDataURL();
+        const uri = stageRef.current.children[0].canvas.toDataURL();
         let map = store.currentMapEdit;
         map.layers = MAP_LAYERS
         map.name = mapName;
@@ -299,12 +315,10 @@ export default function MapEditorScreen() {
         return null;
     }
 
-    
-
     const renderGridLines = () => {
         let gridLines = []
-        for (let i = 0; i < MAP_LAYERS.length; i++) {
-            for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+        for (let i = 0; i < MAP_LAYERS[0].length; i++) {
+            for (let j = 0; j < MAP_LAYERS[0][i].length; j++) {
                 gridLines.push(<Rect
                     x={i * TILE_WIDTH}
                     y={j * TILE_HEIGHT}
@@ -317,11 +331,9 @@ export default function MapEditorScreen() {
         }
         return gridLines
     }
-
+    
     let gridLines = renderGridLines()
-    if (tilesetSelected[0] == -1) { 
-        renderMap()
-    }
+    renderMap()
 
     const handleToggleIsDeleting = (e) => { 
         setIsDeleting(!isDeleting)
@@ -330,6 +342,55 @@ export default function MapEditorScreen() {
     let deleteButton = <Button onClick={handleToggleIsDeleting} sx={{ ml: 1, borderRadius: '0px', display: "block"}}><LayersClearIcon/></Button>
     if (isDeleting) {
         deleteButton = <Button onClick={handleToggleIsDeleting} variant="contained" sx={{ ml: 1, borderRadius: '0px', display: "block"}}><LayersClearIcon/></Button>
+    }
+
+    const handleCreateNewLayer = (event) => {
+        if (MAP_LAYERS.length >= 5) return
+        let newLayers = [...MAP_LAYERS]
+        newLayers.push([])
+        for (let i = 0; i < EDITOR_WIDTH/TILE_WIDTH; i++) {
+            newLayers[newLayers.length-1].push([])
+            for (let j = 0; j < EDITOR_HEIGHT/TILE_HEIGHT; j++) {
+                newLayers[newLayers.length-1][i].push([-1, -1, -1])
+            }
+        }
+        setMapLayers(newLayers)
+    }
+
+    const handleDeleteLayer = (e) => {
+        if (MAP_LAYERS.length <= 1) return
+        let newLayers = [...MAP_LAYERS]
+        newLayers.splice(e.target.id, 1)
+        setMapLayers(newLayers)
+    }
+
+    const handleMoveLayerUp = (e) => {
+        if (e.target.id == 0) return
+        let newLayers = [...MAP_LAYERS]
+        let temp = newLayers[e.target.id-1]
+        newLayers[e.target.id-1] = newLayers[e.target.id]
+        newLayers[e.target.id] = temp
+        setMapLayers(newLayers)
+    }
+
+    const handleMoveLayerDown = (e) => {
+        if (e.target.id == MAP_LAYERS.length-1) return
+        let newLayers = [...MAP_LAYERS]
+        let temp = newLayers[e.target.id+1]
+        newLayers[e.target.id+1] = newLayers[e.target.id]
+        newLayers[e.target.id] = temp
+
+        console.log(newLayers)
+        setMapLayers(newLayers)
+    }
+
+
+    const handleSelectLayer = (e) => {
+        setSelectedLayer(e.target.id)
+    }
+
+    const trigger = () => {
+        console.log("MAP_LAYERS: ", MAP_LAYERS, "# OF LAYERS: ", MAP_LAYERS.length)
     }
 
     return (
@@ -507,24 +568,41 @@ export default function MapEditorScreen() {
                             </Container>               
                         </Grid>
 
-                        <Stage onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "60%", maxHeight: '62vh' , border: '3px solid black'}}>
+                        <Stage ref={stageRef} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "57%", maxHeight: '62vh' , border: '3px solid black'}}>
                             <Layer>
                                 {gridLines.map((rect) => rect )}
                             </Layer>
-                            <Layer ref={editorRef}>
-                                
-                            </Layer>
+
+                            {MAP_LAYERS.map((obj, i) => {
+                                return <Layer id={i}></Layer>
+                            })}
                         </Stage>
                         
-                        <Box container sx={{ backgroundColor: 'lightgray', maxHeight: '62vh', width: "10%" }}>
+                        <Box container sx={{ backgroundColor: 'lightgray', maxHeight: '62vh', width: "13%" }}>
                             <Typography sx={{ textAlign: "center", color: "white", backgroundColor: "#002956", width: "100%" }}>
                                 Layers
                             </Typography>
 
                             <MenuList>
-                                <MenuItem>Layer 1</MenuItem>
-                                <MenuItem>Layer 2</MenuItem>
-                                <MenuItem>Layer 3</MenuItem>
+                                {MAP_LAYERS.map((obj, i) => {
+                                    if (selectedLayer == i) {
+                                        return <MenuItem sx={{backgroundColor: "yellow"}} id={i} onClick={handleSelectLayer}>
+                                            Layer: {i+1} 
+                                            <IconButton size="small">
+                                                <RemoveCircleOutlineIcon fontSize="small" id={i} onClick={handleDeleteLayer}/>
+                                            </IconButton>
+                                            <IconButton size="small">
+                                                <KeyboardArrowUpIcon fontSize="small" id={i} onClick={handleMoveLayerUp}/>
+                                            </IconButton>
+                                            <IconButton size="small">
+                                                <KeyboardArrowDownIcon fontSize="small" id={i} onClick={handleMoveLayerDown}/>
+                                            </IconButton>
+                                            </MenuItem>
+                                    } 
+                                    return <MenuItem id={i} onClick={handleSelectLayer}>Layer {i+1}</MenuItem>
+                                })}
+                                <MenuItem onClick={trigger}>DEBUG LAYERS</MenuItem>
+                                <MenuItem onClick={handleCreateNewLayer}>Create New</MenuItem>
                             </MenuList>
                         </Box>
                     </Grid>

@@ -39,7 +39,7 @@ const MapSchema = new Schema(
         tileHeight: { type: Number, required: true },
         tileWidth: { type: Number, required: true },
         
-        layers: { type: [[[Number]]], required: true },
+        layers: { type: [[[[Number]]]], required: true },
 
         tilesets: { type: [TilesetSchema], required: true },
         
