@@ -79,10 +79,10 @@ export default function PersonalCard(props) {
         setAnchorElUser(null);
     }
 
-    const handleDuplicateMap = (e, mapId) => {
+    const handleDuplicateMap = async (e, mapId) => {
         console.log("PersonalCard.js: handleDuplicateMap...")
 
-        store.duplicateMap()
+        store.duplicateMap(mapId)
 
         console.log("PersonalCard.js: handleDuplicateMap!")
     }
