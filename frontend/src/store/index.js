@@ -631,15 +631,15 @@ function GlobalStoreContextProvider(props) {
 		}
 	};
 
-  return (
+    return (
     <GlobalStoreContext.Provider
-      value={{
+        value={{
         store,
-      }}
+        }}
     >
-      {props.children}
+        {props.children}
     </GlobalStoreContext.Provider>
-  );
+    );
 }
 
 export default GlobalStoreContext;
