@@ -1,8 +1,8 @@
 import React from 'react';
-import { useRef, useEffect, useContext, useState } from "react";
+import { useRef, useEffect, useContext, useState, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
-import AuthContext from "../auth";
-import GlobalStoreContext from "../store";
+import AuthContext from "../../auth";
+import GlobalStoreContext from "../../store";
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
@@ -26,6 +26,9 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
+import MapSection from './Map'
+import TilesetSection from './Tileset'
+
 const theme = createTheme({
     palette: {
         primary: { main: "#002956" },
@@ -44,18 +47,51 @@ export default function MapEditorScreen() {
     const [TILE_WIDTH, setTileWidth] = useState(32)
     const [EDITOR_HEIGHT, setEditorHeight] = useState(1024)
     const [EDITOR_WIDTH, setEditorWidth] = useState(1024)
-
+    
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [anchorTilesetList, setAnchorTilesetList] = useState(null);
     
+    const [isDeleting, setIsDeleting] = useState(false)
     const [tilesetSelected, setTilesetSelected] = useState([-1, null]);
     const [tileSelected, setTileSelected] = useState([0, 0]);
     const [MAP_LAYERS, setMapLayers] = useState([])
 
-    const stageRef = useRef(null);
     const editorRef = useRef(null);
 
-    const [isDeleting, setIsDeleting] = useState(false)
+    const renderMap = (context) => {
+        const loadImage = (src) =>
+            new Promise((resolve, reject) => {
+            const img = new window.Image();
+            img.src = src.data;
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            
+            })  
+
+        Promise.all(store.currentMapEdit.tilesets.map(loadImage)).then(images => {
+            let ctx = context ? context : editorRef.current.canvas.context
+            MAP_LAYERS[0][0] = [-1, -1, -1]
+            for (let i = 0; i < MAP_LAYERS.length; i++) {
+                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
+                    let tilesetIndex = MAP_LAYERS[i][j][0]
+                    if (tilesetIndex >= 0) {
+                        ctx.drawImage(
+                            images[tilesetIndex], 
+                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
+                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
+                            TILE_WIDTH, 
+                            TILE_HEIGHT,
+                            i * TILE_WIDTH,
+                            j * TILE_HEIGHT,
+                            TILE_WIDTH,
+                            TILE_HEIGHT
+                        );
+                        
+                    }
+                }
+            }
+        })
+    }
     
     useEffect(() => {
         store.loadMapEdit(id).then((map) => {
@@ -138,8 +174,6 @@ export default function MapEditorScreen() {
         
         setMapLayers(newMap)
         setEditorHeight(newHeight)
-
-        renderMap()
     }
 
     const handleChangeEditorWidth = (e) => {
@@ -164,9 +198,7 @@ export default function MapEditorScreen() {
         }
         
         setMapLayers(newMap)
-        setEditorWidth(newWidth)
-
-        renderMap()
+        setEditorWidth(newWidth) 
     }
 
 
@@ -263,38 +295,7 @@ export default function MapEditorScreen() {
         return null;
     }
 
-    const renderMap = () => {
-        const loadImage = (src) =>
-            new Promise((resolve, reject) => {
-            const img = new window.Image();
-            img.src = src.data;
-            img.onload = () => resolve(img);
-            img.onerror = reject;
-            
-            })  
-        
-        Promise.all(store.currentMapEdit.tilesets.map(loadImage)).then(images => {
-            let ctx = editorRef.current.canvas.context
-            for (let i = 0; i < MAP_LAYERS.length; i++) {
-                for (let j = 0; j < MAP_LAYERS[i].length; j++) {
-                    let tilesetIndex = MAP_LAYERS[i][j][0]
-                    if (tilesetIndex >= 0) {
-                        ctx.drawImage(
-                            images[tilesetIndex], 
-                            MAP_LAYERS[i][j][1] * TILE_WIDTH, 
-                            MAP_LAYERS[i][j][2] * TILE_HEIGHT, 
-                            TILE_WIDTH, 
-                            TILE_HEIGHT,
-                            i * TILE_WIDTH,
-                            j * TILE_HEIGHT,
-                            TILE_WIDTH,
-                            TILE_HEIGHT
-                        );
-                    }
-                }
-            }
-        })
-    }
+    
 
     const renderGridLines = () => {
         let gridLines = []
@@ -431,6 +432,9 @@ export default function MapEditorScreen() {
                     
                     <Grid container component="main" sx={{ minHeight: '65vh' }}>
                         <Stack container alignItems="center" sx={{ maxHeight: '62vh', width: "1.5%" }}/>
+
+                        {/* <TilesetSection/>
+                        <MapSection/> */}
                         <Grid container sx={{ maxHeight: '62vh', width: "25%" }}>
                             <Button
                                 sx={{ width: "100%" }}
@@ -498,12 +502,12 @@ export default function MapEditorScreen() {
                             </Container>               
                         </Grid>
 
-                        <Stage onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} ref={stageRef} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "60%", maxHeight: '62vh' , border: '3px solid black'}}>
+                        <Stage onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseMove={handleAddTile} width={EDITOR_WIDTH} height={EDITOR_HEIGHT} style={{ overflow: "auto", backgroundColor: "white", marginLeft: "30px", width: "60%", maxHeight: '62vh' , border: '3px solid black'}}>
                             <Layer>
                                 {gridLines.map((rect) => rect )}
                             </Layer>
                             <Layer ref={editorRef}>
-
+                                
                             </Layer>
                         </Stage>
                         

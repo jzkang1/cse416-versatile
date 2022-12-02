@@ -16,7 +16,7 @@ import PersonalScreen from './components/PersonalScreen'
 import CommunityScreen from './components/CommunityScreen'
 import MapView from './components/MapView'
 
-import MapEditorScreen from './components/MapEditorScreen'
+import MapEditorScreen from './components/MapEditor/MapEditorScreen'
 import TileEditor from './components/TileEditor';
 
 
