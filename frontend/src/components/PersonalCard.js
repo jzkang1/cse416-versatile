@@ -1,6 +1,6 @@
 import React from 'react';
 import { useContext, useState } from "react";
-
+import Box from "@mui/material/Box";
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -30,6 +30,42 @@ export default function PersonalCard(props) {
         setAnchorElUser(null);
     };
 
+    const getCardMedia = () => {
+        if (card.isPublished) {
+            return (
+                <CardMedia
+                    component="img"
+                    src={card.thumbnail}
+                    sx={{ height: '130px' }}
+                />
+            );
+        }
+
+        return (
+            <Link to={`/editor/${card._id}`}>
+                <CardMedia
+                    component="img"
+                    src={card.thumbnail}
+                    sx={{ height: '130px' }}
+                />
+            </Link>
+        );
+    }
+
+    const getMenuButtons = () => {
+        let buttons = [];
+
+        if (!card.isPublished) {
+            buttons.push(<MenuItem onClick={(e) => handleOpenShare(e, card._id)}>Share</MenuItem>);
+            buttons.push(<MenuItem onClick={(e) => handlePublishMap(e, card._id)}>Publish</MenuItem>);
+        }
+        
+        buttons.push(<MenuItem onClick={(e) => handleDuplicateMap(e, card._id)}>Duplicate</MenuItem>);
+        buttons.push(<MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>Delete</MenuItem>);
+        
+        return buttons;
+    }
+
     const handleOpenShare = (e, mapId) => {
         console.log("handleOpenShare: " + mapId)
         e.stopPropagation();
@@ -37,6 +73,11 @@ export default function PersonalCard(props) {
         
         store.openShareModal(mapId)
     };
+
+    const handlePublishMap = async (e, mapId) => {
+        await store.publishMap(mapId);
+        setAnchorElUser(null);
+    }
 
     const handleDuplicateMap = (e, mapId) => {
         console.log("PersonalCard.js: handleDuplicateMap...")
@@ -58,18 +99,20 @@ export default function PersonalCard(props) {
         <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>
 
-                <Link to={`/editor/${card._id}`}>
-                    <CardMedia
-                        component="img"
-                        src={card.thumbnail}
-                        sx={{ height: '130px' }}
-                    />
-                </Link>
+
+
+                {getCardMedia()}
                 
-                <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex' }}>
-                    <Typography variant="body2">
-                        {card.name}
-                    </Typography>
+                <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex'}}>
+                    <Box sx={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                        <Typography variant="body2">
+                            {card.name}
+                        </Typography>
+                        <Typography sx={{fontSize: 10, color: "grey"}}>
+                            {card.isPublished ? " (published)" : ""}
+                        </Typography>
+                    </Box>
+
                     {(card.owner != auth.user.username) ? <ShareIcon fontSize="small" sx={{ml:1}}/> : null }
 
                     <Button onClick={handleOpenUserMenu}
@@ -94,9 +137,7 @@ export default function PersonalCard(props) {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                     >
-                        <MenuItem onClick={(e) => handleOpenShare(e, card._id)}>Share</MenuItem>
-                        <MenuItem onClick={(e) => handleDuplicateMap(e, card._id)}>Duplicate</MenuItem>
-                        <MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>Delete</MenuItem>
+                        {getMenuButtons()}
                     </Menu>
                 </Container>
             </Card>

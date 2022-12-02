@@ -463,16 +463,22 @@ function GlobalStoreContextProvider(props) {
         console.log(mapId)
         let response = await api.deleteMap({_id: mapId})
         if (response.data.success) {
-            store.loadPersonalMaps()
+            store.loadPersonalMaps();
         }
 
         console.log("store.deleteMap: deleteMap!")
     }
 
-    store.duplicateMap = async function() {
-        console.log("store.deleteMap: duplicateMap...")
+    store.publishMap = async function(id) {
+        let payload = {_id: id};
+        let response = await api.publishMap(payload);
+        if (response.data.success) {
+            store.loadPersonalMaps();
+        }
+    }
 
-        console.log("store.deleteMap: duplicateMap!")
+    store.duplicateMap = async function(id) {
+        
     }
 
     store.loadMapEdit = async function(id) {

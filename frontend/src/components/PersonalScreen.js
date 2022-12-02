@@ -9,13 +9,9 @@ import Grid from '@mui/material/Grid';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 import SearchIcon from '@mui/icons-material/Search';
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
@@ -23,8 +19,6 @@ import TextModal from './TextModal';
 import ShareModal from './ShareModal';
 import PersonalCard from './PersonalCard';
 import Box from "@mui/material/Box";
-
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const theme = createTheme({
     palette: {
@@ -122,9 +116,7 @@ export default function PersonalScreen() {
                 <Container maxWidth="lg">
                     <Grid container spacing={4}>
                         {store.personalMapCards?.map((card) => (
-                            <PersonalCard 
-                                card={card}
-                            />
+                            <PersonalCard card={card}/>
                         ))}
                     </Grid>
                 </Container>
