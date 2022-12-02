@@ -225,8 +225,7 @@ deleteMap = async (req, res) => {
 getMapsByUser = async (req, res) => {
   try {
     const { username } = req.params;
-
-    let ownedMaps = await Map.find({ owner: username });
+    let ownedMaps = await Map.find({ owner: username, isPublished: true });
 
     if (ownedMaps) {
       return res.status(200).json({
@@ -277,7 +276,6 @@ duplicateMap = async (req, res) => {
   try {
     const { _id } = req.body;
     let { owner } = req.body;
-    let { name } = req.body;
 
     let map = await Map.findOne({ _id: _id });
 
@@ -286,13 +284,13 @@ duplicateMap = async (req, res) => {
         errorMessage: "Could not duplicate map",
       });
     }
-
-    // if owner is undefined, it is duplicated from personal
-    // otherwise, it is duplicated from community
+    let name;
     if (!owner) {
+      // if owner is undefined, it is duplicated from personal
       owner = map.owner;
       name = map.name + " (copy)";
     } else {
+      // otherwise, it is duplicated from community
       name = map.name + ` (copy of ${map.owner}'s map)`;
     }
 
