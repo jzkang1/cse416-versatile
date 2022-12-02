@@ -34,6 +34,7 @@ test("Empty test for skipping the error", async () => {
     tileWidth: 32,
     tileHeight: 32,
   };
+  
 
   const {
     name,
