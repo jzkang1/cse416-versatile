@@ -289,6 +289,7 @@ export default function MapView() {
   const handleDuplicateMap = (event) => {
     event.stopPropagation();
     store.handleMakeACopy();
+    navigate("/personal");
   };
 
   return (
