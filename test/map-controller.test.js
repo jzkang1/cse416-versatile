@@ -25,6 +25,7 @@ test("Empty test for skipping the error", async () => {
     tilesets: [],
 
     collaborators: [],
+    currentlyBeingEdited: false,
     createDate: "2022-11-13",
     modifyDate: "2022-11-13",
 
@@ -42,6 +43,7 @@ test("Empty test for skipping the error", async () => {
     layers,
     tilesets,
     collaborators,
+    currentlyBeingEdited,
     createDate,
     modifyDate,
     isPublished,
@@ -57,6 +59,7 @@ test("Empty test for skipping the error", async () => {
     layers,
     tilesets,
     collaborators,
+    currentlyBeingEdited,
     createDate,
     modifyDate,
     isPublished,
