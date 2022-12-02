@@ -244,7 +244,12 @@ export default function MapEditorScreen() {
 
             const imageString = event.target.result;
 
-            store.createTileset(store.currentMapEdit._id, filename, imageString);
+            let img = new window.Image();
+            img.src = event.target.result;
+
+            img.onload = () => {
+                store.createTileset(store.currentMapEdit._id, filename, imageString, img.width, img.height);
+            }
         }
         reader.readAsDataURL(file);
     }
