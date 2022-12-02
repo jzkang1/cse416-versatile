@@ -496,6 +496,22 @@ function GlobalStoreContextProvider(props) {
     console.log("store.deleteMap: duplicateMap!");
   };
 
+  store.handleMakeACopy = async function () {
+    let _id = store.currentMapView._id;
+    let owner = auth.user.username;
+    console.log("store.handleMakeACopy: handleMakeACopy...");
+
+    console.log(_id);
+    let response = await api.duplicateMap({ _id, owner });
+    if (response.data.success) {
+      storeReducer({
+        type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
+        payload: store.currentMapView,
+      });
+    }
+    console.log("store.handleMakeACopy: handleMakeACopy!");
+  };
+
   store.loadMapEdit = async function (id) {
     let response = await api.getMap(id);
     if (response.data.success) {

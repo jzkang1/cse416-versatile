@@ -276,53 +276,66 @@ publishMap = async (req, res) => {
 duplicateMap = async (req, res) => {
   try {
     const { _id } = req.body;
+    let { owner } = req.body;
+    let { name } = req.body;
 
     let map = await Map.findOne({ _id: _id });
 
-    if (map) {
-      const {
-        owner,
-        height,
-        width,
-        tileHeight,
-        tileWidth,
-        layers,
-        tilesets,
-        collaborators,
-        description,
-        thumbnail,
-      } = map;
-
-      const name = map.name + " (copy)";
-      const createDate = new Date();
-      const modifyDate = new Date();
-      const isPublished = false;
-
-      const newMap = new Map({
-        name,
-        owner,
-        height,
-        width,
-        tileHeight,
-        tileWidth,
-        layers,
-        tilesets,
-        collaborators,
-        createDate,
-        modifyDate,
-        isPublished,
-        description,
-        thumbnail,
-      });
-
-      await newMap.save();
-
-      return res.status(201).json({
-        success: true,
-        message: "Map duplicated!",
-        map: newMap,
+    if (!map) {
+      return res.status(400).json({
+        errorMessage: "Could not duplicate map",
       });
     }
+
+    // if owner is undefined, it is duplicated from personal
+    // otherwise, it is duplicated from community
+    if (!owner) {
+      owner = map.owner;
+      name = map.name + " (copy)";
+    } else {
+      name = map.name + ` (copy of ${map.owner}'s map)`;
+    }
+
+    const {
+      height,
+      width,
+      tileHeight,
+      tileWidth,
+      layers,
+      tilesets,
+      collaborators,
+      description,
+      thumbnail,
+    } = map;
+
+    const createDate = new Date();
+    const modifyDate = new Date();
+    const isPublished = false;
+
+    const newMap = new Map({
+      name,
+      owner,
+      height,
+      width,
+      tileHeight,
+      tileWidth,
+      layers,
+      tilesets,
+      collaborators,
+      createDate,
+      modifyDate,
+      isPublished,
+      description,
+      thumbnail,
+    });
+
+    await newMap.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Map duplicated!",
+      map: newMap,
+    });
   } catch (err) {
     return res.status(400).json({
       errorMessage: "Could not duplicate map",
