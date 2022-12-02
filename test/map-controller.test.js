@@ -16,28 +16,6 @@ beforeAll(() => {
 
 afterAll(() => mongoose.connection.close());
 
-<<<<<<< HEAD
-let mapID = "";
-
-// Test case for create map
-test("Create a map", () => {
-  expect.assertions(2);
-  return apis
-    .createMap({
-      name: "Forest.tmx",
-      owner: "Jun",
-      height: 1024,
-      width: 768,
-      layers: [{}],
-      tilesets: ["Forest_tileset"],
-      isPublished: false,
-    })
-    .then((data) => {
-      expect(data.success).toBe(true);
-      expect(data.message).toBe("Map Created!");
-      mapID = data._id;
-    });
-=======
 test("Empty test for skipping the error", async () => {
   const mapDefault = {
     name: "test map",
@@ -114,7 +92,6 @@ test("Empty test for skipping the error", async () => {
   await Map.findByIdAndDelete(mapID);
   map = await Map.findById(mapID);
   expect(map).toBe(null);
->>>>>>> main
 });
 
 // Test case for get map
