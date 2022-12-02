@@ -22,7 +22,7 @@ const versatileRouter = require("./routes/versatile-router");
 app.use("/api", versatileRouter);
 
 // Choose the port and start the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Started express app on port ${PORT}`);
 });
