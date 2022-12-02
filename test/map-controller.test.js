@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 dotenv.config();
 
-const Map = require("../models/map-model")
+const Map = require("../models/map-model");
 
 beforeAll(() => {
   mongoose.disconnect();
@@ -15,62 +15,79 @@ beforeAll(() => {
 afterAll(() => mongoose.connection.close());
 
 test("Empty test for skipping the error", async () => {
+  const mapDefault = {
+    name: "test map",
+    owner: "test owner",
 
-    const mapDefault = {
-        "name": "test map",
-        "owner": "test owner",
-    
-        "height": 320,
-        "width": 320,
-        "layers": [],
-        "tilesets": [],
-        
-        "collaborators": [],
-        "createDate": "2022-11-13",
-        "modifyDate": "2022-11-13",
+    height: 320,
+    width: 320,
+    layers: [],
+    tilesets: [],
 
-        "isPublished": true,
+    collaborators: [],
+    createDate: "2022-11-13",
+    modifyDate: "2022-11-13",
 
-        "tileWidth": 32,
-        "tileHeight": 32,
-    }
+    isPublished: true,
 
-    const {
-        name, owner,
-        height, width, layers, tilesets,
-        collaborators, createDate, modifyDate,
-        isPublished,
-        tileWidth, tileHeight
-    } = mapDefault;
+    tileWidth: 32,
+    tileHeight: 32,
+  };
 
-    let map = new Map({
-        name, owner,
-        height, width, layers, tilesets, 
-        collaborators, createDate, modifyDate,
-        isPublished,
-        tileWidth, tileHeight,
-    });
+  const {
+    name,
+    owner,
+    height,
+    width,
+    layers,
+    tilesets,
+    collaborators,
+    createDate,
+    modifyDate,
+    isPublished,
+    tileWidth,
+    tileHeight,
+  } = mapDefault;
 
-    //create
-    await map.save();
+  let map = new Map({
+    name,
+    owner,
+    height,
+    width,
+    layers,
+    tilesets,
+    collaborators,
+    createDate,
+    modifyDate,
+    isPublished,
+    tileWidth,
+    tileHeight,
+  });
 
-    //retrieve
-    map = await Map.findOne({name: name});
-    expect(map.name).toBe(name)
-    expect(map.owner).toBe(owner)
+  //create
+  console.log("create");
+  await map.save();
 
-    let mapID = map._id;
+  //retrieve
+  console.log("retrieve");
+  map = await Map.findOne({ name: name });
+  expect(map.name).toBe(name);
+  expect(map.owner).toBe(owner);
 
-    //update
-    let newName = "updated test map";
-    map.name = newName;
-    await Map.findByIdAndUpdate(mapID, map);
+  let mapID = map._id;
 
-    map = await Map.findOne({name: newName});
-    expect(map.name).toBe(newName);
+  //update
+  console.log("update");
+  let newName = "updated test map";
+  map.name = newName;
+  await Map.findByIdAndUpdate(mapID, map);
 
-    //delete
-    await Map.findByIdAndDelete(mapID);
-    map = await Map.findById(mapID);
-    expect(map).toBe(null);
+  map = await Map.findOne({ name: newName });
+  expect(map.name).toBe(newName);
+
+  //delete
+  console.log("delete");
+  await Map.findByIdAndDelete(mapID);
+  map = await Map.findById(mapID);
+  expect(map).toBe(null);
 });
