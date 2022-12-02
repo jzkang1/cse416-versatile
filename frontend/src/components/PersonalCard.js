@@ -83,6 +83,7 @@ export default function PersonalCard(props) {
         console.log("PersonalCard.js: handleDuplicateMap...")
 
         store.duplicateMap(mapId)
+        setAnchorElUser(null);
 
         console.log("PersonalCard.js: handleDuplicateMap!")
     }

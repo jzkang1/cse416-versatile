@@ -281,7 +281,6 @@ duplicateMap = async (req, res) => {
 
     if (map) {
       const {
-        name,
         owner,
         height,
         width,
@@ -294,6 +293,7 @@ duplicateMap = async (req, res) => {
         thumbnail,
       } = map;
 
+      const name = map.name + " (copy)";
       const createDate = new Date();
       const modifyDate = new Date();
       const isPublished = false;
