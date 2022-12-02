@@ -1,389 +1,469 @@
-const Map = require("../models/map-model")
+const Map = require("../models/map-model");
 
-getPersonalMaps = async(req, res) => {
-    try {
-        const { username } = req.params;
-      
-        let personalMaps = await Map.find({ owner: username });
-        let sharedMaps = await Map.find({collaborators: username})
+getPersonalMaps = async (req, res) => {
+  try {
+    const { username } = req.params;
 
-        personalMaps = personalMaps.concat(sharedMaps);
+    let personalMaps = await Map.find({ owner: username });
+    let sharedMaps = await Map.find({ collaborators: username });
 
-        if (personalMaps) {
-            return res.status(200).json({
-                success: true,
-                personalMaps: personalMaps
-            })
-        }
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not retrieve personal maps"
-        });
+    personalMaps = personalMaps.concat(sharedMaps);
+
+    if (personalMaps) {
+      return res.status(200).json({
+        success: true,
+        personalMaps: personalMaps,
+      });
     }
-}
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not retrieve personal maps",
+    });
+  }
+};
 
 getPublicMaps = async (req, res) => {
-    try {
-        let publicMaps = await Map.find({ isPublished: true });
+  try {
+    let publicMaps = await Map.find({ isPublished: true });
 
-        if (publicMaps) {
-            return res.status(200).json({
-                success: true,
-                publicMaps: publicMaps
-            })
-        }
-
-        return res.status(400).json({
-            errorMessage: "Could not retrieve public maps"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not retrieve public maps"
-        });
+    if (publicMaps) {
+      return res.status(200).json({
+        success: true,
+        publicMaps: publicMaps,
+      });
     }
-}
+
+    return res.status(400).json({
+      errorMessage: "Could not retrieve public maps",
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not retrieve public maps",
+    });
+  }
+};
 
 getMap = async (req, res) => {
-    try {
-        const _id  = req.params.id;
+  try {
+    const _id = req.params.id;
 
-        let map = await Map.findOne({_id : _id}).populate("tilesets");
+    let map = await Map.findOne({ _id: _id }).populate("tilesets");
 
-        // console.log(map)
+    // console.log(map)
 
-        if (map) {
-            return res.status(200).json({
-                success: true,
-                map: map
-            })
-        }
-
-        return res.status(400).json({
-            errorMessage: "Could not retrieve map"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not retrieve map"
-        });
+    if (map) {
+      return res.status(200).json({
+        success: true,
+        map: map,
+      });
     }
-}
 
-createMap = async(req, res) => {
-    try {
-        const { name, owner, height, width, tileHeight, tileWidth } = req.body;
+    return res.status(400).json({
+      errorMessage: "Could not retrieve map",
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not retrieve map",
+    });
+  }
+};
 
-        if (!name || !owner || !height || !width)  {
-            return res.status(400).json({
-                errorMessage: "Could not create map"
-            });
-        }
+createMap = async (req, res) => {
+  try {
+    const { name, owner, height, width, tileHeight, tileWidth } = req.body;
 
-        let map = [[]]
-        for (let i = 0; i < width/tileWidth; i++) {
-            map[0].push([])
-            for (let j = 0; j < height/tileHeight; j++) {
-                map[0][i].push([-1, -1, -1])
-            }
-        }
-
-        const layers = map
-        const tilesets = [];
-        const collaborators = [];
-
-        const createDate = new Date();
-        const modifyDate = new Date();
-
-        const isPublished = false;
-
-        const newMap = new Map({
-            name, owner,
-            height, width, tileHeight, tileWidth, layers, tilesets,
-            collaborators, createDate, modifyDate,
-            isPublished
-        });
-        
-        await newMap.save();
-
-        return res.status(201).json({
-            success: true,
-            message: "Map Created!",
-            map: newMap
-        })
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not create map"
-        });
+    if (!name || !owner || !height || !width) {
+      return res.status(400).json({
+        errorMessage: "Could not create map",
+      });
     }
-}
 
-updateMap = async(req, res) => {
-    try {
-        const {
-            _id, name, owner,
-
-            height, width, tileHeight, tileWidth, layers, tilesets,
-             
-            collaborators, createDate, modifyDate,
-            
-            isPublished, publishDate,
-            
-            description, views, usersWhoLiked, usersWhoDisliked, comments,
-            
-            thumbnail
-        } = req.body;
-        
-        Map.findOne({ _id: _id }, (err, map) => {
-            if (!map) {
-                return res.status(400).json({
-                    success: false
-                })
-            }
-
-            if (name) map.name = name
-            if (owner) map.owner = owner
-
-            if (height) map.height = height
-            if (width) map.width = width
-            if (tileHeight) map.tileHeight = tileHeight
-            if (tileWidth) map.tileWidth = tileWidth
-            if (layers) map.layers = layers
-            if (tilesets) map.tilesets = tilesets
-
-            if (collaborators) map.collaborators = collaborators
-            if (createDate) map.createDate = createDate
-            if (modifyDate) map.modifyDate = modifyDate
-
-            if (isPublished) map.isPublished = isPublished
-            if (publishDate) map.publishDate = publishDate
-
-            if (description) map.description = description
-            if (views) map.views = views
-            if (usersWhoLiked) map.usersWhoLiked = usersWhoLiked
-            if (usersWhoDisliked) map.usersWhoDisliked = usersWhoDisliked
-
-            if (comments) map.comments = comments
-            if (thumbnail) map.thumbnail = thumbnail
-
-            map.save();
-            console.log("map update success")
-            return res.status(200).json({
-                success: true,
-                _id: _id,
-                message: "Map updated!",
-            })
-        });
-    } catch (err) {
-        console.log(err);
+    let map = [];
+    for (let i = 0; i < width / tileWidth; i++) {
+      map.push([]);
+      for (let j = 0; j < height / tileHeight; j++) {
+        map[i].push([-1, -1, -1]);
+      }
     }
-}
 
-deleteMap = async(req, res) => {
-    try {
-        const { _id } = req.body;
-        
-        let map = await Map.findOneAndDelete({ _id: _id });
+    const layers = map;
+    const tilesets = [];
+    const collaborators = [];
 
-        if (map) {
-            return res.status(200).json({
-                success: true
-            })
-        }
+    const createDate = new Date();
+    const modifyDate = new Date();
 
+    const isPublished = false;
+
+    const newMap = new Map({
+      name,
+      owner,
+      height,
+      width,
+      tileHeight,
+      tileWidth,
+      layers,
+      tilesets,
+      collaborators,
+      createDate,
+      modifyDate,
+      isPublished,
+    });
+
+    await newMap.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Map Created!",
+      map: newMap,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not create map",
+    });
+  }
+};
+
+updateMap = async (req, res) => {
+  try {
+    const {
+      _id,
+      name,
+      owner,
+
+      height,
+      width,
+      tileHeight,
+      tileWidth,
+      layers,
+      tilesets,
+
+      collaborators,
+      createDate,
+      modifyDate,
+
+      isPublished,
+      publishDate,
+
+      description,
+      views,
+      usersWhoLiked,
+      usersWhoDisliked,
+      comments,
+
+      thumbnail,
+    } = req.body;
+
+    Map.findOne({ _id: _id }, (err, map) => {
+      if (!map) {
         return res.status(400).json({
-            success: false
-        })
-        
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not delete map",
-            err: err
+          success: false,
         });
+      }
+
+      if (name) map.name = name;
+      if (owner) map.owner = owner;
+
+      if (height) map.height = height;
+      if (width) map.width = width;
+      if (tileHeight) map.tileHeight = tileHeight;
+      if (tileWidth) map.tileWidth = tileWidth;
+      if (layers) map.layers = layers;
+      if (tilesets) map.tilesets = tilesets;
+
+      if (collaborators) map.collaborators = collaborators;
+      if (createDate) map.createDate = createDate;
+      if (modifyDate) map.modifyDate = modifyDate;
+
+      if (isPublished) map.isPublished = isPublished;
+      if (publishDate) map.publishDate = publishDate;
+
+      if (description) map.description = description;
+      if (views) map.views = views;
+      if (usersWhoLiked) map.usersWhoLiked = usersWhoLiked;
+      if (usersWhoDisliked) map.usersWhoDisliked = usersWhoDisliked;
+
+      if (comments) map.comments = comments;
+      if (thumbnail) map.thumbnail = thumbnail;
+
+      map.save();
+      console.log("map update success");
+      return res.status(200).json({
+        success: true,
+        _id: _id,
+        message: "Map updated!",
+      });
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+deleteMap = async (req, res) => {
+  try {
+    const { _id } = req.body;
+
+    let map = await Map.findOneAndDelete({ _id: _id });
+
+    if (map) {
+      return res.status(200).json({
+        success: true,
+      });
     }
-}
+
+    return res.status(400).json({
+      success: false,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not delete map",
+      err: err,
+    });
+  }
+};
 
 getMapsByUser = async (req, res) => {
-    try {
-        const { username } = req.params;
+  try {
+    const { username } = req.params;
 
-        let ownedMaps = await Map.find({ owner: username });
-        
-        if (ownedMaps) {
-            return res.status(200).json({
-                success: true,
-                maps: ownedMaps
-            });
-        }
+    let ownedMaps = await Map.find({ owner: username });
 
-        return res.status(400).json({
-            errorMessage: "Could not delete map"
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not delete map",
-            err: err
-        });
+    if (ownedMaps) {
+      return res.status(200).json({
+        success: true,
+        maps: ownedMaps,
+      });
     }
-}
 
-publishMap = async(req, res) => {
-    try {
-        const { _id } = req.body;
-        
-        let map = await Map.findOne({_id: _id});
-        if (!map) {
-            return res.status(400).json({
-                errorMessage: "Could not publish map"
-            }); 
-        }
+    return res.status(400).json({
+      errorMessage: "Could not delete map",
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not delete map",
+      err: err,
+    });
+  }
+};
 
-        map.isPublished = true;
+publishMap = async (req, res) => {
+  try {
+    const { _id } = req.body;
 
-        await map.save();
-
-        console.log("successfully published")
-
-        return res.status(200).json({
-            success: true
-        })
-
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not publish map"
-        });
+    let map = await Map.findOne({ _id: _id });
+    if (!map) {
+      return res.status(400).json({
+        errorMessage: "Could not publish map",
+      });
     }
-}
 
-duplicateMap = async(req, res) => {
-    try {
-        
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not duplicate map"
-        });
+    map.isPublished = true;
+
+    await map.save();
+
+    console.log("successfully published");
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not publish map",
+    });
+  }
+};
+
+duplicateMap = async (req, res) => {
+  try {
+    const { _id } = req.body;
+    let { owner } = req.body;
+    let { name } = req.body;
+
+    let map = await Map.findOne({ _id: _id });
+
+    if (!map) {
+      return res.status(400).json({
+        errorMessage: "Could not duplicate map",
+      });
     }
-}
+
+    // if owner is undefined, it is duplicated from personal
+    // otherwise, it is duplicated from community
+    if (!owner) {
+      owner = map.owner;
+      name = map.name + " (copy)";
+    } else {
+      name = map.name + ` (copy of ${map.owner}'s map)`;
+    }
+
+    const {
+      height,
+      width,
+      tileHeight,
+      tileWidth,
+      layers,
+      tilesets,
+      collaborators,
+      description,
+      thumbnail,
+    } = map;
+
+    const createDate = new Date();
+    const modifyDate = new Date();
+    const isPublished = false;
+
+    const newMap = new Map({
+      name,
+      owner,
+      height,
+      width,
+      tileHeight,
+      tileWidth,
+      layers,
+      tilesets,
+      collaborators,
+      createDate,
+      modifyDate,
+      isPublished,
+      description,
+      thumbnail,
+    });
+
+    await newMap.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Map duplicated!",
+      map: newMap,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not duplicate map",
+    });
+  }
+};
 
 likeMap = async (req, res) => {
-    try {
-        const { _id, username } = req.body;
+  try {
+    const { _id, username } = req.body;
 
-        let map = await Map.findOne({ _id: _id });
+    let map = await Map.findOne({ _id: _id });
 
-        console.log(map)
+    console.log(map);
 
-        map.usersWhoLiked.push(username);
+    map.usersWhoLiked.push(username);
 
-        await map.save();
+    await map.save();
 
-        return res.status(200).json({
-            success: true,
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not like map"
-        });
-    }
-}
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not like map",
+    });
+  }
+};
 
 unlikeMap = async (req, res) => {
-    try {
-        const { _id, username } = req.body;
+  try {
+    const { _id, username } = req.body;
 
-        let map = await Map.findOne({ _id: _id });
+    let map = await Map.findOne({ _id: _id });
 
-        let index = map.usersWhoLiked.indexOf(username);
-        if (index !== -1) {
-            map.usersWhoLiked.splice(index, 1);
-        }
-
-        await map.save();
-
-        return res.status(200).json({
-            success: true,
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not unlike map"
-        });
+    let index = map.usersWhoLiked.indexOf(username);
+    if (index !== -1) {
+      map.usersWhoLiked.splice(index, 1);
     }
-}
+
+    await map.save();
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not unlike map",
+    });
+  }
+};
 
 dislikeMap = async (req, res) => {
-    try {
-        const { _id, username } = req.body;
+  try {
+    const { _id, username } = req.body;
 
-        let map = await Map.findOne({ _id: _id });
+    let map = await Map.findOne({ _id: _id });
 
-        map.usersWhoDisliked.push(username);
+    map.usersWhoDisliked.push(username);
 
-        await map.save();
+    await map.save();
 
-        return res.status(200).json({
-            success: true,
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not dislike map"
-        });
-    }
-}
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not dislike map",
+    });
+  }
+};
 
 undislikeMap = async (req, res) => {
-    try {
-        const { _id, username } = req.body;
+  try {
+    const { _id, username } = req.body;
 
-        let map = await Map.findOne({ _id: _id });
+    let map = await Map.findOne({ _id: _id });
 
-        let index = map.usersWhoDisliked.indexOf(username);
-        if (index !== -1) {
-            map.usersWhoDisliked.splice(index, 1);
-        }
-
-        await map.save();
-
-        return res.status(200).json({
-            success: true,
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not undislike map"
-        });
+    let index = map.usersWhoDisliked.indexOf(username);
+    if (index !== -1) {
+      map.usersWhoDisliked.splice(index, 1);
     }
-}
+
+    await map.save();
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not undislike map",
+    });
+  }
+};
 
 postComment = async (req, res) => {
-    try {
-        const { _id, comment } = req.body;
+  try {
+    const { _id, comment } = req.body;
 
-        let map = await Map.findOne({ _id: _id });
-        
-        map.comments.push(comment);
+    let map = await Map.findOne({ _id: _id });
 
-        await map.save();
+    map.comments.push(comment);
 
-        return res.status(200).json({
-            success: true,
-        });
-    } catch (err) {
-        return res.status(400).json({
-            errorMessage: "Could not post comment"
-        });
-    }
-}
+    await map.save();
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      errorMessage: "Could not post comment",
+    });
+  }
+};
 
 module.exports = {
-    getPersonalMaps,
-    getPublicMaps,
-    getMap,
-    createMap,
-    updateMap,
-    deleteMap,
-    getMapsByUser,
-    publishMap,
-    duplicateMap,
-    likeMap,
-    unlikeMap,
-    dislikeMap,
-    undislikeMap,
-    postComment
-}
+  getPersonalMaps,
+  getPublicMaps,
+  getMap,
+  createMap,
+  updateMap,
+  deleteMap,
+  getMapsByUser,
+  publishMap,
+  duplicateMap,
+  likeMap,
+  unlikeMap,
+  dislikeMap,
+  undislikeMap,
+  postComment,
+};
