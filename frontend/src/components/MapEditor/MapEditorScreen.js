@@ -267,7 +267,7 @@ export default function MapEditorScreen() {
     }
 
     const handleSave = () => {
-        const uri = stageRef.current.children[1].canvas.toDataURL();
+        const uri = stageRef.current.children[0].canvas.toDataURL();
         let map = store.currentMapEdit;
         map.layers = MAP_LAYERS
         map.name = mapName;
