@@ -216,7 +216,7 @@ export default function MapView() {
         commentRef.current.selected = false;
     };
 
-    const handleExportAsJSON = (event) => {
+    const handleClickExport = async (event) => {
         event.preventDefault();
 
         if (!store.currentMapView) {
@@ -273,8 +273,7 @@ export default function MapView() {
                 spacing: 0,
                 tilecount: Math.ceil(
                     (tileset.imageWidth * tileset.imageHeight) /
-                        (store.currentMapView.tileWidth *
-                            store.currentMapView.tileHeight)
+                    (store.currentMapView.tileWidth * store.currentMapView.tileHeight)
                 ),
                 tiledversion: "1.9.1",
                 tileheight: store.currentMapView.tileHeight,
@@ -291,13 +290,35 @@ export default function MapView() {
         for (let i = 0; i < store.currentMapView.layers.length; i++) {
             let layer = store.currentMapView.layers[i];
 
-            let exportLayer = {};
+            console.log(layer);
+
+            let exportLayer = {
+                "data": layer,
+                "height": exportMap.height,
+                "name": i,
+                "opacity": 1,
+                "properties": [
+                    {
+                        "name": "tileLayerProp",
+                        "type": "int",
+                        "value": 1
+                    }],
+                "type": "tilelayer",
+                "visible": true,
+                "width": exportMap.width,
+                "x": 0,
+                "y": 0
+            }
+            exportMap.layers.push(exportLayer);
         }
 
-        fs.writeFile(
-            "test.json",
-            JSON.stringify({ a: 1, b: 2, c: 3 }, null, 4)
-        );
+        const jsonFile = new Blob([JSON.stringify(exportMap, null, 4)], {type: "application/json"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(jsonFile);
+        a.download = store.currentMapView.name + ".json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     const handleDuplicateMap = async (event) => {
@@ -408,7 +429,7 @@ export default function MapView() {
                                     flexGrow: 0,
                                 }}
                             >
-                                <Button variant="contained">
+                                <Button variant="contained" onClick={handleClickExport}>
                                     Export as JSON
                                 </Button>
 
