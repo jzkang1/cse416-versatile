@@ -225,6 +225,34 @@ getMapsByUser = async (req, res) => {
     }
 }
 
+publishMap = async(req, res) => {
+    try {
+        const { _id } = req.body;
+        
+        let map = await Map.findOne({_id: _id});
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not publish map"
+            }); 
+        }
+
+        map.isPublished = true;
+
+        await map.save();
+
+        console.log("successfully published")
+
+        return res.status(200).json({
+            success: true
+        })
+
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not publish map"
+        });
+    }
+}
+
 duplicateMap = async(req, res) => {
     try {
         
@@ -351,6 +379,7 @@ module.exports = {
     updateMap,
     deleteMap,
     getMapsByUser,
+    publishMap,
     duplicateMap,
     likeMap,
     unlikeMap,
