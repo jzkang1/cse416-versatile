@@ -255,6 +255,30 @@ publishMap = async(req, res) => {
 
 duplicateMap = async(req, res) => {
     try {
+        const { _id } = req.body;
+        
+        let map = await Map.findOne({_id: _id});
+        
+        if (map) {
+            const { name, owner, height, width, tileHeight, tileWidth, layers, tilesets, collaborators, createDate, modifyDate, isPublished, publishDate, description, views, usersWhoLiked, usersWhoDisliked, comments, thumbnail } = map;
+
+            const newMap = new Map({
+                name, owner,
+                height, width, tileHeight, tileWidth, layers, tilesets,
+                collaborators, createDate, modifyDate,
+                isPublished, publishDate,
+                description, views, usersWhoLiked, usersWhoDisliked, comments,
+                thumbnail
+            });
+            
+            await newMap.save();
+
+            return res.status(201).json({
+                success: true,
+                message: "Map duplicated!",
+                map: newMap
+            })
+        }
         
     } catch (err) {
         return res.status(400).json({

@@ -477,9 +477,17 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.duplicateMap = async function(id) {
-        
-    }
+    store.duplicateMap = async function (mapId) {
+        console.log("store.deleteMap: duplicateMap...");
+    
+        console.log(mapId);
+        let response = await api.duplicateMap({ _id: mapId });
+        if (response.data.success) {
+          store.loadPersonalMaps();
+        }
+    
+        console.log("store.deleteMap: duplicateMap!");
+    };
 
     store.loadMapEdit = async function(id) {
         let response = await api.getMap(id);

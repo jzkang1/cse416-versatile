@@ -70,6 +70,14 @@ export default function PersonalScreen() {
         console.log("PersonalScreen.js: Map Created!")
     }
 
+    const duplicateMap = (e) => {
+        console.log("PersonalScreen.js: Duplicating Map...");
+    
+        store.duplicateMap(e.currentTarget.id);
+    
+        console.log("PersonalScreen.js: Map Duplicated!");
+      };
+
     return (
         <ThemeProvider theme={theme}>
             <TextModal />
