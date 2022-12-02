@@ -264,7 +264,7 @@ export default function MapEditorScreen() {
     }
 
     const handleSave = () => {
-        const uri = stageRef.current.children[0].canvas.toDataURL();
+        const uri = stageRef.current.children[1].canvas.toDataURL();
         let map = store.currentMapEdit;
         map.layers = MAP_LAYERS
         map.name = mapName;
@@ -365,22 +365,27 @@ export default function MapEditorScreen() {
     }
 
     const handleMoveLayerUp = (e) => {
-        if (e.target.id == 0) return
+        let id = Number(e.target.id)
+        if (id == 0) return
         let newLayers = [...MAP_LAYERS]
-        let temp = newLayers[e.target.id-1]
-        newLayers[e.target.id-1] = newLayers[e.target.id]
-        newLayers[e.target.id] = temp
+        let temp = newLayers[id-1]
+        newLayers[id-1] = newLayers[id]
+        newLayers[id] = temp
+        
+        console.log("Up: ", id, id-1, newLayers)
         setMapLayers(newLayers)
     }
 
     const handleMoveLayerDown = (e) => {
-        if (e.target.id == MAP_LAYERS.length-1) return
-        let newLayers = [...MAP_LAYERS]
-        let temp = newLayers[e.target.id+1]
-        newLayers[e.target.id+1] = newLayers[e.target.id]
-        newLayers[e.target.id] = temp
+        let id = Number(e.target.id)
+        if (id == MAP_LAYERS.length-1) return
 
-        console.log(newLayers)
+        let newLayers = [...MAP_LAYERS]
+        let temp = newLayers[id+1]
+        newLayers[id+1] = newLayers[id]
+        newLayers[id] = temp
+
+        console.log("Down: ", id, id+1, newLayers)
         setMapLayers(newLayers)
     }
 
@@ -586,7 +591,10 @@ export default function MapEditorScreen() {
                             <MenuList>
                                 {MAP_LAYERS.map((obj, i) => {
                                     if (selectedLayer == i) {
-                                        return <MenuItem sx={{backgroundColor: "yellow"}} id={i} onClick={handleSelectLayer}>
+                                        return <MenuItem 
+                                            disableRipple
+                                            sx={{ '&:hover': {backgroundColor: 'yellow'},  backgroundColor: "yellow" }} 
+                                            id={i} onClick={handleSelectLayer}>
                                             Layer: {i+1} 
                                             <IconButton size="small">
                                                 <RemoveCircleOutlineIcon fontSize="small" id={i} onClick={handleDeleteLayer}/>
@@ -601,7 +609,6 @@ export default function MapEditorScreen() {
                                     } 
                                     return <MenuItem id={i} onClick={handleSelectLayer}>Layer {i+1}</MenuItem>
                                 })}
-                                <MenuItem onClick={trigger}>DEBUG LAYERS</MenuItem>
                                 <MenuItem onClick={handleCreateNewLayer}>Create New</MenuItem>
                             </MenuList>
                         </Box>
