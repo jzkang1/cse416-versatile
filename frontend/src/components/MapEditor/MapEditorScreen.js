@@ -288,12 +288,11 @@ export default function MapEditorScreen() {
     }
 
     const onKeyEnter = (e) => {
-        if (e.key === "Enter") {
-          console.log('Input value', e.target.value);
-          setMapName(e.target.value);
-          
-          e.preventDefault();
-        }
+        if (e.key === "Enter") { setMapName(e.target.value); }
+    }
+
+    const onBlur = (e) => {
+        setMapName(e.target.value);
     }
 
     if (!store.currentMapEdit) {
@@ -342,6 +341,7 @@ export default function MapEditorScreen() {
                         <TextField 
                             label= {mapName}
                             onKeyPress={onKeyEnter}
+                            onChange={onBlur}
                             sx={{ ml: 3 }}>
                         </TextField>
                         <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>Share</Button>
