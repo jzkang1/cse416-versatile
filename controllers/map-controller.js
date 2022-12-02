@@ -368,12 +368,8 @@ publishMap = async (req, res) => {
 
 duplicateMap = async (req, res) => {
 	try {
-		const {
-			_id
-		} = req.body;
-		let {
-			owner
-		} = req.body;
+		const { _id } = req.body;
+		let { owner } = req.body;
 
 		let map = await Map.findOne({
 			_id: _id
@@ -407,9 +403,12 @@ duplicateMap = async (req, res) => {
 			thumbnail,
 		} = map;
 
+        const currentlyBeingEdited = false;
+
 		const createDate = new Date();
 		const modifyDate = new Date();
 		const isPublished = false;
+        
 
 		const newMap = new Map({
 			name,
@@ -421,6 +420,7 @@ duplicateMap = async (req, res) => {
 			layers,
 			tilesets,
 			collaborators,
+            currentlyBeingEdited,
 			createDate,
 			modifyDate,
 			isPublished,
@@ -437,7 +437,7 @@ duplicateMap = async (req, res) => {
 		});
 	} catch (err) {
 		return res.status(400).json({
-			errorMessage: "Could not duplicate map",
+			err
 		});
 	}
 };

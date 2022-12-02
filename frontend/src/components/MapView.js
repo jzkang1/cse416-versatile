@@ -343,8 +343,11 @@ export default function MapView() {
                     </Box>
 
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
-                        <Box sx={{ ml: 2, mr: 2 }}>
-                            <img src={require("../images/forest.png")} />
+                        <Box sx={{ ml: 2, mr: 2, maxWidth: 800 }}>
+                            <img style={{
+                                "max-width": "100%",
+                                "max-height": "100%"
+                            }} src={store.currentMapView.thumbnail} />
                         </Box>
 
                         <Box

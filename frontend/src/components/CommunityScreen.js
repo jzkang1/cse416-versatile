@@ -195,20 +195,24 @@ export default function CommunityScreen() {
             <Grid container spacing={3}>
                 {store.communityMapCards?.map((map) => (
                 <Grid item key={map._id} md={12}>
+
                     <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
+
                         <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>
+                        
                             <CardMedia 
                                 component="img"
-                                image={require('../images/forest.png')}
+                                image={map.thumbnail}
                                 sx={{ height: "100%", width: "auto"}}
                             />
-                        
                         </Link>
+                        
+                       
                         
                         <Box display="flex" flexDirection="column">
                             <Typography variant="h4" sx={{ ml: 1 }}>{map.name}</Typography>
                             <Typography variant="body2" sx={{ ml: 2 }}>By {map.owner}</Typography>
-                            <Typography variant="body2" sx={{ ml: 2 }}>{map.description ? map.description : "A green forest map with trees and bushes"}</Typography>
+                            {/* <Typography variant="body2" sx={{ ml: 2 }}>{map.description ? map.description : "A green forest map with trees and bushes"}</Typography> */}
                             
                             <Box display="flex" flexDirection="row" marginTop="auto" sx={{ marginTop: "auto", ml: 2 }}>
                                 <ThumbUpIcon/>
@@ -221,10 +225,8 @@ export default function CommunityScreen() {
                                 <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.comments.length === undefined ? 0 : map.views}</Typography>
                             </Box>
                         </Box>
-                        
-                        
-                            
                     </Card>
+                    
                 </Grid>
                 ))}
             </Grid>
