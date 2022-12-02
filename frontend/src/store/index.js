@@ -219,6 +219,8 @@ function GlobalStoreContextProvider(props) {
                     if (!personalMaps[i].collaborators.includes(newUser)) {
                         personalMaps[i].collaborators.push(newUser);
                         store.updateMap(personalMaps[i])
+
+                        return newUser
                     } else {
                         auth.showModal(newUser + " has already been added!")
                     }  
@@ -256,7 +258,7 @@ function GlobalStoreContextProvider(props) {
                 }
             }
         }
-        store.closeShareModal();
+        // store.closeShareModal();
     }
 
     store.searchCommunityMap = async function(searchText) {
@@ -438,13 +440,14 @@ function GlobalStoreContextProvider(props) {
 
     store.createMap = async function() {
         console.log("store.createMap: Creating Map...")
-
-        // const { name, owner, height, width, layers, tilesets, isPublished } = req.body;
+        
         let payload = {
             name: "untitled",
             owner: auth.user.username,
-            height: 320,
-            width: 320
+            height: 1024,
+            width: 1024,
+            tileHeight: 32,
+            tileWidth: 32
         }
         let response = await api.createMap(payload);
         if (response.data.success) {
@@ -460,16 +463,22 @@ function GlobalStoreContextProvider(props) {
         console.log(mapId)
         let response = await api.deleteMap({_id: mapId})
         if (response.data.success) {
-            store.loadPersonalMaps()
+            store.loadPersonalMaps();
         }
 
         console.log("store.deleteMap: deleteMap!")
     }
 
-    store.duplicateMap = async function() {
-        console.log("store.deleteMap: duplicateMap...")
+    store.publishMap = async function(id) {
+        let payload = {_id: id};
+        let response = await api.publishMap(payload);
+        if (response.data.success) {
+            store.loadPersonalMaps();
+        }
+    }
 
-        console.log("store.deleteMap: duplicateMap!")
+    store.duplicateMap = async function(id) {
+        
     }
 
     store.loadMapEdit = async function(id) {
@@ -481,20 +490,20 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
                 payload: map
             })
+
+            return map
         }
     }
 
-    store.createTileset = async function(mapID, name, imageString) {
-        if (!mapID) {
-            return;
-        }
-
+    store.createTileset = async function(mapID, name, imageString, imageWidth, imageHeight) {
         console.log("store.createTileset: Creating tileset... ")
 
         let payload = {
             mapID: mapID,
             name: name,
-            data: imageString
+            data: imageString,
+            imageWidth: imageWidth,
+            imageHeight: imageHeight
         }
 
         let response = await api.createTileset(payload);
@@ -508,6 +517,30 @@ function GlobalStoreContextProvider(props) {
             })
 
             console.log("store.createTileset: tileset created")
+        }
+    }
+
+    store.updateTileset = async function(mapID, tilesetID, name, imageString) {
+
+        console.log("store.updateTileset: Updating tileset ")
+        let payload = {
+            mapID: mapID,
+            tilesetID: tilesetID,
+            name: name,
+            data: imageString
+        }
+
+        let response = await api.updateTileset(payload);
+
+        if (response.data.success) {
+            let map = response.data.map;
+            console.log(map)
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
+                payload: map
+            })
+
+            console.log("store.updateTileset: tileset updated")
         }
     }
 

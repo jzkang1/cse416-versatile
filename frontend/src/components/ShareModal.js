@@ -46,6 +46,7 @@ export default function ShareModal(props) {
         const newCollaborator = new FormData(e.currentTarget).get("newCollaborator");
         // auth.showModal(newCollaborator)
         store.shareMap(card._id, newCollaborator);
+        store.closeShareModal();
     };
 
     const handleRemoveShare = (e) => {
@@ -55,6 +56,8 @@ export default function ShareModal(props) {
         let username = e.target.parentNode.parentNode.childNodes[0].childNodes[1].innerHTML
         // auth.showModal(username)
         store.removeShare(card._id, username);
+
+        store.closeShareModal();
     };
 
     const handlePublish = (e) => {

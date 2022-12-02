@@ -11,18 +11,20 @@ const CommentSchema = new Schema(
     { timestamps: true },
 )
 
-const LayerSchema = new Schema(
-    {
-        name: { type: String, required: true },
-        grid: { type: Object, required: true },
-    },
-    { timestamps: true },
-)
+// const LayerSchema = new Schema(
+//     {
+//         name: { type: String, required: true },
+//         grid: { type: [[String]], required: true },
+//     },
+//     { timestamps: true },
+// )
 
 const TilesetSchema = new Schema(
     {
         name: { type: String, required: true },
         data: { type: String, required: true },
+        imageWidth: { type: Number, required: true },
+        imageHeight: { type: Number, required: true },
     },
     { timestamps: true },
 )
@@ -34,7 +36,11 @@ const MapSchema = new Schema(
 
         height: { type: Number, required: true },
         width: { type: Number, required: true },
-        layers: { type: [LayerSchema], required: true },
+        tileHeight: { type: Number, required: true },
+        tileWidth: { type: Number, required: true },
+        
+        layers: { type: [[[Number]]], required: true },
+
         tilesets: { type: [TilesetSchema], required: true },
         
         collaborators: { type: [String], required: true },
@@ -50,8 +56,7 @@ const MapSchema = new Schema(
         usersWhoDisliked: { type: [String], required: false },
         comments: { type: [CommentSchema], required: false },
 
-        thumbnailLarge: { type: String, required: false },
-        thumbnailSmall: { type: String, required: false },
+        thumbnail: { type: String, required: false },
     },
     { timestamps: true },
 )

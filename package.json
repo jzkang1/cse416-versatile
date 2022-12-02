@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "test": "jest test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
     "testwatch": "jest --watchAll test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
+=======
+    "test": "jest --testTimeout=10000",
+    "testwatch": "jest --watchAll",
+>>>>>>> main
     "start": "nodemon index.js",
     "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
