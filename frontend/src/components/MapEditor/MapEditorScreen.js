@@ -109,6 +109,9 @@ export default function MapEditorScreen() {
             setMapLayers(map.layers)
         });
         
+        return function cleanup() {
+            store.endEditMap(id);
+        }
     }, []);
 
     const handleOpenUserMenu = (event) => {

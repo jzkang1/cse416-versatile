@@ -81,7 +81,6 @@ export default function TileEditor() {
         const uri = stageRef.current.toDataURL();
         console.log(store.currentMapEdit)
         store.createTileset(store.currentMapEdit._id, tilesetName, uri);
-
     }
 
     return (

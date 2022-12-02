@@ -25,7 +25,9 @@ router.put('/updateMap', MapController.updateMap)
 router.delete('/deleteMap', MapController.deleteMap)
 router.get('/getMapsByUser/:username', MapController.getMapsByUser)
 
-router.put('/publishMap', MapController.publishMap);
+router.put('/startEditMap', MapController.startEditMap)
+router.put('/endEditMap', MapController.endEditMap)
+router.put('/publishMap', MapController.publishMap)
 router.post('/duplicateMap', MapController.duplicateMap);
 
 router.put('/likeMap', MapController.likeMap)

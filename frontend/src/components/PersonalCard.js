@@ -30,27 +30,31 @@ export default function PersonalCard(props) {
     setAnchorElUser(null);
   };
 
-  const getCardMedia = () => {
-    if (card.isPublished) {
-      return (
-        <CardMedia
-          component="img"
-          src={card.thumbnail}
-          sx={{ height: "130px" }}
-        />
-      );
+    const handleClickPersonalCard = (e) => {
+        console.log("handle click personal card")
+        store.startEditMap(card._id);
     }
 
-    return (
-      <Link to={`/editor/${card._id}`}>
-        <CardMedia
-          component="img"
-          src={card.thumbnail}
-          sx={{ height: "130px" }}
-        />
-      </Link>
-    );
-  };
+    const getCardMedia = () => {
+        if (card.isPublished || card.currentlyBeingEdited) {
+            return (
+                <CardMedia
+                    component="img"
+                    src={card.thumbnail}
+                    sx={{ height: '130px' }}
+                />
+            );
+        }
+
+        return (
+                <CardMedia
+                    component="img"
+                    src={card.thumbnail}
+                    sx={{ height: '130px', "&:hover": {cursor: "pointer"}}}
+                    onClick={handleClickPersonalCard}
+                />
+        );
+    }
 
   const getMenuButtons = () => {
     let buttons = [];
@@ -108,34 +112,23 @@ export default function PersonalCard(props) {
     console.log("PersonalCard.js: handleDeleteMap!");
   };
 
-  return (
-    <Grid item xs={12} sm={6} md={4} lg={3}>
-      <Card
-        sx={{
-          height: "155px",
-          display: "flex",
-          flexDirection: "column",
-          borderRadius: "8px",
-        }}
-      >
-        {getCardMedia()}
-
-        <Container
-          sx={{
-            pt: 0.2,
-            height: "25px",
-            backgroundColor: "#F3FFF3",
-            display: "flex",
-          }}
-        >
-          <Box
-            sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
-          >
-            <Typography variant="body2">{card.name}</Typography>
-            <Typography sx={{ fontSize: 10, color: "grey" }}>
-              {card.isPublished ? " (published)" : ""}
-            </Typography>
-          </Box>
+    return (
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+            <Card sx={{ height: '155px', display: 'flex', flexDirection: 'column', borderRadius: '8px' }}>
+                {getCardMedia()}
+                
+                <Container sx={{ pt: .2, height: '25px', backgroundColor: '#F3FFF3', display: 'flex'}}>
+                    <Box sx={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                        <Typography variant="body2">
+                            {card.name}
+                        </Typography>
+                        <Typography sx={{fontSize: 10, color: "grey"}}>
+                            {card.isPublished ? " (published)" : ""}
+                        </Typography>
+                        <Typography sx={{fontSize: 10, color: "red"}}>
+                            {card.currentlyBeingEdited ? " (being edited)" : ""}
+                        </Typography>
+                    </Box>
 
           {card.owner != auth.user.username ? (
             <ShareIcon fontSize="small" sx={{ ml: 1 }} />

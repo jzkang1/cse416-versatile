@@ -42,8 +42,9 @@ const MapSchema = new Schema(
         layers: { type: [[[[Number]]]], required: true },
 
         tilesets: { type: [TilesetSchema], required: true },
-        
+
         collaborators: { type: [String], required: true },
+        currentlyBeingEdited: { type: Boolean, required: true },
         createDate: { type: Date, required: true },
         modifyDate: { type: Date, required: true },
         

@@ -86,31 +86,24 @@ createMap = async (req, res) => {
       }
     }
 
-    const layers = map;
-    const tilesets = [];
-    const collaborators = [];
+        const layers = map
+        const tilesets = [];
 
-    const createDate = new Date();
-    const modifyDate = new Date();
+        const collaborators = [];
+        const currentlyBeingEdited = false;
+        const createDate = new Date();
+        const modifyDate = new Date();
 
     const isPublished = false;
 
-    const newMap = new Map({
-      name,
-      owner,
-      height,
-      width,
-      tileHeight,
-      tileWidth,
-      layers,
-      tilesets,
-      collaborators,
-      createDate,
-      modifyDate,
-      isPublished,
-    });
-
-    await newMap.save();
+        const newMap = new Map({
+            name, owner,
+            height, width, tileHeight, tileWidth, layers, tilesets,
+            collaborators, currentlyBeingEdited, createDate, modifyDate,
+            isPublished
+        });
+        
+        await newMap.save();
 
     return res.status(201).json({
       success: true,
@@ -234,27 +227,79 @@ getMapsByUser = async (req, res) => {
       });
     }
 
-    return res.status(400).json({
-      errorMessage: "Could not delete map",
-    });
-  } catch (err) {
-    return res.status(400).json({
-      errorMessage: "Could not delete map",
-      err: err,
-    });
-  }
-};
-
-publishMap = async (req, res) => {
-  try {
-    const { _id } = req.body;
-
-    let map = await Map.findOne({ _id: _id });
-    if (!map) {
-      return res.status(400).json({
-        errorMessage: "Could not publish map",
-      });
+        return res.status(400).json({
+            errorMessage: "Could not delete map"
+        });
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not delete map",
+            err: err
+        });
     }
+}
+
+startEditMap = async(req, res) => {
+    try {
+        const { _id } = req.body;
+        
+        let map = await Map.findOne({_id: _id});
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not start map edit"
+            }); 
+        }
+
+        map.currentlyBeingEdited = true;
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true
+        })
+
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not start map edit"
+        });
+    }
+}
+
+endEditMap = async(req, res) => {
+    try {
+        const { _id } = req.body;
+        
+        let map = await Map.findOne({_id: _id});
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not end map edit"
+            }); 
+        }
+
+        map.currentlyBeingEdited = false;
+
+        await map.save();
+
+        return res.status(200).json({
+            success: true
+        })
+
+    } catch (err) {
+        return res.status(400).json({
+            errorMessage: "Could not end map edit"
+        });
+    }
+}
+
+publishMap = async(req, res) => {
+    try {
+        const { _id } = req.body;
+        
+        let map = await Map.findOne({_id: _id});
+        if (!map) {
+            return res.status(400).json({
+                errorMessage: "Could not publish map"
+            }); 
+        }
 
     map.isPublished = true;
 
@@ -450,18 +495,22 @@ postComment = async (req, res) => {
 };
 
 module.exports = {
-  getPersonalMaps,
-  getPublicMaps,
-  getMap,
-  createMap,
-  updateMap,
-  deleteMap,
-  getMapsByUser,
-  publishMap,
-  duplicateMap,
-  likeMap,
-  unlikeMap,
-  dislikeMap,
-  undislikeMap,
-  postComment,
-};
+    getPersonalMaps,
+    getPublicMaps,
+    getMap,
+    createMap,
+    updateMap,
+    deleteMap,
+    getMapsByUser,
+
+    startEditMap,
+    endEditMap,
+    publishMap,
+
+    duplicateMap,
+    likeMap,
+    unlikeMap,
+    dislikeMap,
+    undislikeMap,
+    postComment
+}

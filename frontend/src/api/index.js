@@ -28,6 +28,8 @@ export const updateMap = (payload) => api.put(`/updateMap`, payload).catch(catch
 export const deleteMap = (payload) => api.delete(`/deleteMap`, { data: payload }).catch(catcher);
 export const getMapsByUser = (username) => api.get(`/getMapsByUser/${username}`).catch(catcher);
 
+export const startEditMap = (payload) => api.put(`/startEditMap`, payload).catch(catcher);
+export const endEditMap = (payload) => api.put(`/endEditMap`, payload).catch(catcher);
 export const publishMap = (payload) => api.put(`/publishMap`, payload).catch(catcher);
 export const duplicateMap = (payload) => api.post(`/duplicateMap`, payload).catch(catcher);
 
@@ -64,6 +66,9 @@ const apis = {
     updateMap,
     deleteMap,
     getMapsByUser,
+
+    startEditMap,
+    endEditMap,
 
     publishMap,
     duplicateMap,
