@@ -19,6 +19,7 @@ import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -52,6 +53,7 @@ const theme = createTheme({
 export default function MapView() {
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
+  const navigate = useNavigate();
 
   const commentRef = useRef();
 
@@ -286,9 +288,10 @@ export default function MapView() {
     fs.writeFile("test.json", JSON.stringify({ a: 1, b: 2, c: 3 }, null, 4));
   };
 
-  const handleDuplicateMap = (event) => {
+  const handleDuplicateMap = async (event) => {
     event.stopPropagation();
-    store.handleMakeACopy();
+    await store.handleMakeACopy();
+    navigate("/personal");
   };
 
   return (
