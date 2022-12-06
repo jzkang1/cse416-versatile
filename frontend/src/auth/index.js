@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import api from '../api'
 
 const AuthContext = createContext();
@@ -19,7 +19,6 @@ function AuthContextProvider(props) {
         modalText: null
     });
 
-    const navigate = useNavigate()
 
     useEffect(() => {
         auth.getLoggedIn();
@@ -75,7 +74,7 @@ function AuthContextProvider(props) {
                 modalText: text
             }
         })
-        navigate("/login");
+        return <Navigate to="/login" />
     }
 
     auth.showModal = function (text) {
@@ -123,7 +122,7 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
-                navigate("/personal");
+                return <Navigate to="/personal" />
                 // store.loadIdNamePairs();
             } 
             else {
@@ -154,7 +153,7 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
-                navigate('/personal')
+                return <Navigate to="/personal" />
             } else {
                 console.log(response.data)
                 authReducer({
@@ -189,7 +188,7 @@ function AuthContextProvider(props) {
             type: AuthActionType.LOGOUT_USER,
             payload: {}
         });
-        navigate("/");
+        return <Navigate to="/" />
     }
 
     auth.getUser = async function(id) {
@@ -251,7 +250,7 @@ function AuthContextProvider(props) {
         try {
             let response = await api.changePassword(userData);
             if (response.data.success) {
-                navigate('/login')
+                return <Navigate to="/login" />
             } else {
                 authReducer({
                     type: AuthActionType.SHOW_MODAL,
