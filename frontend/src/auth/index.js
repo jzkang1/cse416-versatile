@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import api from '../api'
 
 const AuthContext = createContext();
@@ -13,6 +13,7 @@ export const AuthActionType = {
 }
 
 function AuthContextProvider(props) {
+    const navigate = useNavigate()
     const [auth, setAuth] = useState({
         user: null,
         loggedIn: false,
@@ -74,7 +75,7 @@ function AuthContextProvider(props) {
                 modalText: text
             }
         })
-        return <Navigate to="/login" />
+        return navigate("/login")
     }
 
     auth.showModal = function (text) {
@@ -122,7 +123,7 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
-                return <Navigate to="/personal" />
+                return navigate("/personal")
                 // store.loadIdNamePairs();
             } 
             else {
@@ -153,7 +154,7 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
-                return <Navigate to="/personal" />
+                return navigate("/personal")
             } else {
                 console.log(response.data)
                 authReducer({
@@ -188,7 +189,7 @@ function AuthContextProvider(props) {
             type: AuthActionType.LOGOUT_USER,
             payload: {}
         });
-        return <Navigate to="/" />
+        return navigate("/")
     }
 
     auth.getUser = async function(id) {
@@ -250,7 +251,7 @@ function AuthContextProvider(props) {
         try {
             let response = await api.changePassword(userData);
             if (response.data.success) {
-                return <Navigate to="/login" />
+                return navigate("/login")
             } else {
                 authReducer({
                     type: AuthActionType.SHOW_MODAL,

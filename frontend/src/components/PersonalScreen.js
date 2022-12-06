@@ -35,7 +35,6 @@ const theme = createTheme({
 });
 
 function PageContent({ store, isLoading }) {
-    console.log(store)
     if (isLoading) {
         return <Container maxWidth="lg">
             <LinearProgress />
@@ -101,6 +100,13 @@ export default function PersonalScreen() {
         })();
         
     }, [isAuthenticated]);
+
+    setTimeout(() => {
+        if(!isAuthenticated){
+            setIsAuthenticated(true);
+        }
+    }, 1000);
+
 
     return (
         <ThemeProvider theme={theme}>
