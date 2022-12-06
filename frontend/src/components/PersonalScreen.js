@@ -19,6 +19,7 @@ import TextModal from "./TextModal";
 import ShareModal from "./ShareModal";
 import PersonalCard from "./PersonalCard";
 import Box from "@mui/material/Box";
+import { LinearProgress } from "@mui/material";
 
 // var fs = require('fs');
 
@@ -33,11 +34,29 @@ const theme = createTheme({
     },
 });
 
+function PageContent({ store, isLoading }) {
+    console.log(store)
+    if (isLoading) {
+        return <Container maxWidth="lg">
+            <LinearProgress />
+        </Container>
+    } else {
+        return <Container maxWidth="lg">
+            <Grid container spacing={4}>
+                {store.personalMapCards?.map((card) => (
+                    <PersonalCard card={card} />
+                ))}
+            </Grid>
+        </Container>
+    }
+}
+
 export default function PersonalScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [sortState, setSortState] = useState("all");
 
     const handleSort = (e) => {
@@ -72,11 +91,15 @@ export default function PersonalScreen() {
     }, [auth.loggedIn]);
 
     useEffect(() => {
-        if (isAuthenticated && auth.loggedIn) {
-            store.loadPersonalMaps();
-        } else if (isAuthenticated && !auth.loggedIn) {
-            auth.redirectToLogin("Please log in to view your personal screen.");
-        }
+        (async () => {
+            if (isAuthenticated && auth.loggedIn) {
+                await store.loadPersonalMaps()
+                setIsLoading(false);
+            } else if (isAuthenticated && !auth.loggedIn) {
+                auth.redirectToLogin("Please log in to view your personal screen.");
+            }
+        })();
+        
     }, [isAuthenticated]);
 
     return (
@@ -172,13 +195,7 @@ export default function PersonalScreen() {
                 </Toolbar>
             </Container>
 
-            <Container maxWidth="lg">
-                <Grid container spacing={4}>
-                    {store.personalMapCards?.map((card) => (
-                        <PersonalCard card={card} />
-                    ))}
-                </Grid>
-            </Container>
+            <PageContent store={store} isLoading={isLoading}/>
         </ThemeProvider>
     );
 }
