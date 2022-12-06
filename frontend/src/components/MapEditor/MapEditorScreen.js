@@ -108,11 +108,23 @@ export default function MapEditorScreen() {
             setEditorWidth(map.width)
             setMapLayers(map.layers)
         });
-        
-        return function cleanup() {
+
+        function cleanup(event) {
             store.endEditMap(id);
+            window.onbeforeunload = () => {}
         }
+
+        window.onbeforeunload = cleanup;
+        
+        return cleanup;
     }, []);
+
+    const releaseDocumentLock = async () => {
+        store.endEditMap();
+        window.onunload = () => {}
+    }
+
+    window.onunload = releaseDocumentLock;
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
