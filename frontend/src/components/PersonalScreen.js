@@ -19,6 +19,7 @@ import TextModal from "./TextModal";
 import ShareModal from "./ShareModal";
 import PersonalCard from "./PersonalCard";
 import Box from "@mui/material/Box";
+import { LinearProgress } from "@mui/material";
 
 // var fs = require('fs');
 
@@ -33,11 +34,29 @@ const theme = createTheme({
     },
 });
 
+function PageContent({ store, isLoading }) {
+    console.log(store)
+    if (isLoading) {
+        return <Container maxWidth="lg">
+            <LinearProgress />
+        </Container>
+    } else {
+        return <Container maxWidth="lg">
+            <Grid container spacing={4}>
+                {store.personalMapCards?.map((card) => (
+                    <PersonalCard card={card} />
+                ))}
+            </Grid>
+        </Container>
+    }
+}
+
 export default function PersonalScreen() {
     const { auth } = useContext(AuthContext);
-    console.log(auth)
     const { store } = useContext(GlobalStoreContext);
 
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [sortState, setSortState] = useState("all");
 
     const handleSort = (e) => {
@@ -64,15 +83,24 @@ export default function PersonalScreen() {
 
         console.log("PersonalScreen.js: Map Created!");
     };
-
-
+    
     useEffect(() => {
-        if (!auth.loggedIn) {
-            auth.redirectToLogin("Please log in to view your personal screen.");
-        } else {
-            store.loadPersonalMaps();
+        if (auth.loggedIn) {
+            setIsAuthenticated(true);
         }
     }, [auth.loggedIn]);
+
+    useEffect(() => {
+        (async () => {
+            if (isAuthenticated && auth.loggedIn) {
+                await store.loadPersonalMaps()
+                setIsLoading(false);
+            } else if (isAuthenticated && !auth.loggedIn) {
+                auth.redirectToLogin("Please log in to view your personal screen.");
+            }
+        })();
+        
+    }, [isAuthenticated]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -167,13 +195,7 @@ export default function PersonalScreen() {
                 </Toolbar>
             </Container>
 
-            <Container maxWidth="lg">
-                <Grid container spacing={4}>
-                    {store.personalMapCards?.map((card) => (
-                        <PersonalCard card={card} />
-                    ))}
-                </Grid>
-            </Container>
+            <PageContent store={store} isLoading={isLoading}/>
         </ThemeProvider>
     );
 }
