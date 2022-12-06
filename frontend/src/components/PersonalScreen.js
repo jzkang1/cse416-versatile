@@ -34,15 +34,8 @@ const theme = createTheme({
 });
 
 export default function PersonalScreen() {
-    useEffect(() => {
-        if (!auth.loggedIn) {
-            auth.redirectToLogin("Please log in to view your personal screen.");
-        } else {
-            store.loadPersonalMaps();
-        }
-    }, []);
-
     const { auth } = useContext(AuthContext);
+    console.log(auth)
     const { store } = useContext(GlobalStoreContext);
 
     const [sortState, setSortState] = useState("all");
@@ -71,6 +64,15 @@ export default function PersonalScreen() {
 
         console.log("PersonalScreen.js: Map Created!");
     };
+
+
+    useEffect(() => {
+        if (!auth.loggedIn) {
+            auth.redirectToLogin("Please log in to view your personal screen.");
+        } else {
+            store.loadPersonalMaps();
+        }
+    }, [auth.loggedIn]);
 
     return (
         <ThemeProvider theme={theme}>
