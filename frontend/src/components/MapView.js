@@ -223,9 +223,6 @@ export default function MapView() {
             return;
         }
 
-        // let fs = require('fs');
-        let fs;
-
         let exportMap = {
             backgroundcolor: "00FFFFFF",
             class: "",
@@ -248,7 +245,7 @@ export default function MapView() {
             tilewidth: store.currentMapView.tilewidth,
             type: "map",
             version: "1.0",
-            width: store.currentMapView.width,
+            width: (store.currentMapView.width / store.currentMapView.tileWidth),
         };
 
         let firstgid = 0;
@@ -295,7 +292,7 @@ export default function MapView() {
             let exportLayer = {
                 "data": layer,
                 "height": exportMap.height,
-                "name": i,
+                "name": layer.name,
                 "opacity": 1,
                 "properties": [
                     {

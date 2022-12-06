@@ -1,5 +1,6 @@
 import React from "react";
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
@@ -21,6 +22,8 @@ export default function PersonalCard(props) {
 
     const { card } = props;
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const navigate = useNavigate();
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -59,7 +62,7 @@ export default function PersonalCard(props) {
     const getMenuButtons = () => {
         let buttons = [];
 
-        if (!card.isPublished) {
+        if (!card.isPublished && auth.user.username === card.owner) {
             buttons.push(
                 <MenuItem onClick={(e) => handleOpenShare(e, card._id)}>
                     Share
@@ -77,11 +80,14 @@ export default function PersonalCard(props) {
                 Duplicate
             </MenuItem>
         );
-        buttons.push(
-            <MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>
-                Delete
-            </MenuItem>
-        );
+
+        if (auth.user.username === card.owner) {
+            buttons.push(
+                <MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>
+                    Delete
+                </MenuItem>
+            );
+        }
 
         return buttons;
     };

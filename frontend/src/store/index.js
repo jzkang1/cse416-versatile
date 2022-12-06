@@ -27,9 +27,7 @@ function GlobalStoreContextProvider(props) {
 	});
 
 	const navigate = useNavigate();
-	const {
-		auth
-	} = useContext(AuthContext);
+	const { auth } = useContext(AuthContext);
 
 	const storeReducer = (action) => {
 		const {
@@ -255,7 +253,6 @@ function GlobalStoreContextProvider(props) {
 	}
 
 	store.endEditMap = async function(mapId) {
-		console.log("store.endEditMap")
 		let payload = {
 			_id: mapId
 		}
@@ -264,7 +261,6 @@ function GlobalStoreContextProvider(props) {
 			store.loadPersonalMaps();
 			navigate(`/personal`);
 		}
-
 	}
 
 	store.updateMap = async function(map) {
