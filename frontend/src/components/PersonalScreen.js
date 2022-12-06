@@ -35,9 +35,9 @@ const theme = createTheme({
 
 export default function PersonalScreen() {
     const { auth } = useContext(AuthContext);
-    console.log(auth)
     const { store } = useContext(GlobalStoreContext);
 
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [sortState, setSortState] = useState("all");
 
     const handleSort = (e) => {
@@ -64,15 +64,20 @@ export default function PersonalScreen() {
 
         console.log("PersonalScreen.js: Map Created!");
     };
-
-
+    
     useEffect(() => {
-        if (!auth.loggedIn) {
-            auth.redirectToLogin("Please log in to view your personal screen.");
-        } else {
-            store.loadPersonalMaps();
+        if (auth.loggedIn) {
+            setIsAuthenticated(true);
         }
     }, [auth.loggedIn]);
+
+    useEffect(() => {
+        if (isAuthenticated && auth.loggedIn) {
+            store.loadPersonalMaps();
+        } else if (isAuthenticated && !auth.loggedIn) {
+            auth.redirectToLogin("Please log in to view your personal screen.");
+        }
+    }, [isAuthenticated]);
 
     return (
         <ThemeProvider theme={theme}>
