@@ -7,6 +7,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+import { CircularProgress } from "@mui/material";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -50,12 +51,13 @@ const BlinkingGrid = styled(Grid)`
 
 function PageContent({ store, isLoading }) {
     if (isLoading) {
-        let arr = new Array(8)
-        return <Container maxWidth="lg">
-            <BlinkingGrid container spacing={4}>
-                {[...Array(8)].map((e, i) => <PersonalCard key={i} card={"loading"} />)}
-            </BlinkingGrid>
-        </Container>
+        
+        return (
+            <Container maxWidth="lg" sx={{display: "flex", justifyContent: "center"}}>
+                <CircularProgress size={50}/>
+            </Container>
+        );
+
     } else {
         return <Container maxWidth="lg">
             <Grid container spacing={4}>
