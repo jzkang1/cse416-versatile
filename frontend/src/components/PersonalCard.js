@@ -122,6 +122,83 @@ export default function PersonalCard(props) {
         console.log("PersonalCard.js: handleDeleteMap!");
     };
 
+    if (card == "loading"){
+        return (
+            <Grid item xs={12} sm={6} md={4} lg={3}>
+                <Card
+                    sx={{
+                        height: "155px",
+                        display: "flex",
+                        flexDirection: "column",
+                        borderRadius: "8px",
+                    }}
+                >
+
+                <CardMedia
+                component="img"
+                sx={{ height: "130px" }}
+                />
+    
+                    <Container
+                        sx={{
+                            pt: 0.2,
+                            height: "25px",
+                            backgroundColor: "#F3FFF3",
+                            display: "flex",
+                        }}
+                    >
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Typography variant="body2"></Typography>
+                            <Typography sx={{ fontSize: 10, color: "grey" }}>
+                                
+                            </Typography>
+                            <Typography sx={{ fontSize: 10, color: "red" }}>
+                                
+                            </Typography>
+                        </Box>
+    
+                        <Button
+                            disabled
+                            variant="contained"
+                            sx={{
+                                marginLeft: "auto",
+                                p: 0,
+                                minWidth: "30px",
+                                maxHeight: "20px",
+                            }}
+                        >
+                            <MoreVertIcon fontSize="small" />
+                        </Button>
+    
+                        <Menu
+                            sx={{ mt: "20px" }}
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: "top",
+                                horizontal: "right",
+                            }}
+                            open={Boolean(anchorElUser)}
+
+                        >
+
+                        </Menu>
+                    </Container>
+                </Card>
+            </Grid>
+        );
+    }
+
     return (
         <Grid item xs={12} sm={6} md={4} lg={3}>
             <Card

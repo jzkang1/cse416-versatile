@@ -1,6 +1,5 @@
 import React from "react";
 import { useContext, useState, useEffect } from "react";
-
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
@@ -19,7 +18,7 @@ import TextModal from "./TextModal";
 import ShareModal from "./ShareModal";
 import PersonalCard from "./PersonalCard";
 import Box from "@mui/material/Box";
-import { LinearProgress } from "@mui/material";
+import { styled } from "@mui/material";
 
 // var fs = require('fs');
 
@@ -34,10 +33,28 @@ const theme = createTheme({
     },
 });
 
+const BlinkingGrid = styled(Grid)`
+    animation: blinker 1.5s ease-in-out infinite;
+    @keyframes blinker {
+        0% {
+            opacity: 0.1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        100% {
+            opacity: 0.1;
+        }
+    }
+`
+
 function PageContent({ store, isLoading }) {
     if (isLoading) {
+        let arr = new Array(8)
         return <Container maxWidth="lg">
-            <LinearProgress />
+            <BlinkingGrid container spacing={4}>
+                {[...Array(8)].map((e, i) => <PersonalCard key={i} card={"loading"} />)}
+            </BlinkingGrid>
         </Container>
     } else {
         return <Container maxWidth="lg">
