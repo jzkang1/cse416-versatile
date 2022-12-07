@@ -166,7 +166,7 @@ function GlobalStoreContextProvider(props) {
 						maps: maps,
 					},
 				});
-				navigate(`/profile/${username}`);
+				// navigate(`/profile/${username}`);
 			}
 		} catch (err) {
 			console.log(err);
@@ -182,7 +182,7 @@ function GlobalStoreContextProvider(props) {
 					type: GlobalStoreActionType.SET_CURRENT_MAP_VIEW,
 					payload: map,
 				});
-				navigate(`/mapView/${id}`);
+				// navigate(`/mapView/${id}`);
 			}
 		} catch (err) {
 			console.log(err);
