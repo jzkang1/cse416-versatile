@@ -64,26 +64,26 @@ export default function PersonalCard(props) {
 
         if (!card.isPublished && auth.user.username === card.owner) {
             buttons.push(
-                <MenuItem onClick={(e) => handleOpenShare(e, card._id)}>
+                <MenuItem key={card._id + "share"} onClick={(e) => handleOpenShare(e, card._id)}>
                     Share
                 </MenuItem>
             );
             buttons.push(
-                <MenuItem onClick={(e) => handlePublishMap(e, card._id)}>
+                <MenuItem key={card._id + "pub"} onClick={(e) => handlePublishMap(e, card._id)}>
                     Publish
                 </MenuItem>
             );
         }
 
         buttons.push(
-            <MenuItem onClick={(e) => handleDuplicateMap(e, card._id)}>
+            <MenuItem key={card._id + "dup"} onClick={(e) => handleDuplicateMap(e, card._id)}>
                 Duplicate
             </MenuItem>
         );
 
         if (auth.user.username === card.owner) {
             buttons.push(
-                <MenuItem onClick={(e) => handleDeleteMap(e, card._id)}>
+                <MenuItem key={card._id + "del"} onClick={(e) => handleDeleteMap(e, card._id)}>
                     Delete
                 </MenuItem>
             );
