@@ -1,5 +1,5 @@
 import React from "react";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import AuthContext from "../auth";
@@ -8,7 +8,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import { Card, CardMedia } from "@mui/material";
+import { Card, CardMedia, CircularProgress, LinearProgress} from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import Grid from "@mui/material/Grid";
 import Toolbar from "@mui/material/Toolbar";
@@ -40,6 +40,7 @@ const theme = createTheme({
 export default function ProfileScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
+    const [loading, setLoading] = useState(true);
 
     const handleClickMapCard = (event, mapID) => {
         store.loadMapView(mapID);
@@ -48,12 +49,15 @@ export default function ProfileScreen() {
     let { username } = useParams();
 
     useEffect(() => {
-        store.loadProfile(username);
+        (async() => {
+            await store.loadProfile(username);
+            setLoading(false);
+        })();
     }, []);
 
-    if (!store.currentProfileView) {
-        return null;
-    }
+    // if (!store.currentProfileView) {
+    //     return null;
+    // }
 
     return (
         <ThemeProvider theme={theme}>
@@ -71,11 +75,11 @@ export default function ProfileScreen() {
                     <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                         <Avatar sx={{width: 200, height: 200, ml: 2}} src={require("../images/dog.jpg")}/>
                         <Box sx={{ml: 2, display: "flex", flexDirection: "column"}}>
-                            <Typography variant="h3">{store.currentProfileView.username}</Typography>
+                            <Typography variant="h3">{username}</Typography>
                             <Stack sx={{ml: 2}}>
-                                <Typography variant="h6" color="grey">{store.currentProfileMaps.length} published map{store.currentProfileMaps.length != 1 ? "s" : ""}</Typography>
-                                <Typography variant="h6" color="grey">{store.currentProfileView.numLikes ? store.currentProfileView.numLikes : 0} total likes</Typography>
-                                <Typography variant="h6" color="grey">{store.currentProfileView.numDislikes ? store.currentProfileView.numDislikes : 0} total dislikes</Typography>
+                                <Typography variant="h6" color="grey">{loading ? <CircularProgress size={15}/> : store.currentProfileMaps.length} published map{store.currentProfileMaps.length != 1 ? "s" : ""}</Typography>
+                                <Typography variant="h6" color="grey">{loading ? <CircularProgress size={15}/>  : (store.currentProfileView.numLikes ? store.currentProfileView.numLikes : 0)} total likes</Typography>
+                                <Typography variant="h6" color="grey">{loading ? <CircularProgress size={15}/>  : (store.currentProfileView.numDislikes ? store.currentProfileView.numDislikes : 0)} total dislikes</Typography>
                             </Stack>
                         </Box>
                     </Box>
@@ -83,7 +87,7 @@ export default function ProfileScreen() {
                     <Toolbar sx={{ borderBottom: 1 }}></Toolbar>
 
                     <Grid container spacing={4} sx={{mt: 0}}>
-                        {store.currentProfileMaps.map((map) => (
+                        {loading || store.currentProfileMaps.map((map) => (
                             <Grid item key={map._id} xs={4} sm={4} md={4} lg={4}>
                                 <Card sx={{ display: "flex", flexDirection: "column", borderRadius: 2}}>
                                     <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>

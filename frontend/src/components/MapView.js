@@ -60,8 +60,9 @@ export default function MapView() {
     const commentRef = useRef();
 
     const handleClickViewProfile = (event) => {
-        event.stopPropagation();
-        store.loadProfile(store.currentMapView.owner);
+        // event.stopPropagation();
+        // store.loadProfile(store.currentMapView.owner);
+        navigate(`/profile/${store.currentMapView.owner}`);
     };
 
     let { id } = useParams();
