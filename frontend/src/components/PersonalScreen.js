@@ -43,7 +43,7 @@ function PageContent({ store, isLoading }) {
         return <Container maxWidth="lg">
             <Grid container spacing={4}>
                 {store.personalMapCards?.map((card) => (
-                    <PersonalCard card={card} />
+                    <PersonalCard key={card._id} card={card} />
                 ))}
             </Grid>
         </Container>
