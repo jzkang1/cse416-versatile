@@ -1,7 +1,7 @@
 import React from "react";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -15,6 +15,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import VisibilityIcon from '@mui/icons-material/Visibility';
+
 
 const theme = createTheme({
     palette: {
@@ -40,10 +41,11 @@ const theme = createTheme({
 export default function ProfileScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     const handleClickMapCard = (event, mapID) => {
-        store.loadMapView(mapID);
+        navigate(`/mapView/${mapID}`);
     }
 
     let { username } = useParams();
@@ -90,7 +92,7 @@ export default function ProfileScreen() {
                         {loading || store.currentProfileMaps.map((map) => (
                             <Grid item key={map._id} xs={4} sm={4} md={4} lg={4}>
                                 <Card sx={{ display: "flex", flexDirection: "column", borderRadius: 2}}>
-                                    <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>
+                                    <Link to={`/mapView/${map._id}`}>
                                         <CardMedia
                                             component="img"
                                             image={require("../images/forest.png")}
