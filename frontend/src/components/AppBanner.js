@@ -14,7 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -25,6 +25,7 @@ export default function AppBanner() {
 
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+    const navigate = useNavigate();
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -41,7 +42,8 @@ export default function AppBanner() {
 
     const handleClickOwnProfile = (event) => {
         handleCloseUserMenu(event);
-        store.loadProfile(auth.user.username);
+        // store.loadProfile(auth.user.username);
+        navigate(`/profile/${auth.user.username}`);
     }
 
     let menuLinks = <div> 
