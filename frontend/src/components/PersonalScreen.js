@@ -75,11 +75,11 @@ export default function PersonalScreen() {
     const [isLoading, setIsLoading] = useState(true);
     const [sortState, setSortState] = useState("all");
 
-    const handleSort = (e) => {
+    const handleSort = async (e) => {
         let newSortState = e.target.innerText.toLowerCase();
-
-        store.sortPersonalMaps(newSortState);
-
+        setIsLoading(true)
+        await store.sortPersonalMaps(newSortState);
+        setIsLoading(false)
         setSortState(newSortState);
     };
 
