@@ -20,6 +20,7 @@ import ThumbUpOffAltIcon from "@mui/icons-material/ThumbUpOffAlt";
 import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
+import { LinearProgress } from "@mui/material";
 
 function Copyright(props) {
     return (
@@ -53,6 +54,7 @@ const theme = createTheme({
 export default function MapView() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
+    const [loading, setLoading] = React.useState(true);
     const navigate = useNavigate();
 
     const commentRef = useRef();
@@ -65,12 +67,16 @@ export default function MapView() {
     let { id } = useParams();
 
     useEffect(() => {
-        store.loadMapView(id);
+        (async() => {
+            await store.loadMapView(id);
+            setLoading(false);
+        })();
     }, []);
 
-    if (!store.currentMapView) {
-        return null;
-    }
+
+    // if (!store.currentMapView) {
+    //     return null;
+    // }
 
     const getLikeOrUnlikeButton = () => {
         if (!auth.user) {
@@ -356,17 +362,17 @@ export default function MapView() {
                                 fontWeight: 700,
                             }}
                         >
-                            {store.currentMapView.name}
+                            {loading ? <div>Loading preview<LinearProgress/></div> : store.currentMapView.name}
                         </Typography>
                     </Box>
 
                     <Box sx={{ display: "flex", flexDirection: "row" }}>
-                        <Box sx={{ ml: 2, mr: 2, maxWidth: 800 }}>
+                        {loading || (<Box sx={{ ml: 2, mr: 2, maxWidth: 800 }}>
                             <img style={{
-                                "max-width": "100%",
-                                "max-height": "100%"
+                                "maxWidth": "100%",
+                                "maxHeight": "100%"
                             }} src={store.currentMapView.thumbnail} />
-                        </Box>
+                        </Box>)}
 
                         <Box
                             sx={{
@@ -375,16 +381,16 @@ export default function MapView() {
                                 flexGrow: 1,
                                 alignItems: "center",
                             }}
-                        >
-                            <img
-                                width="200"
-                                height="200"
-                                src={require("../images/dog.jpg")}
-                                alt="pfp"
-                                style={{
-                                    borderRadius: "50%",
-                                }}
-                            />
+                        >{loading || <img
+                            width="200"
+                            height="200"
+                            src={require("../images/dog.jpg")}
+                            alt="pfp"
+                            style={{
+                                borderRadius: "50%",
+                            }}
+                        />}
+                            
 
                             <Typography
                                 variant="h6"
@@ -398,7 +404,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                {store.currentMapView.owner}
+                                {loading || store.currentMapView.owner}
                             </Typography>
 
                             <Typography
@@ -414,7 +420,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                View profile
+                                {loading || "View profile"}
                             </Typography>
 
                             <Box
@@ -426,16 +432,16 @@ export default function MapView() {
                                     flexGrow: 0,
                                 }}
                             >
-                                <Button variant="contained" onClick={handleClickExport}>
+                                {loading || <Button variant="contained" onClick={handleClickExport}>
                                     Export as JSON
-                                </Button>
+                                </Button>}
 
-                                <Button
+                                {loading || <Button
                                     variant="contained"
                                     onClick={handleDuplicateMap}
                                 >
                                     Make a copy
-                                </Button>
+                                </Button>}
                             </Box>
                         </Box>
                     </Box>
@@ -467,7 +473,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                {store.currentMapView.comments.length} comments
+                                {loading || store.currentMapView.comments.length} comments
                             </Typography>
                         </Box>
 
@@ -480,7 +486,7 @@ export default function MapView() {
                                 flexGrow: 0,
                             }}
                         >
-                            {getLikeOrUnlikeButton()}
+                            {loading || getLikeOrUnlikeButton()}
                             <Typography
                                 variant="h6"
                                 noWrap
@@ -496,7 +502,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                {store.currentMapView.usersWhoLiked.length}
+                                {loading || store.currentMapView.usersWhoLiked.length}
                             </Typography>
                         </Box>
 
@@ -507,7 +513,7 @@ export default function MapView() {
                                 flexGrow: 0,
                             }}
                         >
-                            {getDislikeOrUndislikeButton()}
+                            {loading || getDislikeOrUndislikeButton()}
                             <Typography
                                 variant="h6"
                                 noWrap
@@ -523,7 +529,7 @@ export default function MapView() {
                                     textDecoration: "none",
                                 }}
                             >
-                                {store.currentMapView.usersWhoDisliked.length}
+                                {loading || store.currentMapView.usersWhoDisliked.length}
                             </Typography>
                         </Box>
                     </Box>
@@ -561,7 +567,7 @@ export default function MapView() {
                     </Box>
 
                     <Stack spacing={2} sx={{ ml: 2, mr: 2 }}>
-                        {getComments()}
+                        {loading || getComments()}
                     </Stack>
                 </Box>
 

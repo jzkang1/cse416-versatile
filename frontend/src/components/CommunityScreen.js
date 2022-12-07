@@ -198,7 +198,7 @@ export default function CommunityScreen() {
 
                     <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
 
-                        <Link onClick={(event) => {handleClickMapCard(event, map._id)}}>
+                        <Link to={`/mapView/${map._id}`}>
                         
                             <CardMedia 
                                 component="img"
