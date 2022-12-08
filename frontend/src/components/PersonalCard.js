@@ -53,7 +53,7 @@ export default function PersonalCard(props) {
             <CardMedia
                 component="img"
                 src={card.thumbnail}
-                sx={{ height: "130px", "&:hover": { cursor: "pointer" } }}
+                sx={{ height: "130px", "&:hover": { cursor: "pointer" }}}
                 onClick={handleClickPersonalCard}
             />
         );

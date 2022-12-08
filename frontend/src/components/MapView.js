@@ -3,6 +3,8 @@ import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
+import JSZip from 'jszip';
+import FileSaver from 'file-saver';
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -231,60 +233,32 @@ export default function MapView() {
         }
 
         let exportMap = {
-            backgroundcolor: "00FFFFFF",
-            class: "",
-            compressionlevel: -1,
-            height: store.currentMapView.height,
-            hexsidelength: 0,
+            height: (store.currentMapView.height / store.currentMapView.tileHeight),
             infinite: false,
             layers: [],
-            nextlayerid: store.currentMapView.layers.length,
             orientation: "orthogonal",
-            parallaxoriginx: 0,
-            parallaxoriginy: 0,
-            properties: [],
-            renderorder: "right-down",
-            staggeraxis: 0,
-            staggerindex: 0,
-            tiledversion: "1.9.1",
-            tileheight: store.currentMapView.tileheight,
+            tileheight: store.currentMapView.tileHeight,
             tilesets: [],
-            tilewidth: store.currentMapView.tilewidth,
+            tilewidth: store.currentMapView.tileWidth,
             type: "map",
-            version: "1.0",
+            version: 1,
             width: (store.currentMapView.width / store.currentMapView.tileWidth),
         };
 
-        let firstgid = 0;
+        let firstgid = 1;
         for (let i = 0; i < store.currentMapView.tilesets.length; i++) {
             let tileset = store.currentMapView.tilesets[i];
 
             let exportTileset = {
-                backgroundcolor: "00FFFFFF",
-                columns: Math.ceil(
-                    store.currentMapView.width * store.currentMapView.tileWidth
-                ),
-                fillmode: "",
                 firstgid: firstgid,
-                image: tileset.data,
+                image: tileset.name,
                 imageheight: tileset.imageHeight,
                 imagewidth: tileset.imageWidth,
                 margin: 0,
                 name: tileset.name,
-                objectalignment: "unspecified",
-                properties: [],
-                source: tileset.data,
                 spacing: 0,
-                tilecount: Math.ceil(
-                    (tileset.imageWidth * tileset.imageHeight) /
-                    (store.currentMapView.tileWidth * store.currentMapView.tileHeight)
-                ),
-                tiledversion: "1.9.1",
                 tileheight: store.currentMapView.tileHeight,
-                tilerendersize: "tile",
                 tilewidth: store.currentMapView.tileWidth,
-                type: "tileset",
-                version: "1.6",
             };
             exportMap.tilesets.push(exportTileset);
 
@@ -294,35 +268,64 @@ export default function MapView() {
         for (let i = 0; i < store.currentMapView.layers.length; i++) {
             let layer = store.currentMapView.layers[i];
 
-            console.log(layer);
-
             let exportLayer = {
-                "data": layer,
-                "height": exportMap.height,
-                "name": layer.name,
-                "opacity": 1,
-                "properties": [
-                    {
-                        "name": "tileLayerProp",
-                        "type": "int",
-                        "value": 1
-                    }],
-                "type": "tilelayer",
-                "visible": true,
-                "width": exportMap.width,
-                "x": 0,
-                "y": 0
+                data: [],
+                height: exportMap.height,
+                name: "layer" + (i+1),
+                opacity: 1,
+                type: "tilelayer",
+                visible: true,
+                width: exportMap.width,
+                x: 0,
+                y: 0
+            }
+
+            console.log(layer)
+            console.log(layer.length*layer[0].length);
+
+            for (let row = 0; row < layer.length; row++) {
+                for (let col = 0; col < layer[0].length; col++) {
+                    let [tilesetIndex, tilesetRow, tilesetCol] = layer[row][col];
+                    if (tilesetIndex === -1) {
+                        exportLayer["data"].push(0);
+                        continue;
+                    }
+                    
+                    let tile_id = 0;
+
+                    // add all tilecounts before current tileset
+                    tilesetIndex--;
+                    while (tilesetIndex >= 0) {
+                        let numTilesRow = Math.ceil(store.currentMapView.tilesets[tilesetIndex].imageHeight / store.currentMapView.tileHeight);
+                        let numTilesCol = Math.ceil(store.currentMapView.tilesets[tilesetIndex].imageWidth / store.currentMapView.tileWidth);
+                        tile_id += numTilesRow*numTilesCol;
+                        tilesetIndex--;
+                    }
+                    
+                    console.log(layer[0].length)
+
+                    // row is x, col is y
+                    tile_id += tilesetRow;
+                    tile_id += tilesetCol * (layer[0].length);
+                    
+                    exportLayer["data"].push(tile_id);
+                }
             }
             exportMap.layers.push(exportLayer);
         }
 
         const jsonFile = new Blob([JSON.stringify(exportMap, null, 4)], {type: "application/json"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(jsonFile);
-        a.download = store.currentMapView.name + ".json";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+
+        let zip = new JSZip();
+        zip.file(store.currentMapView.name + ".json", jsonFile);
+        let img = zip.folder("tilesets");
+        for (let tileset of store.currentMapView.tilesets) {
+            img.file(tileset.name, tileset["data"].split("base64,")[1], {base64: true});
+        }
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            FileSaver.saveAs(content, store.currentMapView.name + ".zip");
+        });
     };
 
     const handleDuplicateMap = async (event) => {
@@ -379,10 +382,14 @@ export default function MapView() {
                             sx={{
                                 display: "flex",
                                 flexDirection: "column",
-                                flexGrow: 1,
+                                flexGrow: 0,
                                 alignItems: "center",
+                                ml: "auto",
+                                mr: 4
                             }}
-                        >{loading || <img
+                        >
+                            
+                        {loading || <img
                             width="200"
                             height="200"
                             src={require("../images/dog.jpg")}
@@ -391,8 +398,7 @@ export default function MapView() {
                                 borderRadius: "50%",
                             }}
                         />}
-                            
-
+                        
                             <Typography
                                 variant="h6"
                                 noWrap
@@ -419,6 +425,7 @@ export default function MapView() {
                                     fontWeight: 700,
                                     color: "grey",
                                     textDecoration: "none",
+                                    "&:hover": { cursor: "pointer" }
                                 }}
                             >
                                 {loading || "View profile"}
@@ -439,6 +446,7 @@ export default function MapView() {
 
                                 {loading || <Button
                                     variant="contained"
+                                    disabled={auth.user === null}
                                     onClick={handleDuplicateMap}
                                 >
                                     Make a copy
