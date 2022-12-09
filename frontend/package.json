@@ -17,7 +17,8 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
     "konva": "8.3.14",
-    "react-konva": "18.0.0-0"
+    "react-konva": "18.0.0-0",
+    "react-colorful": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
