@@ -17,6 +17,9 @@ import LayersIcon from '@mui/icons-material/Layers';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
 
+import EditOffIcon from '@mui/icons-material/EditOff';
+import EditIcon from '@mui/icons-material/Edit';
+import { HexColorPicker, HexColorInput } from 'react-colorful';
 import { Stage, Layer, Line, Text, Image, Rect } from 'react-konva';
 
 
@@ -50,23 +53,23 @@ export default function TileEditor() {
     const [tilesetName, setTilesetName] = useState("Untitled");
     const stageRef = useRef(null);
 
+    const [tileset, setTileset] = useState(null);
+    const [color, setColor] = useState("#aabbcc");
+    const [strokeWidth, setStrokeWidth] = useState(5);
+
     let { id, tilesetSelected } = useParams();
 
 
     useEffect(() => {
         if (id) {
             store.loadMapEdit(id).then((map) => {
-                console.log(store.currentMapEdit)
-                console.log(stageRef.current)
                 let ctx = stageRef.current.children[0].canvas.context
 
                 const img = new window.Image();
                 img.src = store.currentMapEdit.tilesets[tilesetSelected].data;
+
                 img.onload = (e) => {
-                    console.log(img)
-                    ctx.drawImage(
-                        img, 0, 0
-                    );
+                    setTileset(img)
                 }
             });
         }
@@ -75,10 +78,26 @@ export default function TileEditor() {
     if (!store.currentMapEdit) {
         return null;
     }
+
+    const handleToggleEraser = () => {
+        setTool("eraser")
+    }
+
+    const handleTogglePen = () => {
+        setTool("pen")
+    }
+
+    const handleStrokeWidth = (e) => {
+        e.preventDefault()
+
+        const newStrokeWidth = new FormData(e.currentTarget).get("strokeWidth");
+        setStrokeWidth(Number(newStrokeWidth))
+    }
+
     const handleMouseDown = (e) => {
         isDrawing.current = true;
         const pos = e.target.getStage().getPointerPosition();
-        setLines([...lines, { tool, points: [pos.x, pos.y] }]);
+        setLines([...lines, { tool, color, strokeWidth, points: [pos.x, pos.y] }]);
     };
 
     const handleMouseMove = (e) => {
@@ -104,9 +123,17 @@ export default function TileEditor() {
 
     const handleExport = () => {
         const uri = stageRef.current.toDataURL();
-        console.log(store.currentMapEdit)
-        store.createTileset(store.currentMapEdit._id, tilesetName, uri);
+
+        let img = new window.Image();
+        img.src = uri;
+
+        img.onload = function () {
+            console.log(img.height, img.width)
+            store.createTileset(store.currentMapEdit._id, tilesetName, uri, img.height, img.width);
+        };
     }
+
+    console.log(lines)
 
     return (
         <ThemeProvider theme={theme}>
@@ -122,31 +149,28 @@ export default function TileEditor() {
                             defaultValue={tilesetName}
                             onChange={(newValue) => setTilesetName(newValue.target.value)}
                         />
-                        <Button sx={{ display: "block" }}><PanToolIcon /></Button>
-                        <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><PanToolAltIcon /></Button>
-                        <Button sx={{ borderLeft: 1, borderRadius: '0px', display: "block" }}><FormatColorFillIcon /></Button>
                         <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>Export</Button>
                         <Button onClick={handleExport} sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Save</Button>
                         <Link to={`/editor/${store.currentMapEdit._id}`} style={{ textDecoration: 'none' }}><Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Exit</Button></Link>
-
-
-
                     </Toolbar>
-                    <Grid container md={8}>
+
+                    <Grid container display="flex">
                         <Stage width={600} height={600} ref={stageRef}
                             onMouseDown={handleMouseDown}
                             onMousemove={handleMouseMove}
                             onMouseup={handleMouseUp}
-                            style={{ backgroundColor: "white", border: '3px solid black' }}>
+                            style={{ overflow: "auto", backgroundColor: "white", border: '3px solid black', width: "40%", height: "100%" }}>
                             <Layer>
+                                <Image image={tileset ? tileset : ""} x={0} y={0} style={{ backgroundColor: "yellow" }}></Image>
+
                                 {lines.map((line, i) => (
                                     <Line
                                         key={i}
                                         points={line.points}
-                                        stroke="#df4b26"
-                                        strokeWidth={5}
-                                        tension={0.5}
-                                        lineCap="round"
+                                        stroke={line.color}
+                                        strokeWidth={line.strokeWidth}
+                                        tension={0}
+                                        lineCap="square"
                                         lineJoin="round"
                                         globalCompositeOperation={
                                             line.tool === 'eraser' ? 'destination-out' : 'source-over'
@@ -155,9 +179,41 @@ export default function TileEditor() {
                                 ))}
                             </Layer>
                         </Stage>
+
+                        <Grid height={500} width={500} sx={{ ml: 5, mt: 5 }}>
+
+                            <Container disableGutters alignItems="center" sx={{}}>
+                                <Button variant="contained" component="label" sx={{ ml: 1, width: '30%', maxHeight: '20px' }} onClick={handleToggleEraser}>
+                                    <EditOffIcon />
+                                </Button>
+                                <Button variant="contained" sx={{ ml: 1, width: '30%', maxHeight: '20px' }} onClick={handleTogglePen}>
+                                    <EditIcon />
+                                </Button>
+                            </Container>
+
+                            <Box component="form" onSubmit={handleStrokeWidth} noValidate sx={{ m: 1 }}>
+                                <TextField
+                                    size="small"
+                                    name="strokeWidth"
+                                    label={`Stroke Width: ${strokeWidth}`}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
+                                                Enter
+                                            </Button>
+                                        )
+                                    }} />
+                            </Box>
+
+                            <Grid height={300} width={500}>
+                                <HexColorInput style={{ width: "100%" }} color={color} onChange={setColor} />
+                                <HexColorPicker style={{ width: "100%", height: "100%" }} color={color} onChange={setColor} ></HexColorPicker>
+
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Container>
             </Container>
-        </ThemeProvider>
+        </ThemeProvider >
     );
 }
