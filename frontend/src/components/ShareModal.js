@@ -102,9 +102,8 @@ export default function ShareModal(props) {
                     ))}
                     
 
-                    <Stack direction="row" sx={{ mt: 2 }}>
+                    <Stack direction="row" sx={{ mt: 2 }} justifyContent="center">
                         <Button onClick={store.closeShareModal} variant="contained">Close</Button>
-                        <Button onClick={handlePublish} variant="contained" sx={{ marginLeft: "auto" }}>Publish Map</Button>
                     </Stack>
                     
                 </Box>
