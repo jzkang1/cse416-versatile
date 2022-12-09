@@ -258,8 +258,8 @@ function GlobalStoreContextProvider(props) {
 		}
 		let response = await api.endEditMap(payload);
 		if (response.data.success) {
-			store.loadPersonalMaps();
-			navigate(`/personal`);
+			// store.loadPersonalMaps();
+			// navigate(`/personal`);
 		}
 	}
 

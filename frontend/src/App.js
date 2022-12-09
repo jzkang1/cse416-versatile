@@ -26,23 +26,24 @@ const App = () => {
             <AuthContextProvider>
                 <GlobalStoreContextProvider>
                     <AppBanner />
-                    
+
                     <Routes>
-                        <Route path="/" element={<HomeScreen/>} />
-                        <Route path="/Home" element={<HomeScreen/>} />
+                        <Route path="/" element={<HomeScreen />} />
+                        <Route path="/Home" element={<HomeScreen />} />
 
-                        <Route path="/profile/:username" element={<ProfileScreen/>} />
-                        <Route path="/login" element={<LoginScreen/>} />
-                        <Route path="/register" element={<RegisterScreen/>} />
-                        <Route path="/recovery" element={<RecoveryScreen/>} />
+                        <Route path="/profile/:username" element={<ProfileScreen />} />
+                        <Route path="/login" element={<LoginScreen />} />
+                        <Route path="/register" element={<RegisterScreen />} />
+                        <Route path="/recovery" element={<RecoveryScreen />} />
 
-                        <Route path="/personal" element={<PersonalScreen/>} />
-                        <Route path="/community" element={<CommunityScreen/>} />
+                        <Route path="/personal" element={<PersonalScreen />} />
+                        <Route path="/community" element={<CommunityScreen />} />
 
-                        <Route path="/mapView/:id" element={<MapView/>} />
+                        <Route path="/mapView/:id" element={<MapView />} />
 
-                        <Route path="/editor/:id" element={<MapEditorScreen/>} />
-                        <Route path="/tileEditor" element={<TileEditor/>} />
+                        <Route path="/editor/:id" element={<MapEditorScreen />} />
+                        <Route path="/tileEditor" element={<TileEditor />} />
+                        <Route path="/tileEditor/:id/:tilesetSelected" element={<TileEditor />} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
