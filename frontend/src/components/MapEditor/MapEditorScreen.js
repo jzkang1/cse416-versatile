@@ -182,11 +182,14 @@ export default function MapEditorScreen() {
 
         let newLayers = MAP_LAYERS;
 
-        if (newHeight/TILE_HEIGHT < MAP_LAYERS[0].length) {
+        console.log(MAP_LAYERS[0][0].length, newHeight/TILE_HEIGHT)
+        if (newHeight/TILE_HEIGHT < MAP_LAYERS[0][0].length) {
+            console.log("1")
             for (let i = 0; i < newLayers.length; i++) {
                 newLayers[i] = newLayers[i].map(row => row.slice(0, newHeight/TILE_HEIGHT))
             }
         } else {
+            console.log("2")
             for (let layeri = 0; layeri < newLayers.length; layeri++) {
                 for (let i = 0; i < MAP_LAYERS[layeri].length; i++) {
                     for (let j = MAP_LAYERS[layeri][i].length; j < newHeight/TILE_HEIGHT; j++) {
@@ -196,6 +199,7 @@ export default function MapEditorScreen() {
             }
         }
         
+        console.log(newLayers)
         setMapLayers(newLayers)
         setEditorHeight(newHeight)
     }
