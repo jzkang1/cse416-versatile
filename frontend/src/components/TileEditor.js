@@ -125,15 +125,27 @@ export default function TileEditor() {
 
 
     const handleSave = () => {
-        const uri = stageRef.current.toDataURL();
+        if (tilesetSelected) {
+            console.log("updating")
+            const uri = stageRef.current.children[0].canvas.toDataURL();
 
-        let img = new window.Image();
-        img.src = uri;
+            let img = new window.Image();
+            img.src = uri;
 
-        img.onload = function () {
-            console.log(img.height, img.width)
-            store.createTileset(store.currentMapEdit._id, tilesetName, uri, img.height, img.width);
-        };
+            img.onload = function () {
+                store.updateTileset(store.currentMapEdit._id, tilesetSelected, tilesetName, uri);
+            };
+        } else {
+            const uri = stageRef.current.children[0].canvas.toDataURL();
+    
+            let img = new window.Image();
+            img.src = uri;
+    
+            img.onload = function () {
+                console.log(img.height, img.width)
+                store.createTileset(store.currentMapEdit._id, tilesetName, uri, img.height, img.width);
+            };
+        }
     }
 
     const renderGridLines = () => {

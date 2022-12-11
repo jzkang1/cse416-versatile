@@ -44,7 +44,7 @@ export const postComment = (payload) => api.put(`/postComment`, payload).catch(c
 export const getTileset = (id) => api.get(`/getTileset/${id}`).catch(catcher);
 export const createTileset = (payload) => api.post(`/createTileset`, payload).catch(catcher);
 export const updateTileset = (payload) => api.post(`/updateTileset`, payload).catch(catcher);
-export const deleteTileset = (payload) => api.delete(`/deleteTileset`, payload).catch(catcher);
+export const deleteTileset = (payload) => api.delete(`/deleteTileset`, { data: payload }).catch(catcher);
 
 let catcher = (err) => { if (err.response) return err.response; else return null }
 

@@ -37,7 +37,7 @@ router.put('/undislikeMap', auth.verify, MapController.undislikeMap)
 router.put('/postComment', auth.verify, MapController.postComment)
 
 router.post('/createTileset', auth.verify, TilesetController.createTileset)
-router.put('/updateTileset', auth.verify, TilesetController.updateTileset)
+router.post('/updateTileset', auth.verify, TilesetController.updateTileset)
 router.delete('/deleteTileset', auth.verify, TilesetController.deleteTileset)
 
 module.exports = router

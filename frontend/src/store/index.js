@@ -625,6 +625,25 @@ function GlobalStoreContextProvider(props) {
 		}
 	};
 
+	store.deleteTileset = async function(mapID, tilesetID) {
+		console.log("store.deleteTileset: Deleting tileset " , mapID, tilesetID);
+		let response = await api.deleteTileset({
+			mapID: mapID,
+			tilesetID: tilesetID
+		});
+
+		if (response.data.success) {
+			let map = response.data.map;
+
+			storeReducer({
+				type: GlobalStoreActionType.SET_CURRENT_MAP_EDIT,
+				payload: map,
+			});
+
+			console.log("store.deleteTileset: tileset deleted ");
+		}
+	};
+
     return (
     <GlobalStoreContext.Provider
         value={{
