@@ -119,13 +119,6 @@ export default function MapEditorScreen() {
         return cleanup;
     }, []);
 
-    const releaseDocumentLock = async () => {
-        store.endEditMap();
-        window.onunload = () => { }
-    }
-
-    window.onunload = releaseDocumentLock;
-
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
