@@ -290,12 +290,12 @@ export default function MapEditorScreen() {
         }
 
         const loadImage = (src) =>
-            new Promise((resolve, reject) => {
-                const img = new window.Image();
-                img.src = src;
-                img.onload = () => resolve(img);
-                img.onerror = reject;
-            })
+            // new Promise((resolve, reject) => {
+            //     const img = new window.Image();
+            //     img.src = src;
+            //     img.onload = () => resolve(img);
+            //     img.onerror = reject;
+            // })
 
         Promise.all(layers.map(loadImage)).then(images => {
             for (let image of images) {
