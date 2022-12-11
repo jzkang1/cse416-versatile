@@ -49,13 +49,12 @@ const MapSchema = new Schema(
         modifyDate: { type: Date, required: true },
         
         isPublished: { type: Boolean, required: true },
-        publishDate: { type: Date, required: false }, 
+        publishDate: { type: Date, required: false },
 
-        description: { type: String, required: false },
-        views: { type: Number, required: false },
-        usersWhoLiked: { type: [String], required: false },
-        usersWhoDisliked: { type: [String], required: false },
-        comments: { type: [CommentSchema], required: false },
+        views: { type: Number, required: true },
+        usersWhoLiked: { type: [String], required: true },
+        usersWhoDisliked: { type: [String], required: true },
+        comments: { type: [CommentSchema], required: true },
 
         thumbnail: { type: String, required: false },
     },

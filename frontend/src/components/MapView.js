@@ -280,9 +280,6 @@ export default function MapView() {
                 y: 0
             }
 
-            console.log(layer)
-            console.log(layer.length*layer[0].length);
-
             for (let row = 0; row < layer.length; row++) {
                 for (let col = 0; col < layer[0].length; col++) {
                     let [tilesetIndex, tilesetRow, tilesetCol] = layer[row][col];
@@ -291,7 +288,7 @@ export default function MapView() {
                         continue;
                     }
                     
-                    let tile_id = 0;
+                    let tile_id = 1;
 
                     // add all tilecounts before current tileset
                     tilesetIndex--;
@@ -301,8 +298,6 @@ export default function MapView() {
                         tile_id += numTilesRow*numTilesCol;
                         tilesetIndex--;
                     }
-                    
-                    console.log(layer[0].length)
 
                     // row is x, col is y
                     tile_id += tilesetRow;
@@ -318,9 +313,8 @@ export default function MapView() {
 
         let zip = new JSZip();
         zip.file(store.currentMapView.name + ".json", jsonFile);
-        let img = zip.folder("tilesets");
         for (let tileset of store.currentMapView.tilesets) {
-            img.file(tileset.name, tileset["data"].split("base64,")[1], {base64: true});
+            zip.file(tileset.name, tileset["data"].split("base64,")[1], {base64: true});
         }
         zip.generateAsync({type:"blob"})
         .then(function(content) {
@@ -333,6 +327,10 @@ export default function MapView() {
         await store.handleMakeACopy();
         navigate("/personal");
     };
+
+    if (!store.currentMapView) {
+        return null;
+    }
 
     return (
         <ThemeProvider theme={theme}>
