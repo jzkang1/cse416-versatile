@@ -283,23 +283,23 @@ export default function MapEditorScreen() {
     }
 
     const handleSave = () => {
-        var ctx = stageRef.current.children[1].canvas.context
+        let index = stageRef.current.children.length - 1
+        let ctx = stageRef.current.children[index].canvas.context
         let layers = []
-        for (let i = 0; i < stageRef.current.children.length; i++) {
+        for (let i = 0; i < stageRef.current.children.length-1; i++) {
             layers.push(stageRef.current.children[i].canvas.toDataURL())
         }
 
         const loadImage = (src) =>
-            // new Promise((resolve, reject) => {
-            //     const img = new window.Image();
-            //     img.src = src;
-            //     img.onload = () => resolve(img);
-            //     img.onerror = reject;
-            // })
+            new Promise((resolve, reject) => {
+                const img = new window.Image();
+                img.src = src;
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+            })
 
         Promise.all(layers.map(loadImage)).then(images => {
             for (let image of images) {
-                // console.log(image)
                 ctx.drawImage(
                     image, 0, 0
                 )
@@ -311,7 +311,7 @@ export default function MapEditorScreen() {
             map.tileWidth = TILE_WIDTH
             map.height = EDITOR_HEIGHT
             map.width = EDITOR_WIDTH
-            map.thumbnail = stageRef.current.children[1].canvas.toDataURL();
+            map.thumbnail = stageRef.current.children[index].canvas.toDataURL();
             store.updateMap(map);
         })
     }
@@ -617,6 +617,10 @@ export default function MapEditorScreen() {
                             {MAP_LAYERS.map((obj, i) => {
                                 return <Layer id={i}></Layer>
                             })}
+
+                            <Layer>
+
+                            </Layer>
                         </Stage>
 
                         <Box container sx={{ backgroundColor: 'lightgray', maxHeight: '62vh', width: "13%" }}>
