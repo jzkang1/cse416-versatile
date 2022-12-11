@@ -160,21 +160,36 @@ export default function MapEditorScreen() {
 
     const handleChangeTileHeight = (e) => {
         e.preventDefault();
-        const newTileHeight = new FormData(e.currentTarget).get("tileHeight");
-        setTileHeight(Number(newTileHeight))
+        const height = new FormData(e.currentTarget).get("tileHeight")
+        if (height == 0){
+            console.log("invalid width")
+            return undefined;
+        }
+        setTileHeight(Number(height))
         renderMap()
     }
 
     const handleChangeTileWidth = (e) => {
         e.preventDefault();
-        const newTileWidth = new FormData(e.currentTarget).get("tileWidth");
-        setTileWidth(Number(newTileWidth))
+        const width = new FormData(e.currentTarget).get("tileWidth")
+        if (width == 0){
+            console.log("invalid width")
+            return undefined;
+        }
+        setTileWidth(Number(width))
         renderMap()
     }
 
     const handleChangeEditorHeight = (e) => {
         e.preventDefault();
-        let newHeight = Math.max(TILE_HEIGHT, Number(new FormData(e.currentTarget).get("editorHeight")));
+
+        const height = new FormData(e.currentTarget).get("editorHeight")
+        if (height == 0){
+            console.log("invalid width")
+            return undefined;
+        }
+
+        let newHeight = Math.max(TILE_WIDTH, Number(height));
 
         if (!Number.isInteger(newHeight / TILE_HEIGHT)) {
             newHeight = TILE_HEIGHT * Math.floor(newHeight / TILE_HEIGHT)
@@ -206,7 +221,14 @@ export default function MapEditorScreen() {
 
     const handleChangeEditorWidth = (e) => {
         e.preventDefault();
-        let newWidth = Math.max(TILE_WIDTH, Number(new FormData(e.currentTarget).get("editorWidth")));
+
+        const width = new FormData(e.currentTarget).get("editorWidth")
+        if (width == 0){
+            console.log("invalid width")
+            return undefined;
+        }
+
+        let newWidth = Math.max(TILE_WIDTH, Number(width));
 
         if (!Number.isInteger(newWidth / TILE_WIDTH)) {
             newWidth = TILE_WIDTH * Math.floor(newWidth / TILE_WIDTH)
@@ -461,6 +483,7 @@ export default function MapEditorScreen() {
                                 size="small"
                                 name="tileHeight"
                                 label={"Tile Height: " + TILE_HEIGHT}
+                                type="number"
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
@@ -475,6 +498,7 @@ export default function MapEditorScreen() {
                                 size="small"
                                 name="tileWidth"
                                 label={"Tile Width: " + TILE_WIDTH}
+                                type="number"
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
@@ -489,6 +513,7 @@ export default function MapEditorScreen() {
                                 size="small"
                                 name="editorWidth"
                                 label={"Map Width: " + EDITOR_WIDTH}
+                                type="number"
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
@@ -503,6 +528,7 @@ export default function MapEditorScreen() {
                                 size="small"
                                 name="editorHeight"
                                 label={"Map Height: " + EDITOR_HEIGHT}
+                                type="number"
                                 InputProps={{
                                     endAdornment: (
                                         <Button type="submit" fullWidth variant="contained" sx={{ m: 1, width: '5%' }}>
