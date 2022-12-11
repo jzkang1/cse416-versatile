@@ -121,7 +121,7 @@ export default function TileEditor() {
     };
 
 
-    const handleExport = () => {
+    const handleSave = () => {
         const uri = stageRef.current.toDataURL();
 
         let img = new window.Image();
@@ -149,8 +149,7 @@ export default function TileEditor() {
                             defaultValue={tilesetName}
                             onChange={(newValue) => setTilesetName(newValue.target.value)}
                         />
-                        <Button sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, display: "block", marginLeft: "auto" }}>Export</Button>
-                        <Button onClick={handleExport} sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Save</Button>
+                        <Button onClick={handleSave} sx={{ backgroundColor: "#E0D7FB", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Save</Button>
                         <Link to={`/editor/${store.currentMapEdit._id}`} style={{ textDecoration: 'none' }}><Button sx={{ backgroundColor: "#CCBBFF", borderRadius: '8px', my: 2, ml: 2, display: "block" }}>Exit</Button></Link>
                     </Toolbar>
 

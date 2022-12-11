@@ -15,6 +15,8 @@ function authManager() {
             const verified = jwt.verify(token, process.env.JWT_SECRET)
             req.userId = verified.userId;
 
+            console.log("userid: " + verified.userId);
+
             next();
         } catch (err) {
             console.error(err);
