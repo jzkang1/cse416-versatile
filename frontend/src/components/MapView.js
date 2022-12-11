@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import AuthContext from "../auth";
@@ -56,7 +56,11 @@ const theme = createTheme({
 export default function MapView() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
-    const [loading, setLoading] = React.useState(true);
+    const [loading, setLoading] = useState(true);
+
+    const [disabledButtons, setDisabledButtons] = useState(false);
+
+
     const navigate = useNavigate();
 
     const commentRef = useRef();
@@ -92,13 +96,13 @@ export default function MapView() {
 
         if (!store.currentMapView.usersWhoLiked.includes(auth.user.username)) {
             return (
-                <IconButton onClick={handleClickLike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickLike}>
                     <ThumbUpOffAltIcon />
                 </IconButton>
             );
         } else {
             return (
-                <IconButton onClick={handleClickUnlike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickUnlike}>
                     <ThumbUpIcon />
                 </IconButton>
             );
@@ -118,13 +122,13 @@ export default function MapView() {
             !store.currentMapView.usersWhoDisliked.includes(auth.user.username)
         ) {
             return (
-                <IconButton onClick={handleClickDislike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickDislike}>
                     <ThumbDownOffAltIcon />
                 </IconButton>
             );
         } else {
             return (
-                <IconButton onClick={handleClickUndislike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickUndislike}>
                     <ThumbDownIcon />
                 </IconButton>
             );
@@ -188,24 +192,34 @@ export default function MapView() {
         return comments;
     };
 
-    const handleClickLike = (event) => {
-        event.stopPropagation();
-        store.likeMap();
+    const toggleDisabled = async (callback) => {
+        setDisabledButtons(true);
+        await callback();
+        setDisabledButtons(false);
+    }
+
+    const handleClickLike = async (event) => {
+        setDisabledButtons(true);
+        await store.likeMap();
+        setDisabledButtons(false);
     };
 
-    const handleClickUnlike = (event) => {
-        event.stopPropagation();
-        store.unlikeMap();
+    const handleClickUnlike = async (event) => {
+        setDisabledButtons(true);
+        await store.unlikeMap();
+        setDisabledButtons(false);
     };
 
-    const handleClickDislike = (event) => {
-        event.stopPropagation();
-        store.dislikeMap();
+    const handleClickDislike = async (event) => {
+        setDisabledButtons(true);
+        await store.dislikeMap();
+        setDisabledButtons(false);
     };
 
-    const handleClickUndislike = (event) => {
-        event.stopPropagation();
-        store.undislikeMap();
+    const handleClickUndislike = async (event) => {
+        setDisabledButtons(true);
+        await store.undislikeMap();
+        setDisabledButtons(false);
     };
 
     const handleSubmitComment = (event) => {
