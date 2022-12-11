@@ -415,6 +415,7 @@ export default function MapEditorScreen() {
     }
 
     const handleDeleteLayer = (e) => {
+        e.stopPropagation()
         if (MAP_LAYERS.length <= 1) return
         let newLayers = [...MAP_LAYERS]
         newLayers.splice(e.target.id, 1)
@@ -422,6 +423,7 @@ export default function MapEditorScreen() {
     }
 
     const handleMoveLayerUp = (e) => {
+        e.stopPropagation()
         let id = Number(e.target.id)
         if (id == 0) return
         let newLayers = [...MAP_LAYERS]
@@ -434,6 +436,7 @@ export default function MapEditorScreen() {
     }
 
     const handleMoveLayerDown = (e) => {
+        e.stopPropagation()
         let id = Number(e.target.id)
         if (id == MAP_LAYERS.length - 1) return
 
@@ -449,6 +452,12 @@ export default function MapEditorScreen() {
 
     const handleSelectLayer = (e) => {
         setSelectedLayer(e.target.id)
+    }
+
+    const handleDeleteTileset = (e) => {
+        e.stopPropagation()
+        console.log("Deleting ", store.currentMapEdit._id, e.target.id)
+        store.deleteTileset(store.currentMapEdit._id, e.target.id)
     }
 
     return (
@@ -594,6 +603,9 @@ export default function MapEditorScreen() {
                                             <ListItemText>
                                                 {tileset.name}
                                             </ListItemText>
+                                            <IconButton size="small">
+                                                <RemoveCircleOutlineIcon fontSize="small" id={i} onClick={handleDeleteTileset} />
+                                            </IconButton>
                                         </MenuItem>
                                     ))}
 

@@ -85,8 +85,8 @@ createTileset = async (req, res) => {
 
 updateTileset = async (req, res) => {
     try {
-        const { mapID, _id, name, data } = req.body;
-        
+        const { mapID, tilesetID, name, data } = req.body;
+
         let map = await Map.findOne({_id: mapID});
 
         if (!map) {
@@ -94,10 +94,9 @@ updateTileset = async (req, res) => {
                 errorMessage: "Could not update tileset"
             });
         }
-
         for (let i = 0; i < map.tilesets.length; i++) {
-            if (map.tilesets[i]._id === _id) {
-                map.tilesets[i] = {name, data};
+            if (i == tilesetID) {
+                map.tilesets[i] = {name, data, imageWidth: 600, imageHeight: 600};
                 break;
             }
         }
@@ -117,8 +116,10 @@ updateTileset = async (req, res) => {
 
 deleteTileset = async (req, res) => {
     try {
-        const { mapID, _id } = req.body;
+        console.log(req)
+        const { mapID, tilesetID } = req.body;
         let map = await Map.findOne({_id: mapID});
+        console.log(mapID, tilesetID)
 
         if (!map) {
             return res.status(400).json({
@@ -127,8 +128,9 @@ deleteTileset = async (req, res) => {
         }
 
         let deleted = false;
+
         for (let i = 0; i < map.tilesets.length; i++) {
-            if (map.tilesets[i]._id.toString() === _id) {
+            if (i == tilesetID) {
                 map.tilesets.splice(i, 1);
                 deleted = true;
                 break;
