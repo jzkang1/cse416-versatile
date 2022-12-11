@@ -616,14 +616,14 @@ export default function MapEditorScreen() {
                             </Stage>
 
                             <Container disableGutters alignItems="center" sx={{}}>
-                                <Link to={`/tileEditor/${store.currentMapEdit._id}/${tilesetSelected[0]}`}>
+                                <Link to={`/tileEditor/${store.currentMapEdit._id}/${tilesetSelected[0]}/${TILE_WIDTH}/${TILE_HEIGHT}`}>
                                     <Button variant="contained" sx={{ ml: 1, width: '30%', maxHeight: '20px' }}><EditIcon /></Button>
                                 </Link>
                                 <Button variant="contained" component="label" sx={{ ml: 1, width: '30%', maxHeight: '20px' }}>
                                     <CloudUploadIcon />
                                     <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload} />
                                 </Button>
-                                <Link to={`/tileEditor`}>
+                                <Link to={`/tileEditor/${TILE_WIDTH}/${TILE_HEIGHT}`}>
                                     <Button variant="contained" sx={{ ml: 1, width: '30%', maxHeight: '20px' }}><AddIcon /></Button>
                                 </Link>
                             </Container>
