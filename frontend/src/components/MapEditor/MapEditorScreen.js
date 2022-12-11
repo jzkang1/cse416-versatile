@@ -299,11 +299,12 @@ export default function MapEditorScreen() {
             })
 
         Promise.all(layers.map(loadImage)).then(images => {
-            for (let image of images) {
-                ctx.drawImage(
-                    image, 0, 0
-                )
-            }
+            // for (let image of images) {
+            //     // console.log(image)
+            //     ctx.drawImage(
+            //         image, 0, 0
+            //     )
+            // }
             let map = store.currentMapEdit;
             map.layers = MAP_LAYERS
             map.name = mapName;
