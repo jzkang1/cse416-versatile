@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useContext, useState } from "react";
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
@@ -14,7 +14,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
@@ -26,6 +26,24 @@ export default function AppBanner() {
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
     const navigate = useNavigate();
+
+
+    const usePrevious = (value) => {
+        const ref = React.useRef()
+        useEffect(() => { ref.current = value })
+      
+        return ref.current
+    }
+
+    const location = useLocation()
+    const prevLocation = usePrevious(location)
+    useEffect(() => { 
+        // console.log("prev path: " + prevLocation?.pathname)
+        if (prevLocation?.pathname?.includes("editor") && location?.pathname?.includes("personal")){
+            console.log("Load again when navigating from editor to personal")
+            store.loadPersonalMaps();
+        }
+    }, [location])
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
