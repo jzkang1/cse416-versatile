@@ -290,20 +290,20 @@ export default function MapEditorScreen() {
         }
 
         const loadImage = (src) =>
-            // new Promise((resolve, reject) => {
-            //     const img = new window.Image();
-            //     img.src = src;
-            //     img.onload = () => resolve(img);
-            //     img.onerror = reject;
-            // })
+            new Promise((resolve, reject) => {
+                const img = new window.Image();
+                img.src = src;
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+            })
 
         Promise.all(layers.map(loadImage)).then(images => {
-            for (let image of images) {
-                // console.log(image)
-                ctx.drawImage(
-                    image, 0, 0
-                )
-            }
+            // for (let image of images) {
+            //     // console.log(image)
+            //     ctx.drawImage(
+            //         image, 0, 0
+            //     )
+            // }
             let map = store.currentMapEdit;
             map.layers = MAP_LAYERS
             map.name = mapName;
