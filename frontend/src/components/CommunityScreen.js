@@ -1,6 +1,6 @@
 import React from 'react';
 import { useContext, useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthContext from "../auth";
 import GlobalStoreContext from "../store";
 import Box from "@mui/material/Box";
@@ -59,8 +59,10 @@ export default function CommunityScreen() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
 
+    const navigate = useNavigate();
+
     const handleClickMapCard = (event, id) => {
-        store.loadMapView(id);
+        navigate(`/mapView/${id}`)
     }
 
     const handleSearch = (e) => {
@@ -196,23 +198,22 @@ export default function CommunityScreen() {
                 {store.communityMapCards?.map((map) => (
                 <Grid item key={map._id} md={12}>
 
-                    <Card sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px'}}>
-
-                        <Link to={`/mapView/${map._id}`}>
+                    <Card
+                        sx={{ height: '250px', display: 'flex', flexDirection: 'row', borderRadius: '8px', "&:hover": { cursor: "pointer" }}}
+                        onClick={(e) => {handleClickMapCard(e, map._id)}}
+                    >
                         
-                            <CardMedia 
-                                component="img"
-                                image={map.thumbnail}
-                                sx={{ height: "100%", width: "auto"}}
-                            />
-                        </Link>
+                        <CardMedia 
+                            component="img"
+                            image={map.thumbnail}
+                            sx={{ height: "100%", width: "auto"}}
+                        />
                         
                        
                         
                         <Box display="flex" flexDirection="column">
                             <Typography variant="h4" sx={{ ml: 1 }}>{map.name}</Typography>
                             <Typography variant="body2" sx={{ ml: 2 }}>By {map.owner}</Typography>
-                            {/* <Typography variant="body2" sx={{ ml: 2 }}>{map.description ? map.description : "A green forest map with trees and bushes"}</Typography> */}
                             
                             <Box display="flex" flexDirection="row" marginTop="auto" sx={{ marginTop: "auto", ml: 2 }}>
                                 <ThumbUpIcon/>
@@ -222,7 +223,7 @@ export default function CommunityScreen() {
                                 <QuestionAnswerIcon/>
                                 <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.comments.length === undefined ? 0 : map.comments.length}</Typography>
                                 <VisibilityIcon/>
-                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.comments.length === undefined ? 0 : map.views}</Typography>
+                                <Typography variant="body2" sx={{ m: 2, mt: "auto"}}>{map.views === undefined ? 0 : map.views}</Typography>
                             </Box>
                         </Box>
                     </Card>

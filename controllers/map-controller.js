@@ -55,13 +55,17 @@ getMap = async (req, res) => {
 	try {
 		const _id = req.params.id;
 
-		let map = await Map.findOne({
-			_id: _id
-		}).populate("tilesets");
-
-		// console.log(map)
+		let map = await Map.findOne({ _id: _id });
 
 		if (map) {
+            if (map.isPublished) {
+                console.log("map is published")
+                map.views++;
+                await map.save();
+            }
+
+            console.log(map.views)
+
 			return res.status(200).json({
 				success: true,
 				map: map,
@@ -113,6 +117,11 @@ createMap = async (req, res) => {
 
 		const isPublished = false;
 
+        const views = 0;
+        const usersWhoLiked = [];
+        const usersWhoDisliked = [];
+        const comments = [];
+
 		const newMap = new Map({
 			name,
 			owner,
@@ -126,7 +135,11 @@ createMap = async (req, res) => {
 			currentlyBeingEdited,
 			createDate,
 			modifyDate,
-			isPublished
+			isPublished,
+            views,
+            usersWhoLiked,
+            usersWhoDisliked,
+            comments
 		});
 
 		await newMap.save();
@@ -163,8 +176,7 @@ updateMap = async (req, res) => {
 
 			isPublished,
 			publishDate,
-
-			description,
+            
 			views,
 			usersWhoLiked,
 			usersWhoDisliked,
@@ -198,8 +210,7 @@ updateMap = async (req, res) => {
 
 			if (isPublished) map.isPublished = isPublished;
 			if (publishDate) map.publishDate = publishDate;
-
-			if (description) map.description = description;
+            
 			if (views) map.views = views;
 			if (usersWhoLiked) map.usersWhoLiked = usersWhoLiked;
 			if (usersWhoDisliked) map.usersWhoDisliked = usersWhoDisliked;
@@ -361,7 +372,7 @@ publishMap = async (req, res) => {
 		});
 	} catch (err) {
 		return res.status(400).json({
-			errorMessage: "Could not publish map",
+			errorMessage: err
 		});
 	}
 };
@@ -374,7 +385,6 @@ duplicateMap = async (req, res) => {
 		let map = await Map.findOne({
 			_id: _id
 		});
-		console.log(map)
 
 		if (!map) {
 			return res.status(400).json({
@@ -399,7 +409,6 @@ duplicateMap = async (req, res) => {
 			layers,
 			tilesets,
 			collaborators,
-			description,
 			thumbnail,
 		} = map;
 
@@ -408,6 +417,11 @@ duplicateMap = async (req, res) => {
 		const createDate = new Date();
 		const modifyDate = new Date();
 		const isPublished = false;
+
+        const views = 0;
+        const usersWhoLiked = [];
+        const usersWhoDisliked = [];
+        const comments = [];
         
 
 		const newMap = new Map({
@@ -424,8 +438,11 @@ duplicateMap = async (req, res) => {
 			createDate,
 			modifyDate,
 			isPublished,
-			description,
 			thumbnail,
+            views,
+            usersWhoLiked,
+            usersWhoDisliked,
+            comments
 		});
 
 		await newMap.save();
@@ -452,8 +469,6 @@ likeMap = async (req, res) => {
 		let map = await Map.findOne({
 			_id: _id
 		});
-
-		console.log(map);
 
 		map.usersWhoLiked.push(username);
 
