@@ -125,7 +125,7 @@ export default function TileEditor() {
 
 
     const handleSave = () => {
-        if (tilesetSelected) {
+        if (tilesetSelected >= 0) {
             console.log("updating")
             const uri = stageRef.current.children[0].canvas.toDataURL();
 
@@ -180,9 +180,9 @@ export default function TileEditor() {
         console.log(redoStack, redoStack.length)
         if (redoStack.length > 0) {
             let newLines = [...lines]
-            newLines.push(redoStack[0])
+            newLines.push(redoStack[redoStack.length-1])
             setLines(newLines)
-            setRedoStack(redoStack.slice(1, redoStack.length))
+            setRedoStack(redoStack.slice(0, redoStack.length-1))
         }
     }
 
