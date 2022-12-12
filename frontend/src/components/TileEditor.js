@@ -16,11 +16,13 @@ import PanToolAltIcon from '@mui/icons-material/PanToolAlt';
 import LayersIcon from '@mui/icons-material/Layers';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import LayersClearIcon from '@mui/icons-material/LayersClear';
-
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
 import EditOffIcon from '@mui/icons-material/EditOff';
 import EditIcon from '@mui/icons-material/Edit';
 import { HexColorPicker, HexColorInput } from 'react-colorful';
 import { Stage, Layer, Line, Text, Image, Rect } from 'react-konva';
+import { FormControlUnstyledContext } from '@mui/base';
 
 
 const theme = createTheme({
@@ -48,6 +50,7 @@ export default function TileEditor() {
     const { store } = useContext(GlobalStoreContext);
     const [tool, setTool] = React.useState('pen');
     const [lines, setLines] = React.useState([]);
+    const [redoStack, setRedoStack] = React.useState([]);
     const isDrawing = React.useRef(false);
 
     const [tilesetName, setTilesetName] = useState("Untitled");
@@ -57,8 +60,7 @@ export default function TileEditor() {
     const [color, setColor] = useState("#aabbcc");
     const [strokeWidth, setStrokeWidth] = useState(5);
 
-    let { id, tilesetSelected } = useParams();
-
+    let { id, tilesetSelected, gridWidth, gridHeight } = useParams();
 
     useEffect(() => {
         if (id) {
@@ -82,24 +84,25 @@ export default function TileEditor() {
     const handleToggleEraser = () => {
         setTool("eraser")
     }
-
+    
     const handleTogglePen = () => {
         setTool("pen")
     }
-
+    
     const handleStrokeWidth = (e) => {
         e.preventDefault()
-
+        
         const newStrokeWidth = new FormData(e.currentTarget).get("strokeWidth");
         setStrokeWidth(Number(newStrokeWidth))
     }
 
     const handleMouseDown = (e) => {
         isDrawing.current = true;
+        setRedoStack([])
         const pos = e.target.getStage().getPointerPosition();
         setLines([...lines, { tool, color, strokeWidth, points: [pos.x, pos.y] }]);
     };
-
+    
     const handleMouseMove = (e) => {
         // no drawing - skipping
         if (!isDrawing.current) {
@@ -122,18 +125,68 @@ export default function TileEditor() {
 
 
     const handleSave = () => {
-        const uri = stageRef.current.toDataURL();
+        if (tilesetSelected >= 0) {
+            console.log("updating")
+            const uri = stageRef.current.children[0].canvas.toDataURL();
 
-        let img = new window.Image();
-        img.src = uri;
+            let img = new window.Image();
+            img.src = uri;
 
-        img.onload = function () {
-            console.log(img.height, img.width)
-            store.createTileset(store.currentMapEdit._id, tilesetName, uri, img.height, img.width);
-        };
+            img.onload = function () {
+                store.updateTileset(store.currentMapEdit._id, tilesetSelected, tilesetName, uri);
+            };
+        } else {
+            const uri = stageRef.current.children[0].canvas.toDataURL();
+    
+            let img = new window.Image();
+            img.src = uri;
+    
+            img.onload = function () {
+                console.log(img.height, img.width)
+                store.createTileset(store.currentMapEdit._id, tilesetName, uri, img.height, img.width);
+            };
+        }
     }
 
-    console.log(lines)
+    const renderGridLines = () => {
+        let gridLines = []
+        for (let i = 0; i < 600/gridWidth; i++) {
+            for (let j = 0; j < 600/gridHeight; j++) {
+                gridLines.push(<Rect
+                    x={i * gridWidth}
+                    y={j * gridHeight}
+                    width={gridWidth}
+                    height={gridHeight}
+                    fill="transparent"
+                    stroke="black"
+                />)
+            }
+        }
+        return gridLines
+    }
+
+    const handleUndo = () => {
+        console.log("Undo")
+        if (lines.length > 0) {
+            let newRedoStack = [...redoStack]
+            newRedoStack.push(lines[lines.length-1])
+            setRedoStack(newRedoStack)
+            setLines(lines.slice(0, lines.length-1))
+        }
+    }
+
+    const handleRedo = () => {
+        console.log("Redo")
+        console.log(redoStack, redoStack.length)
+        if (redoStack.length > 0) {
+            let newLines = [...lines]
+            newLines.push(redoStack[redoStack.length-1])
+            setLines(newLines)
+            setRedoStack(redoStack.slice(0, redoStack.length-1))
+        }
+    }
+
+    let gridLines = renderGridLines()
 
     return (
         <ThemeProvider theme={theme}>
@@ -164,9 +217,9 @@ export default function TileEditor() {
 
                                 {lines.map((line, i) => (
                                     <Line
-                                        key={i}
-                                        points={line.points}
-                                        stroke={line.color}
+                                    key={i}
+                                    points={line.points}
+                                    stroke={line.color}
                                         strokeWidth={line.strokeWidth}
                                         tension={0}
                                         lineCap="square"
@@ -174,19 +227,29 @@ export default function TileEditor() {
                                         globalCompositeOperation={
                                             line.tool === 'eraser' ? 'destination-out' : 'source-over'
                                         }
-                                    />
+                                        />
                                 ))}
+                            </Layer>
+                            <Layer>
+                                {gridLines.map((rect) => rect)}
                             </Layer>
                         </Stage>
 
                         <Grid height={500} width={500} sx={{ ml: 5, mt: 5 }}>
 
                             <Container disableGutters alignItems="center" sx={{}}>
-                                <Button variant="contained" component="label" sx={{ ml: 1, width: '30%', maxHeight: '20px' }} onClick={handleToggleEraser}>
+                                <Button variant="contained" sx={{ ml: 1, width: '33%', maxHeight: '20px' }} onClick={handleTogglePen}>
+                                    <EditIcon />
+                                </Button>
+                                <Button variant="contained" component="label" sx={{ ml: 1, width: '33%', maxHeight: '20px' }} onClick={handleToggleEraser}>
                                     <EditOffIcon />
                                 </Button>
-                                <Button variant="contained" sx={{ ml: 1, width: '30%', maxHeight: '20px' }} onClick={handleTogglePen}>
-                                    <EditIcon />
+
+                                <Button variant="contained" component="label" sx={{ ml: 1, width: '33%', maxHeight: '20px' }} onClick={handleUndo}>
+                                    <UndoIcon />
+                                </Button>
+                                <Button variant="contained" component="label" sx={{ ml: 1, width: '33%', maxHeight: '20px' }} onClick={handleRedo}>
+                                    <RedoIcon />
                                 </Button>
                             </Container>
 

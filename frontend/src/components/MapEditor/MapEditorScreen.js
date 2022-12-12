@@ -314,12 +314,12 @@ export default function MapEditorScreen() {
             })
 
         Promise.all(layers.map(loadImage)).then(images => {
-            // for (let image of images) {
-            //     // console.log(image)
-            //     ctx.drawImage(
-            //         image, 0, 0
-            //     )
-            // }
+            for (let image of images) {
+                // console.log(image)
+                ctx.drawImage(
+                    image, 0, 0
+                )
+            }
             let map = store.currentMapEdit;
             map.layers = MAP_LAYERS
             map.name = mapName;
@@ -328,6 +328,7 @@ export default function MapEditorScreen() {
             map.height = EDITOR_HEIGHT
             map.width = EDITOR_WIDTH
             map.thumbnail = stageRef.current.children[index].canvas.toDataURL();
+            ctx.clearRect(0, 0, images[0].height, images[0].width);
             store.updateMap(map);
         })
     }
@@ -415,6 +416,7 @@ export default function MapEditorScreen() {
     }
 
     const handleDeleteLayer = (e) => {
+        e.stopPropagation()
         if (MAP_LAYERS.length <= 1) return
         let newLayers = [...MAP_LAYERS]
         newLayers.splice(e.target.id, 1)
@@ -422,6 +424,7 @@ export default function MapEditorScreen() {
     }
 
     const handleMoveLayerUp = (e) => {
+        e.stopPropagation()
         let id = Number(e.target.id)
         if (id == 0) return
         let newLayers = [...MAP_LAYERS]
@@ -434,6 +437,7 @@ export default function MapEditorScreen() {
     }
 
     const handleMoveLayerDown = (e) => {
+        e.stopPropagation()
         let id = Number(e.target.id)
         if (id == MAP_LAYERS.length - 1) return
 
@@ -449,6 +453,12 @@ export default function MapEditorScreen() {
 
     const handleSelectLayer = (e) => {
         setSelectedLayer(e.target.id)
+    }
+
+    const handleDeleteTileset = (e) => {
+        e.stopPropagation()
+        console.log("Deleting ", store.currentMapEdit._id, e.target.id)
+        store.deleteTileset(store.currentMapEdit._id, e.target.id)
     }
 
     return (
@@ -594,6 +604,9 @@ export default function MapEditorScreen() {
                                             <ListItemText>
                                                 {tileset.name}
                                             </ListItemText>
+                                            <IconButton size="small">
+                                                <RemoveCircleOutlineIcon fontSize="small" id={i} onClick={handleDeleteTileset} />
+                                            </IconButton>
                                         </MenuItem>
                                     ))}
 
@@ -616,14 +629,14 @@ export default function MapEditorScreen() {
                             </Stage>
 
                             <Container disableGutters alignItems="center" sx={{}}>
-                                <Link to={`/tileEditor/${store.currentMapEdit._id}/${tilesetSelected[0]}`}>
+                                <Link to={`/tileEditor/${store.currentMapEdit._id}/${tilesetSelected[0]}/${TILE_WIDTH}/${TILE_HEIGHT}`}>
                                     <Button variant="contained" sx={{ ml: 1, width: '30%', maxHeight: '20px' }}><EditIcon /></Button>
                                 </Link>
                                 <Button variant="contained" component="label" sx={{ ml: 1, width: '30%', maxHeight: '20px' }}>
                                     <CloudUploadIcon />
                                     <input hidden accept="image/*" multiple type="file" onChange={handleTilesetUpload} />
                                 </Button>
-                                <Link to={`/tileEditor`}>
+                                <Link to={`/tileEditor/${TILE_WIDTH}/${TILE_HEIGHT}`}>
                                     <Button variant="contained" sx={{ ml: 1, width: '30%', maxHeight: '20px' }}><AddIcon /></Button>
                                 </Link>
                             </Container>

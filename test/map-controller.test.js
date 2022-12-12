@@ -31,6 +31,11 @@ test("Empty test for skipping the error", async () => {
 
     isPublished: true,
 
+    views: 0,
+    usersWhoLiked: [],
+    usersWhoDisliked: [],
+    comments: [],
+
     tileWidth: 32,
     tileHeight: 32,
   };
@@ -48,6 +53,10 @@ test("Empty test for skipping the error", async () => {
     createDate,
     modifyDate,
     isPublished,
+    views,
+    usersWhoLiked,
+    usersWhoDisliked,
+    comments,
     tileWidth,
     tileHeight,
   } = mapDefault;
@@ -64,6 +73,10 @@ test("Empty test for skipping the error", async () => {
     createDate,
     modifyDate,
     isPublished,
+    views,
+    usersWhoLiked,
+    usersWhoDisliked,
+    comments,
     tileWidth,
     tileHeight,
   });

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import AuthContext from "../auth";
@@ -56,7 +56,11 @@ const theme = createTheme({
 export default function MapView() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
-    const [loading, setLoading] = React.useState(true);
+    const [loading, setLoading] = useState(true);
+
+    const [disabledButtons, setDisabledButtons] = useState(false);
+
+
     const navigate = useNavigate();
 
     const commentRef = useRef();
@@ -92,13 +96,13 @@ export default function MapView() {
 
         if (!store.currentMapView.usersWhoLiked.includes(auth.user.username)) {
             return (
-                <IconButton onClick={handleClickLike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickLike}>
                     <ThumbUpOffAltIcon />
                 </IconButton>
             );
         } else {
             return (
-                <IconButton onClick={handleClickUnlike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickUnlike}>
                     <ThumbUpIcon />
                 </IconButton>
             );
@@ -118,13 +122,13 @@ export default function MapView() {
             !store.currentMapView.usersWhoDisliked.includes(auth.user.username)
         ) {
             return (
-                <IconButton onClick={handleClickDislike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickDislike}>
                     <ThumbDownOffAltIcon />
                 </IconButton>
             );
         } else {
             return (
-                <IconButton onClick={handleClickUndislike}>
+                <IconButton disabled={disabledButtons} onClick={handleClickUndislike}>
                     <ThumbDownIcon />
                 </IconButton>
             );
@@ -188,24 +192,34 @@ export default function MapView() {
         return comments;
     };
 
-    const handleClickLike = (event) => {
-        event.stopPropagation();
-        store.likeMap();
+    const toggleDisabled = async (callback) => {
+        setDisabledButtons(true);
+        await callback();
+        setDisabledButtons(false);
+    }
+
+    const handleClickLike = async (event) => {
+        setDisabledButtons(true);
+        await store.likeMap();
+        setDisabledButtons(false);
     };
 
-    const handleClickUnlike = (event) => {
-        event.stopPropagation();
-        store.unlikeMap();
+    const handleClickUnlike = async (event) => {
+        setDisabledButtons(true);
+        await store.unlikeMap();
+        setDisabledButtons(false);
     };
 
-    const handleClickDislike = (event) => {
-        event.stopPropagation();
-        store.dislikeMap();
+    const handleClickDislike = async (event) => {
+        setDisabledButtons(true);
+        await store.dislikeMap();
+        setDisabledButtons(false);
     };
 
-    const handleClickUndislike = (event) => {
-        event.stopPropagation();
-        store.undislikeMap();
+    const handleClickUndislike = async (event) => {
+        setDisabledButtons(true);
+        await store.undislikeMap();
+        setDisabledButtons(false);
     };
 
     const handleSubmitComment = (event) => {
@@ -262,7 +276,10 @@ export default function MapView() {
             };
             exportMap.tilesets.push(exportTileset);
 
-            firstgid += exportTileset.tilecount;
+            let numTilesRow = Math.floor(tileset.imageWidth / store.currentMapView.tileWidth);
+            let numTilesCol = Math.floor(tileset.imageHeight / store.currentMapView.tileHeight);
+            
+            firstgid += numTilesRow * numTilesCol;
         }
 
         for (let i = 0; i < store.currentMapView.layers.length; i++) {
@@ -280,9 +297,10 @@ export default function MapView() {
                 y: 0
             }
 
-            for (let row = 0; row < layer.length; row++) {
-                for (let col = 0; col < layer[0].length; col++) {
-                    let [tilesetIndex, tilesetRow, tilesetCol] = layer[row][col];
+            for (let y = 0; y < layer[0].length; y++) {
+                for (let x = 0; x < layer.length; x++) {
+                    let [tilesetIndex, tilesetX, tilesetY] = layer[x][y];
+                    
                     if (tilesetIndex === -1) {
                         exportLayer["data"].push(0);
                         continue;
@@ -291,17 +309,24 @@ export default function MapView() {
                     let tile_id = 1;
 
                     // add all tilecounts before current tileset
-                    tilesetIndex--;
-                    while (tilesetIndex >= 0) {
-                        let numTilesRow = Math.ceil(store.currentMapView.tilesets[tilesetIndex].imageHeight / store.currentMapView.tileHeight);
-                        let numTilesCol = Math.ceil(store.currentMapView.tilesets[tilesetIndex].imageWidth / store.currentMapView.tileWidth);
+                    for (let index = 0; index < tilesetIndex; index++) {
+                        let numTilesRow = Math.floor(store.currentMapView.tilesets[index].imageHeight / store.currentMapView.tileHeight);
+                        let numTilesCol = Math.floor(store.currentMapView.tilesets[index].imageWidth / store.currentMapView.tileWidth);
                         tile_id += numTilesRow*numTilesCol;
-                        tilesetIndex--;
                     }
 
-                    // row is x, col is y
-                    tile_id += tilesetRow;
-                    tile_id += tilesetCol * (layer[0].length);
+                    // add x offset
+                    tile_id += tilesetX
+
+                    // add y offset * length of row
+                    tile_id += tilesetY * Math.floor(store.currentMapView.tilesets[tilesetIndex].imageWidth / store.currentMapView.tileWidth);
+
+                    console.log("(" + tilesetX + "," + tilesetY + ")" + " id: " + tile_id)
+
+                    // console.log(layer[x][y])
+                    if (tilesetX === 9 && tilesetY === 3) {
+                        console.log(tile_id)
+                    }
                     
                     exportLayer["data"].push(tile_id);
                 }
@@ -314,7 +339,7 @@ export default function MapView() {
         let zip = new JSZip();
         zip.file(store.currentMapView.name + ".json", jsonFile);
         for (let tileset of store.currentMapView.tilesets) {
-            zip.file(tileset.name, tileset["data"].split("base64,")[1], {base64: true});
+            zip.file(tileset.name + ".png", tileset["data"].split("base64,")[1], {base64: true});
         }
         zip.generateAsync({type:"blob"})
         .then(function(content) {

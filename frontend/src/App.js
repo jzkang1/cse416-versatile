@@ -42,8 +42,8 @@ const App = () => {
                         <Route path="/mapView/:id" element={<MapView />} />
 
                         <Route path="/editor/:id" element={<MapEditorScreen />} />
-                        <Route path="/tileEditor" element={<TileEditor />} />
-                        <Route path="/tileEditor/:id/:tilesetSelected" element={<TileEditor />} />
+                        <Route path="/tileEditor/:gridWidth/:gridHeight" element={<TileEditor />} />
+                        <Route path="/tileEditor/:id/:tilesetSelected/:gridWidth/:gridHeight" element={<TileEditor />} />
                     </Routes>
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
