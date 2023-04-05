@@ -328,6 +328,7 @@ export default function MapEditorScreen() {
             map.height = EDITOR_HEIGHT
             map.width = EDITOR_WIDTH
             map.thumbnail = stageRef.current.children[index].canvas.toDataURL();
+            ctx.clearRect(0, 0, images[0].height, images[0].width);
             store.updateMap(map);
         })
     }
